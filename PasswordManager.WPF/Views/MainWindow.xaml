@@ -1,0 +1,202 @@
+﻿<Window x:Class="PasswordManager.WPF.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:uc="clr-namespace:PasswordManager.WPF.UserControls"
+        Title="Password Manager"
+        Height="720"
+        Width="1080"
+        WindowState="Maximized"
+        Background="#fff"
+        FlowDirection="RightToLeft"
+        FontFamily="pack://application:,,,/Fonts/#Cairo"
+        >
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+    </Window.Resources>
+
+    <Grid x:Name="MainGrid">
+        <!-- Row and Column Definitions -->
+        <Grid.RowDefinitions>
+            <!-- Topbar -->
+            <RowDefinition Height="60"/>
+            <!-- Main content -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <!-- Sidebar -->
+            <ColumnDefinition Width="Auto"
+                          MinWidth="60"
+                          MaxWidth="240"/>
+            <!-- Main Content Area -->
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Topbar -->
+        <Border
+        Panel.ZIndex="1"
+        x:Name="Topbar"
+        Padding="20,0"
+        Grid.Column="1"
+        Height="60"
+        VerticalAlignment="Top"
+        Background="{StaticResource BgColor}"
+        BorderThickness="0">
+
+            <Border.Effect>
+                <DropShadowEffect
+                Color="#03000000"
+                Direction="250"
+                ShadowDepth="7"
+                BlurRadius="20"
+                Opacity=".2"/>
+            </Border.Effect>
+
+            <!-- Grid for layout inside topbar -->
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- Burger Icon -->
+                    <ColumnDefinition Width="*"/>
+                    <!-- Spacer -->
+                    <ColumnDefinition Width="Auto"/>
+                    <!-- User Profile Dropdown -->
+                </Grid.ColumnDefinitions>
+
+                <!-- Burger Button (on right due to RTL) -->
+                <Button Background="Transparent"
+                    Click="ToggleSidebar_Click"
+                    BorderThickness="0"
+                    Cursor="Hand">
+
+                    <Border Grid.Column="0"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Center"
+                        Padding="10">
+                        <TextBlock
+                        x:Name="BurgerIcon"
+                        FontSize="24"
+                        Text="&#xE700;"
+                        FontFamily="Segoe MDL2 Assets"
+                        VerticalAlignment="Center"
+                        TextAlignment="Center"
+                        Foreground="#363949"/>
+                    </Border>
+                </Button>
+
+                <!-- User Profile Dropdown (appears on the left side visually) -->
+                <Menu Background="Transparent"
+                  Grid.Column="2"
+                  VerticalAlignment="Center"
+                  HorizontalAlignment="Right">
+                    <MenuItem Background="Transparent"
+                          FlowDirection="LeftToRight">
+                        <MenuItem.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <Ellipse Width="32"
+                                     Height="32"
+                                     Fill="LightGray"/>
+                                <TextBlock Text="اسم المستخدم"
+                                       Margin="8,0,0,0"
+                                       VerticalAlignment="Center"/>
+                                <TextBlock Text="&#xE70D;"
+                                       FontFamily="Segoe MDL2 Assets"
+                                       FontSize="12"
+                                       VerticalAlignment="Center"
+                                       Margin="5,0,0,0"/>
+                            </StackPanel>
+                        </MenuItem.Header>
+                        <MenuItem Header="الملف الشخصي"/>
+                        <MenuItem Header="الإعدادات"/>
+                        <Separator/>
+                        <MenuItem Header="تسجيل الخروج"/>
+                    </MenuItem>
+                </Menu>
+            </Grid>
+        </Border>
+
+        <!-- Logo -->
+        <Border Panel.ZIndex="3"
+            x:Name="Logo"
+            Grid.Row="0"
+            Grid.Column="0"
+            Height="60"
+            Background="#fff"
+            HorizontalAlignment="Left">
+
+            <WrapPanel
+            x:Name="LogoWrapper"
+            Height="60"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Center">
+
+                <Border x:Name="LogoIconWrapper"
+                    Height="60"
+                    Width="60">
+                    <TextBlock
+                    x:Name="LogoIcon"
+                    FontSize="36"
+                    Text="&#xE707;"
+                    FontFamily="Segoe MDL2 Assets"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Foreground="#363949"/>
+
+                </Border>
+
+                <TextBlock x:Name="LogoText"
+                       Width="180"
+                       TextAlignment="Center"
+                       Text="LOGO"
+                       FontSize="28"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       Visibility="{Binding IsSidebarExpanded, Converter={StaticResource BoolToVis}, RelativeSource={RelativeSource AncestorType=Window}}"/>
+
+            </WrapPanel>
+        </Border>
+
+        <!-- Sidebar -->
+        <Border x:Name="SidebarContainer"
+            Width="240"
+            Grid.Row="1"
+            Grid.Column="0"
+            Grid.RowSpan="2"
+            HorizontalAlignment="Left"
+            Panel.ZIndex="2"
+            Background="#fff">
+            <uc:Sidebar x:Name="Sidebar"
+                        IsSidebarExpanded="{Binding IsSidebarExpanded, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}"/>
+        </Border>
+
+        <!-- Main Content -->
+        <Border Grid.Row="1"
+            Grid.Column="1"
+            Padding="20">
+
+            <Border
+            CornerRadius="20"
+            Padding="20,10"
+            Background="#fff">
+                <Border.Effect>
+                    <DropShadowEffect
+                    Color="#03000000"
+                    Direction="270"
+                    ShadowDepth="7"
+                    BlurRadius="25"
+                    Opacity=".2"/>
+                </Border.Effect>
+
+
+
+                <Frame x:Name="MainContentArea"
+                   NavigationUIVisibility="Hidden"/>
+
+            </Border>
+
+        </Border>
+
+    </Grid>
+</Window>

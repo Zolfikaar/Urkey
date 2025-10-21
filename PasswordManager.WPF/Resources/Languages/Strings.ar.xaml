@@ -26,4 +26,14 @@
         <sys:String x:Key="AddressesTitle">العناوين</sys:String>
         <sys:String x:Key="SettingsTitle">اللإعدادات</sys:String>
     
+        <!-- Home Page Translations -->
+        <sys:String x:Key="WelcomeHomeText">مرحباً بك في مدير كلمات المرور</sys:String>
+        <sys:String x:Key="WelcomeSubtitle">إدارة آمنة ومرتبة لجميع كلمات المرور الخاصة بك</sys:String>
+        <sys:String x:Key="PasswordsTotal">إجمالي كلمات المرور</sys:String>
+        <sys:String x:Key="VaultsTotal">المخازن</sys:String>
+        <sys:String x:Key="SecurityPoints">نقاط الامان</sys:String>
+
+
+
+
 </ResourceDictionary>

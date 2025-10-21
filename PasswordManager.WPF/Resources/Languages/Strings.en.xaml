@@ -25,4 +25,12 @@
     <sys:String x:Key="AddressesTitle">Addresses</sys:String>
     <sys:String x:Key="SettingsTitle">Settings</sys:String>
 
+    <!-- Home Page Translations -->
+    <sys:String x:Key="WelcomeHomeText">Welcome to password manager</sys:String>
+    <sys:String x:Key="WelcomeSubtitle">Secure and organized management of all your passwords.</sys:String>
+    <sys:String x:Key="PasswordsTotal">Total Passwords </sys:String>
+    <sys:String x:Key="VaultsTotal">Valuts</sys:String>
+    <sys:String x:Key="SecurityPoints">Security Points</sys:String>
+    
+
 </ResourceDictionary>

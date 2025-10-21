@@ -6,11 +6,10 @@
       xmlns:local="clr-namespace:PasswordManager.WPF.Views.Pages"
       mc:Ignorable="d"
       Title="Home"
-      Background="#fff"
-      >
+      Foreground="{DynamicResource TextColor}">
 
-    <Border 
-            Margin="20">
+    <Border
+        Margin="20">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -31,7 +30,6 @@
                                Text="{DynamicResource HomeTitle}"
                                FontSize="24"
                                FontWeight="Bold"
-                               
                                VerticalAlignment="Center"/>
 
                     <!--
@@ -42,29 +40,32 @@
                             Padding="16,10"
                             Click="AddNewPassword"/>
                     -->
-                    <Button Content="{DynamicResource AddButton}" Width="100" Margin="10"/>
-                    
+                    <Button Content="{DynamicResource AddButton}"
+                            Width="100"
+                            Margin="10"/>
+
                 </Grid>
             </Border>
 
             <!-- Main Content -->
             <ScrollViewer Grid.Row="1"
-                    VerticalScrollBarVisibility="Auto"
-                    Margin="30,0,30,30">
+                          VerticalScrollBarVisibility="Auto"
+                          Margin="30,0,30,30">
                 <StackPanel>
                     <!-- Welcome Section -->
-                    <Border 
-                            CornerRadius="8"
-                            Padding="20"
-                            Margin="0,0,0,20">
+                    <Border
+                        CornerRadius="8"
+                        Padding="20"
+                        Margin="0,0,0,20"
+                        Style="{StaticResource CardStyle}">
                         <StackPanel>
-                            <TextBlock Text="مرحباً بك في مدير كلمات المرور"
+                            <TextBlock Text="{DynamicResource WelcomeHomeText}"
                                        FontSize="20"
                                        FontWeight="SemiBold"
-                                       
                                        Margin="0,0,0,10"/>
-                            <TextBlock Text="إدارة آمنة ومرتبة لجميع كلمات المرور الخاصة بك"
+                            <TextBlock Text="{DynamicResource WelcomeSubtitle}"
                                        FontSize="14"
+                                       Foreground="{DynamicResource SecondaryTextColor}"
                                        TextWrapping="Wrap"/>
                         </StackPanel>
                     </Border>
@@ -81,15 +82,16 @@
                         <Border Grid.Column="0"
                                 CornerRadius="8"
                                 Margin="0,0,10,0"
-                                BorderThickness="1">
+                                BorderThickness="1"
+                                Style="{StaticResource CardStyle}">
                             <StackPanel Margin="20"
-                                    HorizontalAlignment="Center">
+                                        HorizontalAlignment="Center">
                                 <Path Data="M12 15l-3-3 3-3"
                                       Stroke="{StaticResource PrimaryColor}"
                                       StrokeThickness="2"
                                       Fill="Transparent"
                                       Width="24"
-                                        Height="24"
+                                      Height="24"
                                       HorizontalAlignment="Center"
                                       Margin="0,0,0,10"/>
                                 <TextBlock Text="0"
@@ -97,8 +99,9 @@
                                            FontWeight="Bold"
                                            HorizontalAlignment="Center"
                                            Margin="0,0,0,5"/>
-                                <TextBlock Text="إجمالي كلمات المرور"
+                                <TextBlock Text="{DynamicResource PasswordsTotal}"
                                            FontSize="12"
+                                           Foreground="{DynamicResource SecondaryTextColor}"
                                            HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Border>
@@ -107,15 +110,16 @@
                         <Border Grid.Column="1"
                                 CornerRadius="8"
                                 Margin="5,0"
-                                BorderThickness="1">
+                                BorderThickness="1"
+                                Style="{StaticResource CardStyle}">
                             <StackPanel Margin="20"
-                                    HorizontalAlignment="Center">
+                                        HorizontalAlignment="Center">
                                 <Path Data="M4 7V4a2 2 0 012-2h8a2 2 0 012 2v3M4 7H2a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2h-2M4 7v10a2 2 0 002 2h8a2 2 0 002-2V7"
                                       Stroke="{StaticResource PrimaryColor}"
                                       StrokeThickness="2"
                                       Fill="Transparent"
                                       Width="24"
-                                        Height="24"
+                                      Height="24"
                                       HorizontalAlignment="Center"
                                       Margin="0,0,0,10"/>
                                 <TextBlock Text="0"
@@ -123,8 +127,9 @@
                                            FontWeight="Bold"
                                            HorizontalAlignment="Center"
                                            Margin="0,0,0,5"/>
-                                <TextBlock Text="المخازن"
+                                <TextBlock Text="{DynamicResource VaultsTotal}"
                                            FontSize="12"
+                                           Foreground="{DynamicResource SecondaryTextColor}"
                                            HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Border>
@@ -133,15 +138,16 @@
                         <Border Grid.Column="2"
                                 CornerRadius="8"
                                 Margin="10,0,0,0"
-                                BorderThickness="1">
+                                BorderThickness="1"
+                                Style="{StaticResource CardStyle}">
                             <StackPanel Margin="20"
-                                    HorizontalAlignment="Center">
+                                        HorizontalAlignment="Center">
                                 <Path Data="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                                       Stroke="{StaticResource PrimaryColor}"
                                       StrokeThickness="2"
                                       Fill="Transparent"
                                       Width="24"
-                                        Height="24"
+                                      Height="24"
                                       HorizontalAlignment="Center"
                                       Margin="0,0,0,10"/>
                                 <TextBlock Text="100%"
@@ -149,17 +155,19 @@
                                            FontWeight="Bold"
                                            HorizontalAlignment="Center"
                                            Margin="0,0,0,5"/>
-                                <TextBlock Text="نقاط الأمان"
+                                <TextBlock Text="{DynamicResource SecurityPoints}"
                                            FontSize="12"
+                                           Foreground="{DynamicResource SecondaryTextColor}"
                                            HorizontalAlignment="Center"/>
                             </StackPanel>
                         </Border>
                     </Grid>
 
                     <!-- Recent Activity -->
-                    <Border 
-                            CornerRadius="8"
-                            BorderThickness="1">
+                    <Border
+                        CornerRadius="8"
+                        BorderThickness="1"
+                        Style="{StaticResource CardStyle}">
                         <StackPanel Margin="20">
                             <TextBlock Text="النشاط الأخير"
                                        FontSize="16"
@@ -168,6 +176,7 @@
 
                             <TextBlock Text="لا يوجد نشاط حديث"
                                        FontSize="14"
+                                       Foreground="{DynamicResource SecondaryTextColor}"
                                        HorizontalAlignment="Center"
                                        Margin="0,20"/>
                         </StackPanel>

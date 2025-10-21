@@ -93,9 +93,8 @@ namespace PasswordManager.WPF.UserControls
             // Initialize sidebar state based on the dependency property
             _isSidebarOpen = IsSidebarExpanded;
 
-            
 
-            //if (LanguageManager.CurrentLanguage == )
+
         }
 
         public void ToggleSidebar(ContentControl MainContentArea, Border Topbar, Border Logo)
@@ -151,15 +150,6 @@ namespace PasswordManager.WPF.UserControls
             UpdateSidebarTextVisibility();
         }
 
-        private void HandleNestedMenuOnSidebarToggle()
-        {
-            // If sidebar is collapsed, close the nested menu
-            if (!_isSidebarOpen && _isAllEntriesMenuOpen)
-            {
-                _isAllEntriesMenuOpen = false;
-            }
-        }
-
         private void SidebarBtnClicked(object sender, RoutedEventArgs e)
         {
             // First, completely reset ALL buttons to their default state
@@ -183,7 +173,9 @@ namespace PasswordManager.WPF.UserControls
                     case "CreditCards":
                         OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new CreditCards()));
                         break;
-
+                    case "Addresses":
+                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Addresses()));
+                        break;
 
 
 
@@ -202,6 +194,7 @@ namespace PasswordManager.WPF.UserControls
         {
             _isAllEntriesMenuOpen = !_isAllEntriesMenuOpen;
             UpdateNestedMenuVisualState();
+
         }
 
         private void ResetAllButtons()
@@ -213,7 +206,7 @@ namespace PasswordManager.WPF.UserControls
                 {
                     SetIsActive(btn, false);
                 }
-                else if (child is StackPanel stackPanel && stackPanel.Name == "PeopleManagementContainer")
+                else if (child is StackPanel stackPanel && stackPanel.Name == "AllEntriesContainer")
                 {
                     // Reset nested menu buttons
                     if (stackPanel.Children[1] is StackPanel nestedItems)

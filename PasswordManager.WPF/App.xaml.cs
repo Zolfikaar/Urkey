@@ -1,36 +1,33 @@
 ﻿using System.Windows;
 using PasswordManager.WPF.Helpers;
-//using PasswordManager.WPF.Views;
 
 namespace PasswordManager.WPF
 {
     public partial class App : Application
     {
-        //protected bool isInitialLoad = true;
-        //protected string master_password = "";
+        public static AppSettings Settings { get; private set; } = new();
+
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            /*
-             اذا كان البرنامج يشتغل للمرة الاولى , يجب عرض واجهة ادخال الرمز الرئيسي 
-             */
-            //if (isInitialLoad)
-            //{
-            //    // show set master password window
-            //} else
-            //{
-            //    // show master password window to login
-            //}
+            Settings = SettingsHelper.LoadSettings();
 
-            // Apply default language
-            Console.WriteLine("Applying default language...");
-            LanguageManager.ApplyDefaultLanguage();
-            Console.WriteLine($"Language applied: {LanguageManager.CurrentLanguage}");
+            LanguageManager.ApplyLanguage(Settings.Language);
+            ThemeManager.ApplyTheme(Settings.Theme);
 
             var mainWindow = new Views.MainWindow();
             mainWindow.Show();
         }
+
+
+        protected override void OnExit(ExitEventArgs e)
+        {
+            SettingsHelper.SaveSettings(Settings);
+            base.OnExit(e);
+        }
+
+        
 
     }
 

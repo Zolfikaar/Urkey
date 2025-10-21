@@ -4,367 +4,369 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:PasswordManager.WPF.UserControls"
-             mc:Ignorable="d"
-             >
-    <UserControl.Resources>
+             mc:Ignorable="d">
+        <UserControl.Resources>
 
-        <!-- Style for Sidebar Buttons -->
-        <Style x:Key="SidebarButtonStyle"
-               TargetType="Button">
-            <Setter Property="Background"
-                    Value="Transparent"/>
-            <Setter Property="BorderThickness"
-                    Value="0"/>
-            <Setter Property="Cursor"
-                    Value="Hand"/>
-            <Setter Property="Width"
-                    Value="240"/>
-            <Setter Property="Height"
-                    Value="60"/>
-            <Setter Property="Foreground"
-                    Value="{StaticResource TextColor}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
-                            <Grid>
-                                <WrapPanel Height="60"
-                                           Width="240">
-                                    <Border Focusable="False"
-                                            Height="60"
-                                            Width="60"
-                                            HorizontalAlignment="Left"
-                                            Background="{TemplateBinding Background}">
-                                        <Path
-                                            Data="{TemplateBinding Tag}"
-                                            Fill="{TemplateBinding Foreground}"
-                                            Width="24"
-                                            Height="24"/>
-                                    </Border>
-                                    <Border Focusable="False"
-                                            Height="60"
-                                            Width="180"
-                                            Background="{TemplateBinding Background}">
-                                        <TextBlock
-                                            Focusable="False"
-                                            Text="{TemplateBinding Content}"
-                                            FontSize="20"
-                                            FontWeight="Bold"
-                                            Foreground="{TemplateBinding Foreground}"
-                                            HorizontalAlignment="{Binding WordDicrection}"
-                                            VerticalAlignment="Center"
-                                            FontFamily="Cairo"/>
-                                    </Border>
-                                </WrapPanel>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
+                <!-- Style for Sidebar Buttons -->
+                <Style x:Key="SidebarButtonStyle"
+                       TargetType="Button">
+                        <Setter Property="Background"
+                                Value="{DynamicResource BgColor}"/>
+                        <Setter Property="BorderThickness"
+                                Value="0"/>
+                        <Setter Property="Cursor"
+                                Value="Hand"/>
+                        <Setter Property="Width"
+                                Value="240"/>
+                        <Setter Property="Height"
+                                Value="60"/>
+                        <Setter Property="Foreground"
+                                Value="{DynamicResource TextColor}"/>
+                        <Setter Property="Template">
+                                <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                                        <Grid>
+                                                                <WrapPanel Height="60"
+                                                                           Width="240">
+                                                                        <Border Focusable="False"
+                                                                                Height="60"
+                                                                                Width="60"
+                                                                                HorizontalAlignment="Left"
+                                                                                Background="{TemplateBinding Background}">
+                                                                                <Path
+                                                                                        Data="{TemplateBinding Tag}"
+                                                                                        Fill="{TemplateBinding Foreground}"
+                                                                                        Width="24"
+                                                                                        Height="24"/>
+                                                                        </Border>
+                                                                        <Border Focusable="False"
+                                                                                Height="60"
+                                                                                Width="180"
+                                                                                Background="{TemplateBinding Background}">
+                                                                                <TextBlock
+                                                                                        Focusable="False"
+                                                                                        Text="{TemplateBinding Content}"
+                                                                                        FontSize="20"
+                                                                                        FontWeight="Bold"
+                                                                                        Foreground="{TemplateBinding Foreground}"
+                                                                                        HorizontalAlignment="{Binding WordDicrection}"
+                                                                                        VerticalAlignment="Center"
+                                                                                        FontFamily="Cairo"/>
+                                                                        </Border>
+                                                                </WrapPanel>
+                                                        </Grid>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
 
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
+                                                        <Trigger Property="IsMouseOver"
+                                                                 Value="True">
+                                                                <Setter Property="Background"
+                                                                        Value="{DynamicResource HoverColor}"/>
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource PrimaryColor}"/>
+                                                        </Trigger>
 
+                                                        <Trigger Property="IsPressed"
+                                                                 Value="True">
+                                                                <Setter Property="Background"
+                                                                        Value="{DynamicResource SidebarSelectedColor}"/>
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource PrimaryColor}"/>
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
+                                                                     Value="True">
+                                                                <Setter Property="Background"
+                                                                        Value="{DynamicResource SidebarSelectedColor}"/>
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource PrimaryColor}"/>
+                                                        </DataTrigger>
+                                                        <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
+                                                                                   Value="True"/>
+                                                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
+                                                                                   Value="True"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background"
+                                                                        Value="{DynamicResource HoverColor}"/>
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource PrimaryColor}"/>
+                                                        </MultiDataTrigger>
+                                                        <Trigger Property="IsEnabled"
+                                                                 Value="False">
+                                                                <Setter Property="Opacity"
+                                                                        Value="0.5"/>
+                                                        </Trigger>
+                                                </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                </Setter.Value>
+                        </Setter>
+                </Style>
 
-                                <Setter Property="Foreground"
-                                        Value="{StaticResource PrimaryColor}"/>
+                <!-- Style for Nested Menu Buttons -->
+                <Style x:Key="NestedMenuButtonStyle"
+                       TargetType="Button"
+                       BasedOn="{StaticResource SidebarButtonStyle}">
+                        <Setter Property="Height"
+                                Value="50"/>
+                        <Setter Property="Margin"
+                                Value="0,0,0,2"/>
+                        <Setter Property="Template">
+                                <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                                <Border Background="{TemplateBinding Background}"
+                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                                        <Grid>
+                                                                <WrapPanel Height="50"
+                                                                           Width="240">
+                                                                        <Border Focusable="False"
+                                                                                Height="50"
+                                                                                Width="60"
+                                                                                HorizontalAlignment="Left"
+                                                                                Background="{TemplateBinding Background}">
+                                                                                <Path
+                                                                                        Data="{TemplateBinding Tag}"
+                                                                                        Fill="{TemplateBinding Foreground}"
+                                                                                        Width="20"
+                                                                                        Height="20"/>
+                                                                        </Border>
+                                                                        <Border Focusable="False"
+                                                                                Height="50"
+                                                                                Width="180"
+                                                                                Background="{TemplateBinding Background}">
+                                                                                <TextBlock
+                                                                                        Focusable="False"
+                                                                                        Text="{TemplateBinding Content}"
+                                                                                        FontSize="18"
+                                                                                        FontWeight="Normal"
+                                                                                        Foreground="{TemplateBinding Foreground}"
+                                                                                        HorizontalAlignment="Left"
+                                                                                        VerticalAlignment="Center"
+                                                                                        FontFamily="Cairo"/>
+                                                                        </Border>
+                                                                </WrapPanel>
+                                                        </Grid>
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver"
+                                                                 Value="True">
+                                                                <Setter Property="Background"
+                                                                        Value="{DynamicResource HoverColor}"/>
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource PrimaryColor}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsPressed"
+                                                                 Value="True">
+                                                                <Setter Property="Background"
+                                                                        Value="{DynamicResource SidebarSelectedColor}"/>
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource PrimaryColor}"/>
+                                                        </Trigger>
+                                                        <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
+                                                                     Value="True">
+                                                                <Setter Property="Background"
+                                                                        Value="{DynamicResource SidebarSelectedColor}"/>
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource PrimaryColor}"/>
+                                                        </DataTrigger>
+                                                        <MultiDataTrigger>
+                                                                <MultiDataTrigger.Conditions>
+                                                                        <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
+                                                                                   Value="True"/>
+                                                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
+                                                                                   Value="True"/>
+                                                                </MultiDataTrigger.Conditions>
+                                                                <Setter Property="Background"
+                                                                        Value="{DynamicResource HoverColor}"/>
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource PrimaryColor}"/>
+                                                        </MultiDataTrigger>
+                                                        <Trigger Property="IsEnabled"
+                                                                 Value="False">
+                                                                <Setter Property="Opacity"
+                                                                        Value="0.5"/>
+                                                        </Trigger>
+                                                </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                </Setter.Value>
+                        </Setter>
+                </Style>
+        </UserControl.Resources>
 
-                            </Trigger>
-
-                            <Trigger Property="IsPressed"
-                                     Value="True">
-                                <Setter Property="Background"
-                                        Value="{StaticResource BgColor}"/>
-                                <Setter Property="Foreground"
-                                        Value="{StaticResource PrimaryColor}"/>
-                            </Trigger>
-                            <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
-                                         Value="True">
-                                <Setter Property="Background"
-                                        Value="{StaticResource BgColor}"/>
-                                <Setter Property="Foreground"
-                                        Value="{StaticResource PrimaryColor}"/>
-                            </DataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
-                                               Value="True"/>
-                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
-                                               Value="True"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Background"
-                                        Value="{StaticResource BgColor}"/>
-                                <Setter Property="Foreground"
-                                        Value="{StaticResource PrimaryColor}"/>
-                            </MultiDataTrigger>
-                            <Trigger Property="IsEnabled"
-                                     Value="False">
-                                <Setter Property="Opacity"
-                                        Value="0.5"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
-        <!-- Style for Nested Menu Buttons -->
-        <Style x:Key="NestedMenuButtonStyle"
-               TargetType="Button"
-               BasedOn="{StaticResource SidebarButtonStyle}">
-            <Setter Property="Height"
-                    Value="50"/>
-            <Setter Property="Margin"
-                    Value="0,0,0,2"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}">
-                            <Grid>
-                                <WrapPanel Height="50"
-                                           Width="240">
-                                    <Border Focusable="False"
-                                            Height="50"
-                                            Width="60"
-                                            HorizontalAlignment="Left"
-                                            Background="{TemplateBinding Background}">
-                                        <Path
-                                            Data="{TemplateBinding Tag}"
-                                            Fill="{TemplateBinding Foreground}"
-                                            Width="20"
-                                            Height="20"/>
-                                    </Border>
-                                    <Border Focusable="False"
-                                            Height="50"
-                                            Width="180"
-                                            Background="{TemplateBinding Background}">
-                                        <TextBlock
-                                            Focusable="False"
-                                            Text="{TemplateBinding Content}"
-                                            FontSize="18"
-                                            FontWeight="Normal"
-                                            Foreground="{TemplateBinding Foreground}"
-                                            HorizontalAlignment="Left"
-                                            VerticalAlignment="Center"
-                                            FontFamily="Cairo"/>
-                                    </Border>
-                                </WrapPanel>
-                            </Grid>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
-                                <Setter Property="Foreground"
-                                        Value="{StaticResource PrimaryColor}"/>
-                            </Trigger>
-                            <Trigger Property="IsPressed"
-                                     Value="True">
-                                <Setter Property="Background"
-                                        Value="{StaticResource BgColor}"/>
-                                <Setter Property="Foreground"
-                                        Value="{StaticResource PrimaryColor}"/>
-                            </Trigger>
-                            <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
-                                         Value="True">
-                                <Setter Property="Background"
-                                        Value="{StaticResource BgColor}"/>
-                                <Setter Property="Foreground"
-                                        Value="{StaticResource PrimaryColor}"/>
-                            </DataTrigger>
-                            <MultiDataTrigger>
-                                <MultiDataTrigger.Conditions>
-                                    <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
-                                               Value="True"/>
-                                    <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
-                                               Value="True"/>
-                                </MultiDataTrigger.Conditions>
-                                <Setter Property="Background"
-                                        Value="{StaticResource BgColor}"/>
-                                <Setter Property="Foreground"
-                                        Value="{StaticResource PrimaryColor}"/>
-                            </MultiDataTrigger>
-                            <Trigger Property="IsEnabled"
-                                     Value="False">
-                                <Setter Property="Opacity"
-                                        Value="0.5"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </UserControl.Resources>
-
-    <!-- Sidebar -->
-    <Border
-        BorderBrush="#fff"
-        BorderThickness="0"
-        x:Name="SidebarWrapper"
-        Grid.Row="1"
-        Grid.RowSpan="2"
-        Grid.Column="0"
-        VerticalAlignment="Stretch">
-        <Border BorderBrush="#fff"
+        <!-- Sidebar -->
+        <Border
+                BorderBrush="{x:Null}"
                 BorderThickness="0"
-                Background="#fff">
-            <Border.Effect>
-                <DropShadowEffect
-                    Color="#03000000"
-                    Direction="270"
-                    ShadowDepth="7"
-                    BlurRadius="25"
-                    Opacity=".2"/>
+                x:Name="SidebarWrapper"
+                Grid.Row="1"
+                Grid.RowSpan="2"
+                Grid.Column="0"
+                VerticalAlignment="Stretch">
+                <Border BorderBrush="{x:Null}"
+                        BorderThickness="0"
+                        Background="{DynamicResource BgColor}">
+                        <Border.Effect>
+                                <DropShadowEffect
+                                        Color="#03000000"
+                                        Direction="270"
+                                        ShadowDepth="7"
+                                        BlurRadius="25"
+                                        Opacity=".2"/>
 
-            </Border.Effect>
+                        </Border.Effect>
 
-            <DockPanel x:Name="SidebarPanel"
-                       LastChildFill="false">
+                        <DockPanel x:Name="SidebarPanel"
+                                   LastChildFill="false">
 
-                <!-- Top Buttons  -->
-                <StackPanel x:Name="TopBtns"
-                            DockPanel.Dock="Top">
+                                <!-- Top Buttons  -->
+                                <StackPanel x:Name="TopBtns"
+                                            DockPanel.Dock="Top">
 
-                    <Button Style="{StaticResource SidebarButtonStyle}"
-                            Click="SidebarBtnClicked"
-                            x:Name="Home"
-                            Tag="{StaticResource bx_home}"
-                            Content="{DynamicResource HomeTitle}"/>
+                                        <Button Style="{StaticResource SidebarButtonStyle}"
+                                                Click="SidebarBtnClicked"
+                                                x:Name="Home"
+                                                Tag="{StaticResource bx_home}"
+                                                Content="{DynamicResource HomeTitle}"/>
 
-                    <!-- All Entries Nested Menu -->
-                    <StackPanel x:Name="AllEntriesContainer">
-                        <Button Style="{StaticResource SidebarButtonStyle}"
-                                Click="AllEntriesMenuClicked"
-                                x:Name="AllEntriesMenu"
-                                Tag="{StaticResource bx_arrow_down}"
-                                Content="{DynamicResource AllEntriesTitle}">
-                            <Button.Template>
-                                <ControlTemplate TargetType="Button">
-                                    <Border Background="{TemplateBinding Background}"
-                                            BorderBrush="{TemplateBinding BorderBrush}"
-                                            BorderThickness="{TemplateBinding BorderThickness}">
-                                        <Grid>
-                                            <WrapPanel Height="60"
-                                                       Width="240">
-                                                <Border Focusable="False"
-                                                        Height="60"
-                                                        Width="60"
-                                                        HorizontalAlignment="Left"
-                                                        Background="{TemplateBinding Background}">
-                                                    <Path x:Name="PART_LeftIcon"
-                                                          Data="{StaticResource bx_arrow_down}"
-                                                          Fill="{TemplateBinding Foreground}"
-                                                          Width="24"
-                                                          Height="24"/>
-                                                </Border>
-                                                <Border Focusable="False"
-                                                        Height="60"
-                                                        Width="180"
-                                                        Background="{TemplateBinding Background}">
-                                                    <Grid>
-                                                        <TextBlock
-                                                            Focusable="False"
-                                                            Text="{TemplateBinding Content}"
-                                                            FontSize="20"
-                                                            FontWeight="Bold"
-                                                            Foreground="{TemplateBinding Foreground}"
-                                                            HorizontalAlignment="Left"
-                                                            VerticalAlignment="Center"
-                                                            FontFamily="Cairo"/>
+                                        <!-- All Entries Nested Menu -->
+                                        <StackPanel x:Name="AllEntriesContainer">
+                                                <Button Style="{StaticResource SidebarButtonStyle}"
+                                                        Click="AllEntriesMenuClicked"
+                                                        x:Name="AllEntriesMenu"
+                                                        Tag="{StaticResource bx_arrow_down}"
+                                                        Content="{DynamicResource AllEntriesTitle}">
+                                                        <Button.Template>
+                                                                <ControlTemplate TargetType="Button">
+                                                                        <Border Background="{TemplateBinding Background}"
+                                                                                BorderBrush="{TemplateBinding BorderBrush}"
+                                                                                BorderThickness="{TemplateBinding BorderThickness}">
+                                                                                <Grid>
+                                                                                        <WrapPanel Height="60"
+                                                                                                   Width="240">
+                                                                                                <Border Focusable="False"
+                                                                                                        Height="60"
+                                                                                                        Width="60"
+                                                                                                        HorizontalAlignment="Left"
+                                                                                                        Background="{TemplateBinding Background}">
+                                                                                                        <Path x:Name="PART_LeftIcon"
+                                                                                                              Data="{StaticResource bx_arrow_down}"
+                                                                                                              Fill="{TemplateBinding Foreground}"
+                                                                                                              Width="24"
+                                                                                                              Height="24"/>
+                                                                                                </Border>
+                                                                                                <Border Focusable="False"
+                                                                                                        Height="60"
+                                                                                                        Width="180"
+                                                                                                        Background="{TemplateBinding Background}">
+                                                                                                        <Grid>
+                                                                                                                <TextBlock
+                                                                                                                        Focusable="False"
+                                                                                                                        Text="{TemplateBinding Content}"
+                                                                                                                        FontSize="20"
+                                                                                                                        FontWeight="Bold"
+                                                                                                                        Foreground="{TemplateBinding Foreground}"
+                                                                                                                        HorizontalAlignment="Left"
+                                                                                                                        VerticalAlignment="Center"
+                                                                                                                        FontFamily="Cairo"/>
 
-                                                    </Grid>
-                                                </Border>
-                                            </WrapPanel>
-                                        </Grid>
-                                    </Border>
-                                    <ControlTemplate.Triggers>
-                                        <Trigger Property="IsMouseOver"
-                                                 Value="True">
-                                            <Setter Property="Foreground"
-                                                    Value="{StaticResource PrimaryColor}"/>
-                                        </Trigger>
-                                        <Trigger Property="IsPressed"
-                                                 Value="True">
-                                            <Setter Property="Background"
-                                                    Value="{StaticResource BgColor}"/>
-                                            <Setter Property="Foreground"
-                                                    Value="{StaticResource PrimaryColor}"/>
-                                        </Trigger>
-                                        <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
-                                                     Value="True">
-                                            <Setter Property="Background"
-                                                    Value="{StaticResource BgColor}"/>
-                                            <Setter Property="Foreground"
-                                                    Value="{StaticResource PrimaryColor}"/>
-                                        </DataTrigger>
-                                        <MultiDataTrigger>
-                                            <MultiDataTrigger.Conditions>
-                                                <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
-                                                           Value="True"/>
-                                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
-                                                           Value="True"/>
-                                            </MultiDataTrigger.Conditions>
-                                            <Setter Property="Background"
-                                                    Value="{StaticResource BgColor}"/>
-                                            <Setter Property="Foreground"
-                                                    Value="{StaticResource PrimaryColor}"/>
-                                        </MultiDataTrigger>
-                                        <Trigger Property="IsEnabled"
-                                                 Value="False">
-                                            <Setter Property="Opacity"
-                                                    Value="0.5"/>
-                                        </Trigger>
-                                    </ControlTemplate.Triggers>
-                                </ControlTemplate>
-                            </Button.Template>
-                        </Button>
-
-
-
-                        <!-- Nested Menu Items -->
-                        <StackPanel x:Name="NestedMenuItems"
-                                    Visibility="Visible"
-                                    Margin="0,0,0,0">
-                            <Button Style="{StaticResource SidebarButtonStyle}"
-                                    Click="SidebarBtnClicked"
-                                    x:Name="Passwords"
-                                    Tag="{StaticResource bx_passwords}"
-                                    Content="{DynamicResource PasswordsTitle}"/>
-
-                            <Button Style="{StaticResource SidebarButtonStyle}"
-                                    Click="SidebarBtnClicked"
-                                    x:Name="CreditCards"
-                                    Tag="{StaticResource bx_credit_card}"
-                                    Content="{DynamicResource BankCardsTitle}"/>
-
-                            <Button Style="{StaticResource SidebarButtonStyle}"
-                                    Click="SidebarBtnClicked"
-                                    x:Name="Addresses"
-                                    Tag="{StaticResource bx_address}"
-                                    Content="{DynamicResource AddressesTitle}"/>
-
-                        </StackPanel>
-                    </StackPanel>
+                                                                                                        </Grid>
+                                                                                                </Border>
+                                                                                        </WrapPanel>
+                                                                                </Grid>
+                                                                        </Border>
+                                                                        <ControlTemplate.Triggers>
+                                                                                <Trigger Property="IsMouseOver"
+                                                                                         Value="True">
+                                                                                        <Setter Property="Background"
+                                                                                                Value="{DynamicResource HoverColor}"/>
+                                                                                        <Setter Property="Foreground"
+                                                                                                Value="{DynamicResource PrimaryColor}"/>
+                                                                                </Trigger>
+                                                                                <Trigger Property="IsPressed"
+                                                                                         Value="True">
+                                                                                        <Setter Property="Background"
+                                                                                                Value="{DynamicResource SidebarSelectedColor}"/>
+                                                                                        <Setter Property="Foreground"
+                                                                                                Value="{DynamicResource PrimaryColor}"/>
+                                                                                </Trigger>
+                                                                                <DataTrigger Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
+                                                                                             Value="True">
+                                                                                        <Setter Property="Background"
+                                                                                                Value="{DynamicResource SidebarSelectedColor}"/>
+                                                                                        <Setter Property="Foreground"
+                                                                                                Value="{DynamicResource PrimaryColor}"/>
+                                                                                </DataTrigger>
+                                                                                <MultiDataTrigger>
+                                                                                        <MultiDataTrigger.Conditions>
+                                                                                                <Condition Binding="{Binding IsActive, RelativeSource={RelativeSource Self}}"
+                                                                                                           Value="True"/>
+                                                                                                <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
+                                                                                                           Value="True"/>
+                                                                                        </MultiDataTrigger.Conditions>
+                                                                                        <Setter Property="Background"
+                                                                                                Value="{DynamicResource HoverColor}"/>
+                                                                                        <Setter Property="Foreground"
+                                                                                                Value="{DynamicResource PrimaryColor}"/>
+                                                                                </MultiDataTrigger>
+                                                                                <Trigger Property="IsEnabled"
+                                                                                         Value="False">
+                                                                                        <Setter Property="Opacity"
+                                                                                                Value="0.5"/>
+                                                                                </Trigger>
+                                                                        </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                        </Button.Template>
+                                                </Button>
 
 
 
-                </StackPanel>
+                                                <!-- Nested Menu Items -->
+                                                <StackPanel x:Name="NestedMenuItems"
+                                                            Visibility="Visible"
+                                                            Margin="0,0,0,0">
+                                                        <Button Style="{StaticResource SidebarButtonStyle}"
+                                                                Click="SidebarBtnClicked"
+                                                                x:Name="Passwords"
+                                                                Tag="{StaticResource bx_passwords}"
+                                                                Content="{DynamicResource PasswordsTitle}"/>
+
+                                                        <Button Style="{StaticResource SidebarButtonStyle}"
+                                                                Click="SidebarBtnClicked"
+                                                                x:Name="CreditCards"
+                                                                Tag="{StaticResource bx_credit_card}"
+                                                                Content="{DynamicResource BankCardsTitle}"/>
+
+                                                        <Button Style="{StaticResource SidebarButtonStyle}"
+                                                                Click="SidebarBtnClicked"
+                                                                x:Name="Addresses"
+                                                                Tag="{StaticResource bx_address}"
+                                                                Content="{DynamicResource AddressesTitle}"/>
+
+                                                </StackPanel>
+                                        </StackPanel>
 
 
-                <!-- Settings Button -->
-                <Button DockPanel.Dock="Bottom"
-                        Style="{StaticResource SidebarButtonStyle}"
-                        Tag="{StaticResource bx_settings}"
-                        Click="SidebarBtnClicked"
-                        x:Name="Settings"
-                        Content="{DynamicResource SettingsTitle}"/>
+
+                                </StackPanel>
+
+
+                                <!-- Settings Button -->
+                                <Button DockPanel.Dock="Bottom"
+                                        Style="{StaticResource SidebarButtonStyle}"
+                                        Tag="{StaticResource bx_settings}"
+                                        Click="SidebarBtnClicked"
+                                        x:Name="Settings"
+                                        Content="{DynamicResource SettingsTitle}"/>
 
 
 
 
-            </DockPanel>
+                        </DockPanel>
+                </Border>
         </Border>
-    </Border>
 
 </UserControl>

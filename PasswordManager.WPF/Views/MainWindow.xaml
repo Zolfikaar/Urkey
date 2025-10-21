@@ -6,7 +6,8 @@
         Height="720"
         Width="1080"
         WindowState="Maximized"
-        Background="#fff"
+        Background="{DynamicResource BgColor}"
+        Foreground="{DynamicResource TextColor}"
         FontFamily="pack://application:,,,/Fonts/#Cairo">
 
     <Window.Resources>
@@ -39,7 +40,7 @@
             Grid.Column="1"
             Height="60"
             VerticalAlignment="Top"
-            Background="{StaticResource BgColor}"
+            Background="{DynamicResource BgColor}"
             BorderThickness="0">
 
             <Border.Effect>
@@ -79,7 +80,7 @@
                             FontFamily="Segoe MDL2 Assets"
                             VerticalAlignment="Center"
                             TextAlignment="Center"
-                            Foreground="#363949"/>
+                            Foreground="{DynamicResource TextColor}"/>
                     </Border>
                 </Button>
 
@@ -120,7 +121,7 @@
                 Grid.Row="0"
                 Grid.Column="0"
                 Height="60"
-                Background="#fff"
+                Background="{DynamicResource BgColor}"
                 HorizontalAlignment="Left">
 
             <WrapPanel
@@ -139,7 +140,7 @@
                         FontFamily="Segoe MDL2 Assets"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
-                        Foreground="#363949"/>
+                        Foreground="{DynamicResource TextColor}"/>
 
                 </Border>
 
@@ -164,7 +165,7 @@
                 Grid.RowSpan="2"
                 HorizontalAlignment="Left"
                 Panel.ZIndex="2"
-                Background="#fff">
+                Background="{DynamicResource BgColor}">
             <uc:Sidebar x:Name="Sidebar"
                         IsSidebarExpanded="{Binding IsSidebarExpanded, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}"/>
         </Border>
@@ -172,12 +173,13 @@
         <!-- Main Content -->
         <Border Grid.Row="1"
                 Grid.Column="1"
-                Padding="20">
+                Padding="20"
+                >
 
             <Border
                 CornerRadius="20"
                 Padding="20,10"
-                Background="#fff">
+                Background="{DynamicResource CardBgColor}">
                 <Border.Effect>
                     <DropShadowEffect
                         Color="#03000000"

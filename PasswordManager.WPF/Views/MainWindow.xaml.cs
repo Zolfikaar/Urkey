@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using System.Configuration;
+﻿using System;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Animation;
@@ -11,11 +11,16 @@ using PasswordManager.WPF.Views.Pages;
 
 namespace PasswordManager.WPF.Views
 {
-
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
-        private bool _isSidebarExpanded = true; // Changed to true to make sidebar open by default
-        private MainViewModel _mainViewModel;
+        private bool _isSidebarExpanded;
+        private readonly MainViewModel _mainViewModel;
+        private readonly string _burgerIcon = "\uE700";
+        private readonly string _closeIcon = "\uE711";
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        public static event EventHandler<bool> SidebarStateChanged;
+
         public bool IsSidebarExpanded
         {
             get => _isSidebarExpanded;
@@ -29,73 +34,64 @@ namespace PasswordManager.WPF.Views
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        protected void OnPropertyChanged(string name) =>
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-
-        // Event to notify when sidebar state changes
-        public static event EventHandler<bool> SidebarStateChanged;
-
-        private string _burgerIcon = "\uE700";
-        private string _closeIcon = "\uE711";
+        protected void OnPropertyChanged(string name)
+            => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         public MainWindow()
         {
             InitializeComponent();
 
-            // Set flow direction based on current language
-            this.FlowDirection = LanguageManager.CurrentLanguage == LangCode.ar
+            // 🟢 تطبيق اللغة والثيم المحفوظين
+            LanguageManager.ApplyLanguage(App.Settings.Language);
+            ThemeManager.ApplyTheme(App.Settings.Theme);
+
+            // 🔄 ضبط اتجاه الواجهة حسب اللغة
+            this.FlowDirection = App.Settings.Language == "ar"
                 ? FlowDirection.RightToLeft
                 : FlowDirection.LeftToRight;
 
-            // Initialize the main view model
+            // 🧠 تهيئة الـ ViewModel
             _mainViewModel = new MainViewModel();
             this.DataContext = _mainViewModel;
 
-            // Load sidebar preference from settings
-            LoadSidebarPreference();
+            // 🟢 تحميل تفضيل الشريط الجانبي من الإعدادات
+            _isSidebarExpanded = App.Settings.SidebarExpanded;
+            InitializeSidebarVisualState();
 
-            // Subscribe to the Sidebar's navigation event  
+            // اشتراك في أحداث التنقل من الشريط
             Sidebar.OnNavigationRequested += Sidebar_OnNavigationRequested;
 
-            // Set initial content  
-            var homePage = new Home();
-            homePage.DataContext = _mainViewModel;
-            MainContentArea.Content = homePage; // Fix: Replace Navigate with Content property  
-
-            // Set the sidebar initial state after it's loaded
-            Sidebar.SetInitialState(_isSidebarExpanded);
-
-            // Initialize logo wrapper width
-            InitializeLogoWrapperWidth();
+            // 🏠 تحميل الصفحة الرئيسية
+            var homePage = new Home { DataContext = _mainViewModel };
+            MainContentArea.Content = homePage;
         }
 
         private void Sidebar_OnNavigationRequested(object sender, SidebarNavigationEventArgs e)
         {
-            // Set the DataContext for the new page
-            if (e.View is FrameworkElement frameworkElement)
-            {
-                frameworkElement.DataContext = _mainViewModel;
-            }
-            MainContentArea.Content = e.View; // Fix: Replace Navigate with Content property  
+            if (e.View is FrameworkElement view)
+                view.DataContext = _mainViewModel;
+
+            MainContentArea.Content = e.View;
         }
 
         private void ToggleSidebar_Click(object sender, RoutedEventArgs e)
         {
             PerformAnimation();
 
-            // Delay the state change until after the animation completes
-            var delay = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) }; // Match animation duration
+            // تأخير بسيط لمزامنة الحركة
+            var delay = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
             delay.Tick += (s, args) =>
             {
                 delay.Stop();
                 IsSidebarExpanded = !IsSidebarExpanded;
                 BurgerIcon.Text = IsSidebarExpanded ? _closeIcon : _burgerIcon;
 
-                // Update logo text visibility
                 UpdateLogoTextVisibility(IsSidebarExpanded);
 
-                // Notify that sidebar state has changed
+                // حفظ التفضيل الجديد 🔒
+                App.Settings.SidebarExpanded = IsSidebarExpanded;
+                SettingsHelper.SaveSettings(App.Settings);
+
                 SidebarStateChanged?.Invoke(this, IsSidebarExpanded);
             };
             delay.Start();
@@ -117,152 +113,32 @@ namespace PasswordManager.WPF.Views
             SidebarContainer.BeginAnimation(WidthProperty, animation);
             Logo.BeginAnimation(WidthProperty, animation);
 
-            // Also animate the logo wrapper width
             if (LogoWrapper != null)
-            {
                 LogoWrapper.BeginAnimation(WidthProperty, animation);
-            }
-
-            // Schedule text/icon visibility update AFTER the animation completes
-            var delay = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
-            delay.Tick += (s, args) =>
-            {
-                delay.Stop();
-                //Sidebar.SetSidebarState(_isSidebarExpanded); // Update internal layout AFTER animation
-            };
-            delay.Start();
-
-            //_isSidebarExpanded = !_isSidebarExpanded;
         }
 
-        private void LoadSidebarPreference()
+        private void InitializeSidebarVisualState()
         {
-            try
-            {
-                var setting = ConfigurationManager.AppSettings["SidebarOpenByDefault"];
-                if (!string.IsNullOrEmpty(setting))
-                {
-                    bool shouldOpenByDefault = bool.Parse(setting);
-                    if (shouldOpenByDefault)
-                    {
-                        // Sidebar should be open by default
-                        _isSidebarExpanded = true;
-                        IsSidebarExpanded = true;
-                        SidebarContainer.Width = 240;
-                        Logo.Width = 240;
-                        if (LogoWrapper != null)
-                        {
-                            LogoWrapper.Width = 240;
-                        }
-                        BurgerIcon.Text = _closeIcon;
+            SidebarContainer.Width = _isSidebarExpanded ? 240 : 60;
+            Logo.Width = SidebarContainer.Width;
+            if (LogoWrapper != null)
+                LogoWrapper.Width = SidebarContainer.Width;
 
-                        // Update logo text visibility
-                        UpdateLogoTextVisibility(true);
-
-                        // Notify that sidebar state has changed
-                        SidebarStateChanged?.Invoke(this, true);
-                    }
-                    else
-                    {
-                        // Sidebar should be closed by default
-                        _isSidebarExpanded = false;
-                        IsSidebarExpanded = false;
-                        SidebarContainer.Width = 60;
-                        Logo.Width = 60;
-                        if (LogoWrapper != null)
-                        {
-                            LogoWrapper.Width = 60;
-                        }
-                        BurgerIcon.Text = _burgerIcon;
-
-                        // Update logo text visibility
-                        UpdateLogoTextVisibility(false);
-
-                        // Notify that sidebar state has changed
-                        SidebarStateChanged?.Invoke(this, false);
-                    }
-                }
-                else
-                {
-                    // No setting found, use default (open)
-                    _isSidebarExpanded = true;
-                    IsSidebarExpanded = true;
-                    SidebarContainer.Width = 240;
-                    Logo.Width = 240;
-                    if (LogoWrapper != null)
-                    {
-                        LogoWrapper.Width = 240;
-                    }
-                    BurgerIcon.Text = _closeIcon;
-
-                    // Update logo text visibility
-                    UpdateLogoTextVisibility(true);
-
-                    // Notify that sidebar state has changed
-                    SidebarStateChanged?.Invoke(this, true);
-                }
-            }
-            catch
-            {
-                // Use default value if setting is invalid
-                _isSidebarExpanded = true;
-                IsSidebarExpanded = true;
-                SidebarContainer.Width = 240;
-                Logo.Width = 240;
-                if (LogoWrapper != null)
-                {
-                    LogoWrapper.Width = 240;
-                }
-                BurgerIcon.Text = _closeIcon;
-
-                // Update logo text visibility
-                UpdateLogoTextVisibility(true);
-
-                // Notify that sidebar state has changed
-                SidebarStateChanged?.Invoke(this, true);
-            }
+            BurgerIcon.Text = _isSidebarExpanded ? _closeIcon : _burgerIcon;
+            UpdateLogoTextVisibility(_isSidebarExpanded);
+            SidebarStateChanged?.Invoke(this, _isSidebarExpanded);
         }
 
-        /// <summary>
-        /// Refreshes the sidebar state based on current settings
-        /// </summary>
-        public void RefreshSidebarState()
-        {
-            LoadSidebarPreference();
-            if (Sidebar != null)
-            {
-                Sidebar.SetInitialState(_isSidebarExpanded);
-            }
-        }
-
-        /// <summary>
-        /// Updates the logo text visibility based on sidebar state
-        /// </summary>
-        /// <param name="isVisible">Whether the logo text should be visible</param>
         private void UpdateLogoTextVisibility(bool isVisible)
         {
             if (LogoWrapper != null)
             {
-                foreach (var item in LogoWrapper.Children)
+                foreach (var child in LogoWrapper.Children)
                 {
-                    if (item is TextBlock textBlock && textBlock.Name == "LogoText")
-                    {
-                        textBlock.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
-                    }
+                    if (child is TextBlock text && text.Name == "LogoText")
+                        text.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
                 }
             }
         }
-
-        /// <summary>
-        /// Initializes the logo wrapper width based on current sidebar state
-        /// </summary>
-        private void InitializeLogoWrapperWidth()
-        {
-            if (LogoWrapper != null)
-            {
-                LogoWrapper.Width = _isSidebarExpanded ? 240 : 60;
-            }
-        }
-
     }
 }

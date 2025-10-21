@@ -1,0 +1,28 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="AppTitle">Password Manager</sys:String>
+    <sys:String x:Key="AddButton">Add</sys:String>
+    <sys:String x:Key="CancelButton">Cancel</sys:String>
+    <sys:String x:Key="Settings_Title">Settings</sys:String>
+    <sys:String x:Key="MainWindowTitle">Password Manager</sys:String>
+    <sys:String x:Key="ChangeBtn">Change</sys:String>
+    <sys:String x:Key="LanguageSettings_Title">Language Settings</sys:String>
+    <sys:String x:Key="LanguageSettings_Description">Change the main application language</sys:String>
+    <sys:String x:Key="SecuritySettings_Title">Security Settings</sys:String>
+    <sys:String x:Key="MasterPassword_Title">Change Master Password</sys:String>
+    <sys:String x:Key="MasterPassword_Description">Change the master password to protect all passwords</sys:String>
+    <sys:String x:Key="ThemeSettings_Title">Theme Settings</sys:String>
+    <sys:String x:Key="ThemeSettings_Description">Change the main application background color</sys:String>
+    <sys:String x:Key="Username">Username</sys:String>
+    <sys:String x:Key="Profile">Profile</sys:String>
+    <sys:String x:Key="Logout">Logout</sys:String>
+    <!-- Sidebar titles -->
+    <sys:String x:Key="HomeTitle">Home</sys:String>
+    <sys:String x:Key="AllEntriesTitle">All Entries</sys:String>
+    <sys:String x:Key="PasswordsTitle">Passwords</sys:String>
+    <sys:String x:Key="BankCardsTitle">Bank Cards</sys:String>
+    <sys:String x:Key="AddressesTitle">Addresses</sys:String>
+    <sys:String x:Key="SettingsTitle">Settings</sys:String>
+
+</ResourceDictionary>

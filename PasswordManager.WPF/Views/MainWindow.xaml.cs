@@ -2,10 +2,9 @@
 using System.Configuration;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
-using PasswordManager.Core.Models;
+using PasswordManager.WPF.Helpers;
 using PasswordManager.WPF.UserControls;
 using PasswordManager.WPF.ViewModels;
 using PasswordManager.WPF.Views.Pages;
@@ -43,7 +42,11 @@ namespace PasswordManager.WPF.Views
         public MainWindow()
         {
             InitializeComponent();
-            this.FlowDirection = FlowDirection.RightToLeft;
+
+            // Set flow direction based on current language
+            this.FlowDirection = LanguageManager.CurrentLanguage == LangCode.ar
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
 
             // Initialize the main view model
             _mainViewModel = new MainViewModel();

@@ -2,6 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using PasswordManager.WPF.Helpers;
 using PasswordManager.WPF.Views;
 using PasswordManager.WPF.Views.Pages;
 
@@ -11,6 +12,7 @@ namespace PasswordManager.WPF.UserControls
 {
     public partial class Sidebar : UserControl
     {
+        public string WordDirection = "";
         private static string _bgColor = "#F6F6F9";
         private static string _bgWhite = "#FFF";
         private static string _textColor = "#363949";
@@ -90,6 +92,10 @@ namespace PasswordManager.WPF.UserControls
 
             // Initialize sidebar state based on the dependency property
             _isSidebarOpen = IsSidebarExpanded;
+
+            
+
+            //if (LanguageManager.CurrentLanguage == )
         }
 
         public void ToggleSidebar(ContentControl MainContentArea, Border Topbar, Border Logo)

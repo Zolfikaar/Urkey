@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:PasswordManager.WPF.UserControls"
              mc:Ignorable="d"
-             FlowDirection="RightToLeft">
+             >
     <UserControl.Resources>
 
         <!-- Style for Sidebar Buttons -->
@@ -53,7 +53,7 @@
                                             FontSize="20"
                                             FontWeight="Bold"
                                             Foreground="{TemplateBinding Foreground}"
-                                            HorizontalAlignment="Center"
+                                            HorizontalAlignment="{Binding WordDicrection}"
                                             VerticalAlignment="Center"
                                             FontFamily="Cairo"/>
                                     </Border>
@@ -146,7 +146,7 @@
                                             FontSize="18"
                                             FontWeight="Normal"
                                             Foreground="{TemplateBinding Foreground}"
-                                            HorizontalAlignment="Center"
+                                            HorizontalAlignment="Left"
                                             VerticalAlignment="Center"
                                             FontFamily="Cairo"/>
                                     </Border>
@@ -230,7 +230,7 @@
                             Click="SidebarBtnClicked"
                             x:Name="Home"
                             Tag="{StaticResource bx_home}"
-                            Content="الرئيسية"/>
+                            Content="{DynamicResource HomeTitle}"/>
 
                     <!-- All Entries Nested Menu -->
                     <StackPanel x:Name="AllEntriesContainer">
@@ -238,7 +238,7 @@
                                 Click="AllEntriesMenuClicked"
                                 x:Name="AllEntriesMenu"
                                 Tag="{StaticResource bx_arrow_down}"
-                                Content="كل الإدخالات">
+                                Content="{DynamicResource AllEntriesTitle}">
                             <Button.Template>
                                 <ControlTemplate TargetType="Button">
                                     <Border Background="{TemplateBinding Background}"
@@ -269,7 +269,7 @@
                                                             FontSize="20"
                                                             FontWeight="Bold"
                                                             Foreground="{TemplateBinding Foreground}"
-                                                            HorizontalAlignment="Center"
+                                                            HorizontalAlignment="Left"
                                                             VerticalAlignment="Center"
                                                             FontFamily="Cairo"/>
 
@@ -330,19 +330,19 @@
                                     Click="SidebarBtnClicked"
                                     x:Name="Passwords"
                                     Tag="{StaticResource bx_passwords}"
-                                    Content="كلمات السر"/>
+                                    Content="{DynamicResource PasswordsTitle}"/>
 
                             <Button Style="{StaticResource SidebarButtonStyle}"
                                     Click="SidebarBtnClicked"
                                     x:Name="CreditCards"
                                     Tag="{StaticResource bx_credit_card}"
-                                    Content="البطاقات البنكية"/>
+                                    Content="{DynamicResource BankCardsTitle}"/>
 
                             <Button Style="{StaticResource SidebarButtonStyle}"
                                     Click="SidebarBtnClicked"
                                     x:Name="Addresses"
                                     Tag="{StaticResource bx_address}"
-                                    Content="العناوين"/>
+                                    Content="{DynamicResource AddressesTitle}"/>
 
                         </StackPanel>
                     </StackPanel>
@@ -358,7 +358,7 @@
                         Tag="{StaticResource bx_settings}"
                         Click="SidebarBtnClicked"
                         x:Name="Settings"
-                        Content="الاعدادات"/>
+                        Content="{DynamicResource SettingsTitle}"/>
 
 
 

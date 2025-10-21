@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using PasswordManager.WPF.Views;
 
 namespace PasswordManager.WPF.Views.Pages
 {
@@ -27,7 +28,9 @@ namespace PasswordManager.WPF.Views.Pages
 
         private void AddNewPassword(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Add New Password Clicked");
+            //MessageBox.Show("Add New Password Clicked");
+
+            //Add_New.Show();
         }
     }
 }

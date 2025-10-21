@@ -1,0 +1,22 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Style TargetType="Control">
+        <Setter Property="FontFamily"
+            Value="pack://application:,,,/Fonts/#Cairo"/>
+    </Style>
+
+    <Style TargetType="Label">
+        <Setter Property="FontFamily"
+        Value="Cairo"/>
+    </Style>
+
+    <Style TargetType="TextBox">
+        <Setter Property="FontFamily"
+        Value="Cairo"/>
+    </Style>
+
+    <Style TargetType="TextBlock">
+        <Setter Property="FontFamily"
+        Value="Cairo"/>
+    </Style>
+</ResourceDictionary>

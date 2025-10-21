@@ -1,0 +1,29 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+        <sys:String x:Key="AppTitle"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">مدير كلمات المرور</sys:String>
+        <sys:String x:Key="AddButton">إضافة</sys:String>
+        <sys:String x:Key="CancelButton">إلغاء</sys:String>
+        <sys:String x:Key="Settings_Title">الإعدادات</sys:String>
+        <sys:String x:Key="MainWindowTitle">مدير كلمات المرور</sys:String>
+        <sys:String x:Key="ChangeBtn">تغيير</sys:String>
+        <sys:String x:Key="LanguageSettings_Title">إعدادات اللغة</sys:String>
+        <sys:String x:Key="LanguageSettings_Description">قم بتغيير لغة التطبيق الرئيسية</sys:String>
+        <sys:String x:Key="SecuritySettings_Title">إعدادات الأمان</sys:String>
+        <sys:String x:Key="MasterPassword_Title">تغيير كلمة المرور الرئيسية</sys:String>
+        <sys:String x:Key="MasterPassword_Description">قم بتغيير كلمة المرور الرئيسية لحماية جميع كلمات المرور</sys:String>
+        <sys:String x:Key="ThemeSettings_Title">إعدادات الخلفية</sys:String>
+        <sys:String x:Key="ThemeSettings_Description">قم بتغيير لون خلفية التطبيق الرئيسية</sys:String>
+        <sys:String x:Key="Username">اسم المستخدم</sys:String>
+        <sys:String x:Key="Profile">الملف الشخصي</sys:String>
+        <sys:String x:Key="Logout">تسجيل الخروج</sys:String>
+        <!-- Sidebar titles -->
+        <sys:String x:Key="HomeTitle">الرئيسية</sys:String>
+        <sys:String x:Key="AllEntriesTitle">كل الإدخالات</sys:String>
+        <sys:String x:Key="PasswordsTitle">كلمات المرور</sys:String>
+        <sys:String x:Key="BankCardsTitle">البطاقات البنكية</sys:String>
+        <sys:String x:Key="AddressesTitle">العناوين</sys:String>
+        <sys:String x:Key="SettingsTitle">اللإعدادات</sys:String>
+    
+</ResourceDictionary>

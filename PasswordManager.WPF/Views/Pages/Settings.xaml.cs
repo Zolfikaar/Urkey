@@ -1,30 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using PasswordManager.WPF.ViewModels;
+using PasswordManager.WPF.Helpers;
 
 namespace PasswordManager.WPF.Views.Pages
 {
-    /// <summary>
-    /// Interaction logic for Settings.xaml
-    /// </summary>
+
     public partial class Settings : Page
     {
         public Settings()
         {
             InitializeComponent();
-            // DataContext will be set by the parent MainWindow
+            this.FlowDirection = Application.Current.MainWindow.FlowDirection;
+
+            // Initialize language toggle state
+            LangToggle.IsChecked = LanguageManager.CurrentLanguage == LangCode.ar;
         }
+
+        private void OnLanguageChanged(object sender, RoutedEventArgs e)
+        {
+            // Toggle between languages
+            if (LangToggle.IsChecked == true)
+            {
+                LanguageManager.ChangeLanguage(LangCode.ar);
+            }
+            else
+            {
+                LanguageManager.ChangeLanguage(LangCode.en);
+            }
+
+            // Update flow direction for this page
+            this.FlowDirection = Application.Current.MainWindow.FlowDirection;
+        }
+
+        private void OnThemeChanged(object sender, RoutedEventArgs e)
+        {
+            ThemeManager.ChangeTheme("DarkTheme");
+            // أو ThemeManager.ChangeTheme("LightTheme");
+        }
+
+        //public void ChangeTheme()
+        //{
+
+        //}
+
+        //public void ChangeLanguage()
+        //{
+
+        //}
     }
 }

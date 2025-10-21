@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace PasswordManager.WPF
+namespace PasswordManager.WPF.Commands
 {
     public class RelayCommand<T> : ICommand
     {
@@ -24,6 +24,11 @@ namespace PasswordManager.WPF
         {
             add { CommandManager.RequerySuggested += value; }
             remove { CommandManager.RequerySuggested -= value; }
+        }
+
+        public void RaiseCanExecuteChanged()
+        {
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 }

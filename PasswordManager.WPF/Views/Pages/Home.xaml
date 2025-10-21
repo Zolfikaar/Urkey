@@ -7,7 +7,7 @@
       mc:Ignorable="d"
       Title="Home"
       Background="#fff"
-      FlowDirection="RightToLeft">
+      >
 
     <Border 
             Margin="20">
@@ -28,18 +28,22 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Grid.Column="0"
-                               Text="الرئيسية"
+                               Text="{DynamicResource HomeTitle}"
                                FontSize="24"
                                FontWeight="Bold"
                                
                                VerticalAlignment="Center"/>
 
+                    <!--
                     <Button Grid.Column="1"
                             Content="+ إضافة كلمة مرور جديدة"
                             Style="{StaticResource PrimaryButtonStyle}"
                             FontSize="14"
                             Padding="16,10"
                             Click="AddNewPassword"/>
+                    -->
+                    <Button Content="{DynamicResource AddButton}" Width="100" Margin="10"/>
+                    
                 </Grid>
             </Border>
 

@@ -38,40 +38,49 @@ namespace PasswordManager.Core.Repository
         //}
 
 
-        //public Vault LoadVault()
-        //{
-        //    // if there is no password file exists 
-        //    if (!File.Exists(_filePath))
-        //        // create new empty one
-        //        return new Vault();
+        public Vault LoadVault()
+        {
+            // if there is no password file exists 
+            if (!File.Exists(_filePath))
+                // create new empty one
+                return new Vault();
 
-        //    string json = File.ReadAllText(_filePath);
-        //    var vault = JsonSerializer.Deserialize<Vault>(json) ?? new Vault();
+            string json = File.ReadAllText(_filePath);
+            var vault = JsonSerializer.Deserialize<Vault>(json) ?? new Vault();
 
-        //    foreach (var cred in vault.Credentials)
-        //    {
-        //        cred.Password = EncryptionHelper.Decrypt(cred.Password, _masterPassword);
-        //    }
+            // TODO: Add encryption/decryption when EncryptionHelper is implemented
+            // foreach (var cred in vault.Credentials)
+            // {
+            //     cred.Password = EncryptionHelper.Decrypt(cred.Password, _masterPassword);
+            // }
 
-        //    return vault;
+            return vault;
+        }
 
-        //}
+        public void SaveVault(Vault vault)
+        {
+            // TODO: Add encryption when EncryptionHelper is implemented
+            // foreach (var cred in vault.Credentials)
+            // {
+            //     cred.Password = EncryptionHelper.Encrypt(cred.Password, _masterPassword);
+            // }
 
-        //public void SaveVault(Vault vault)
-        //{
-        //    foreach (var cred in vault.Credentials)
-        //    {
-        //        cred.Password = EncryptionHelper.Encrypt(cred.Password, _masterPassword);
-        //    }
+            string json = JsonSerializer.Serialize(vault, new JsonSerializerOptions { WriteIndented = true });
+            File.WriteAllText(_filePath, json);
 
-        //    string json = JsonSerializer.Serialize(vault, new JsonSerializerOptions { WriteIndented = true });
-        //    File.WriteAllText(_filePath, json);
+            // TODO: Decrypt passwords back for in-memory use when EncryptionHelper is implemented
+            // foreach (var cred in vault.Credentials)
+            // {
+            //     cred.Password = EncryptionHelper.Decrypt(cred.Password, _masterPassword);
+            // }
+        }
 
-        //    foreach (var cred in vault.Credentials)
-        //    {
-        //        cred.Password = EncryptionHelper.Decrypt(cred.Password, _masterPassword);
-        //    }
-        //}
+        public void AddCredential(Credential credential)
+        {
+            var vault = LoadVault();
+            vault.Credentials.Add(credential);
+            SaveVault(vault);
+        }
 
         ////public void SetMasterPassword(string masterPassword)
         ////{

@@ -5,9 +5,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:PasswordManager.WPF.Views.Pages"
       mc:Ignorable="d"
-      Title="Settings"
-      Background="#fff"
-      FlowDirection="RightToLeft">
+      Title="{DynamicResource Settings_Title}"
+      Background="#fff">
 
 
     <Border
@@ -22,7 +21,7 @@
             <Border Grid.Row="0"
                     Background="Transparent"
                     Margin="30,30,30,20">
-                <TextBlock Text="الإعدادات"
+                <TextBlock Text="{DynamicResource Settings_Title}"
                            FontSize="24"
                            FontWeight="Bold"
                            VerticalAlignment="Center"/>
@@ -41,7 +40,7 @@
                         Margin="0,0,0,20"
                         Style="{StaticResource CardStyle}">
                         <StackPanel Margin="20">
-                            <TextBlock Text="إعدادات الأمان"
+                            <TextBlock Text="{DynamicResource SecuritySettings_Title}"
                                        FontSize="18"
                                        FontWeight="SemiBold"
                                        Margin="0,0,0,20"/>
@@ -54,17 +53,17 @@
                                 </Grid.ColumnDefinitions>
 
                                 <StackPanel Grid.Column="0">
-                                    <TextBlock Text="تغيير كلمة المرور الرئيسية"
+                                    <TextBlock Text="{DynamicResource MasterPassword_Title}"
                                                FontSize="14"
                                                FontWeight="SemiBold"
                                                Margin="0,0,0,5"/>
-                                    <TextBlock Text="قم بتغيير كلمة المرور الرئيسية لحماية جميع كلمات المرور"
+                                    <TextBlock Text="{DynamicResource MasterPassword_Description}"
                                                FontSize="12"
                                                Foreground="{StaticResource SecondaryTextColor}"/>
                                 </StackPanel>
 
                                 <Button Grid.Column="1"
-                                        Content="تغيير"
+                                        Content="{DynamicResource ChangeBtn}"
                                         Style="{StaticResource PrimaryButtonStyle}"
                                         FontSize="12"
                                         Padding="12,6"
@@ -72,7 +71,80 @@
                             </Grid>
                         </StackPanel>
                     </Border>
+
+                    <!-- Language Settings -->
+                    <Border CornerRadius="8"
+                            BorderThickness="1"
+                            Margin="0,0,0,20"
+                            Style="{StaticResource CardStyle}">
+                        <StackPanel Margin="20">
+                            <TextBlock Text="{DynamicResource LanguageSettings_Title}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,20"/>
+
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{DynamicResource LanguageSettings_Description}"
+                                               FontSize="12"
+                                               Margin="0,0,0,5"
+                                               Foreground="{StaticResource SecondaryTextColor}"/>
+                                </StackPanel>
+
+                                <ToggleButton x:Name="LangToggle"
+                                              Grid.Column="1"
+                                              Content="{DynamicResource ChangeBtn}"
+                                              Style="{StaticResource PrimaryToggleButtonStyle}"
+                                              VerticalAlignment="Center"
+                                              Click="OnLanguageChanged"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <Border  CornerRadius="8"
+                             BorderThickness="1"
+                             Margin="0,0,0,20"
+                             Style="{StaticResource CardStyle}">
+
+                        <StackPanel Margin="20">
+                            <TextBlock Text="{DynamicResource ThemeSettings_Title}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,20"/>
+
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{DynamicResource ThemeSettings_Description}"
+                                               FontSize="12"
+                                               Margin="0,0,0,5"
+                                               Foreground="{StaticResource SecondaryTextColor}"/>
+                                </StackPanel>
+
+                                <Button Grid.Column="1"
+                                        Content="{DynamicResource ChangeBtn}"
+                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        FontSize="12"
+                                        Padding="12,6"
+                                        VerticalAlignment="Center"
+                                        Click="OnThemeChanged"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+
                 </StackPanel>
+
+
             </ScrollViewer>
         </Grid>
     </Border>

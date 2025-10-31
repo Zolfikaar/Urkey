@@ -25,6 +25,8 @@
         <sys:String x:Key="AddressesTitle">العناوين</sys:String>
         <sys:String x:Key="NotesTitle">الملاحظات</sys:String>
         <sys:String x:Key="DocsTitle">المستندات</sys:String>
+        <sys:String x:Key="PasswordCheckTitle">فحص كلمات المرور</sys:String>
+        <sys:String x:Key="PasswordGeneratorTitle">مولد الرموز</sys:String>
         <sys:String x:Key="SettingsTitle">اللإعدادات</sys:String>
 
         <!-- Home Page Translations -->

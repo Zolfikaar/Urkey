@@ -270,6 +270,18 @@
                                                 Tag="{StaticResource bx_doc}"
                                                 Content="{DynamicResource DocsTitle}"/>
 
+                                        <Button Style="{StaticResource SidebarButtonStyle}"
+                                                Click="SidebarBtnClicked"
+                                                x:Name="PasswordCheck"
+                                                Tag="{StaticResource bx_passwords}"
+                                                Content="{DynamicResource PasswordCheckTitle}"/>
+
+                                        <Button Style="{StaticResource SidebarButtonStyle}"
+                                                Click="SidebarBtnClicked"
+                                                x:Name="PasswordGenerator"
+                                                Tag="{StaticResource bx_password_gen}"
+                                                Content="{DynamicResource PasswordGeneratorTitle}"/>
+
                 </StackPanel>
 
 

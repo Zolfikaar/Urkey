@@ -184,7 +184,14 @@ namespace PasswordManager.WPF.UserControls
                     case "Docs":
                         OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Documents()));
                         break;
+                    case "PasswordCheck":
+                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new PasswordCheck()));
+                        break;
+                    case "PasswordGenerator":
+                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new PasswordGenerator()));
+                        break;
 
+                        
 
                     case "Settings":
                         OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Settings()));

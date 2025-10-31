@@ -1,18 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using PasswordManager.WPF.Views;
+using PasswordManager.WPF.Views.Windows;
+
 
 namespace PasswordManager.WPF.Views.Pages
 {
@@ -26,11 +16,47 @@ namespace PasswordManager.WPF.Views.Pages
             InitializeComponent();
         }
 
-        private void AddNewPassword(object sender, RoutedEventArgs e)
+        private void ToggleMenu(object sender, RoutedEventArgs e)
         {
-            //MessageBox.Show("Add New Password Clicked");
-
-            //Add_New.Show();
+            AddMenuPopup.IsOpen = !AddMenuPopup.IsOpen;
         }
+
+
+        private void OnAddAccount_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AddAccount();
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+        }
+
+        private void OnAddBankCard_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AddBankCard();
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+        }
+
+        private void OnAddDocument_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AddDocument();
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+        }
+
+        private void OnAddAddress_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AddAddress();
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+        }
+
+        private void OnAddNote_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AddNote();
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+        }
+
+        // Removed problematic implicit operator that was causing NotImplementedException
     }
 }

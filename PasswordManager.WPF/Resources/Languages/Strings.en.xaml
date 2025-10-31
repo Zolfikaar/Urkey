@@ -20,17 +20,50 @@
     <!-- Sidebar titles -->
     <sys:String x:Key="HomeTitle">Home</sys:String>
     <sys:String x:Key="AllEntriesTitle">All Entries</sys:String>
-    <sys:String x:Key="PasswordsTitle">Passwords</sys:String>
+    <sys:String x:Key="AccountsTitle">Accounts</sys:String>
     <sys:String x:Key="BankCardsTitle">Bank Cards</sys:String>
     <sys:String x:Key="AddressesTitle">Addresses</sys:String>
+    <sys:String x:Key="NotesTitle">Notes</sys:String>
+    <sys:String x:Key="DocsTitle">Documents</sys:String>
     <sys:String x:Key="SettingsTitle">Settings</sys:String>
 
     <!-- Home Page Translations -->
     <sys:String x:Key="WelcomeHomeText">Welcome to password manager</sys:String>
     <sys:String x:Key="WelcomeSubtitle">Secure and organized management of all your passwords.</sys:String>
-    <sys:String x:Key="PasswordsTotal">Total Passwords </sys:String>
+    <sys:String x:Key="PasswordsTotal">Total Passwords</sys:String>
     <sys:String x:Key="VaultsTotal">Valuts</sys:String>
     <sys:String x:Key="SecurityPoints">Security Points</sys:String>
-    
+
+    <!-- Settings Page Translations -->
+    <sys:String x:Key="SidebarSettings_Title">Sidebar Settings</sys:String>
+    <sys:String x:Key="SidebarSettings_DefaultState">Default Sidebar State</sys:String>
+    <sys:String x:Key="SidebarSettings_Description">Set the default expanded state of the sidebar</sys:String>
+    <sys:String x:Key="SidebarState_Expanded">Expanded</sys:String>
+    <sys:String x:Key="SidebarState_Shrunk">Shrunk</sys:String>
+
+    <sys:String x:Key="ClipboardSettings_Title">Clipboard Settings</sys:String>
+    <sys:String x:Key="ClipboardSettings_ClearAfter">Clear Clipboard After</sys:String>
+    <sys:String x:Key="ClipboardSettings_Description">Automatically clear clipboard after specified time</sys:String>
+    <sys:String x:Key="ClipboardTime_10Seconds">10 seconds</sys:String>
+    <sys:String x:Key="ClipboardTime_30Seconds">30 seconds</sys:String>
+    <sys:String x:Key="ClipboardTime_1Minute">1 minute</sys:String>
+    <sys:String x:Key="ClipboardTime_Never">Never</sys:String>
+
+    <sys:String x:Key="UserAccount_Title">User Account</sys:String>
+    <sys:String x:Key="UserAccount_Name">Guest User</sys:String>
+    <sys:String x:Key="UserAccount_Description">Manage your account settings</sys:String>
+    <sys:String x:Key="SignOutButton">Sign Out</sys:String>
+
+    <sys:String x:Key="AutosaveAutofill_Title">Autosave &amp; Autofill</sys:String>
+    <sys:String x:Key="AutosavePasswords">Autosave Passwords</sys:String>
+    <sys:String x:Key="AutofillPasswords">Autofill Passwords</sys:String>
+    <sys:String x:Key="AutosaveAddresses">Autosave Addresses</sys:String>
+    <sys:String x:Key="AutofillAddresses">Autofill Addresses</sys:String>
+    <sys:String x:Key="AutosaveBankCards">Autosave Bank Cards</sys:String>
+    <sys:String x:Key="AutofillBankCards">Autofill Bank Cards</sys:String>
+
+    <sys:String x:Key="SyncSettings_Title">Sync Settings</sys:String>
+    <sys:String x:Key="SyncSettings_SyncDevices">Sync Across Devices</sys:String>
+    <sys:String x:Key="SyncSettings_Description">Sync your passwords and data across all your devices</sys:String>
 
 </ResourceDictionary>

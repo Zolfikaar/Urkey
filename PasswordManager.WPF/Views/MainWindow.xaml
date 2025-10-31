@@ -8,32 +8,82 @@
         WindowState="Maximized"
         Background="{DynamicResource BgColor}"
         Foreground="{DynamicResource TextColor}"
-        FontFamily="pack://application:,,,/Fonts/#Cairo">
+        FontFamily="pack://application:,,,/Fonts/#Cairo"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        ResizeMode="CanResizeWithGrip">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </Window.Resources>
 
-    <Grid x:Name="MainGrid">
-        <!-- Row and Column Definitions -->
+    <Grid>
         <Grid.RowDefinitions>
-            <!-- Topbar -->
-            <RowDefinition Height="60"/>
-            <!-- Main content -->
+            <RowDefinition Height="40"/>
+            <!-- الشريط العلوي -->
             <RowDefinition Height="*"/>
+            <!-- المحتوى -->
         </Grid.RowDefinitions>
 
-        <Grid.ColumnDefinitions>
-            <!-- Sidebar -->
-            <ColumnDefinition Width="Auto"
+        <!-- 🔹 الرأس المخصص -->
+        <Border Grid.Row="0"
+            Background="{DynamicResource BgColor}"
+            MouseLeftButtonDown="DragWindow">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- عنوان التطبيق -->
+                <TextBlock Text="{DynamicResource AppTitle}"
+                       Foreground="{DynamicResource TextColor}"
+                       VerticalAlignment="Center"
+                       Margin="10,0,0,0"
+                       FontWeight="Bold"/>
+
+                <!-- أزرار التحكم -->
+                <Button Grid.Column="1"
+                    Content="—"
+                    Style="{StaticResource WindowButtonStyle}"
+                    Click="Minimize_Click"/>
+
+                <Button Grid.Column="2"
+                    Content="❐"
+                    Style="{StaticResource WindowButtonStyle}"
+                    Click="Maximize_Click"/>
+
+                <Button Grid.Column="3"
+                    Content="✕"
+                    Style="{StaticResource WindowButtonStyle}"
+                    Click="Close_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- 🔹 المحتوى الرئيسي -->
+
+        <Grid Grid.Row="1" x:Name="MainGrid">
+            <!-- Row and Column Definitions -->
+            <Grid.RowDefinitions>
+                <!-- Topbar -->
+                <RowDefinition Height="60"/>
+                <!-- Main content -->
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <!-- Sidebar -->
+                <ColumnDefinition Width="Auto"
                               MinWidth="60"
                               MaxWidth="240"/>
-            <!-- Main Content Area -->
-            <ColumnDefinition Width="*"/>
-        </Grid.ColumnDefinitions>
+                <!-- Main Content Area -->
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Topbar -->
-        <Border
+            <!-- Topbar -->
+            <Border
             Panel.ZIndex="1"
             x:Name="Topbar"
             Padding="20,0"
@@ -43,37 +93,37 @@
             Background="{DynamicResource BgColor}"
             BorderThickness="0">
 
-            <Border.Effect>
-                <DropShadowEffect
+                <Border.Effect>
+                    <DropShadowEffect
                     Color="#03000000"
                     Direction="250"
                     ShadowDepth="7"
                     BlurRadius="20"
                     Opacity=".2"/>
-            </Border.Effect>
+                </Border.Effect>
 
-            <!-- Grid for layout inside topbar -->
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <!-- Burger Icon -->
-                    <ColumnDefinition Width="*"/>
-                    <!-- Spacer -->
-                    <ColumnDefinition Width="Auto"/>
-                    <!-- User Profile Dropdown -->
-                </Grid.ColumnDefinitions>
+                <!-- Grid for layout inside topbar -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- Burger Icon -->
+                        <ColumnDefinition Width="*"/>
+                        <!-- Spacer -->
+                        <ColumnDefinition Width="Auto"/>
+                        <!-- User Profile Dropdown -->
+                    </Grid.ColumnDefinitions>
 
-                <!-- Burger Button (on right due to RTL) -->
-                <Button Background="Transparent"
+                    <!-- Burger Button (on right due to RTL) -->
+                    <Button Background="Transparent"
                         Click="ToggleSidebar_Click"
                         BorderThickness="0"
                         Cursor="Hand">
 
-                    <Border Grid.Column="0"
+                        <Border Grid.Column="0"
                             HorizontalAlignment="Left"
                             VerticalAlignment="Center"
                             Padding="10">
-                        <TextBlock
+                            <TextBlock
                             x:Name="BurgerIcon"
                             FontSize="24"
                             Text="&#xE700;"
@@ -81,42 +131,66 @@
                             VerticalAlignment="Center"
                             TextAlignment="Center"
                             Foreground="{DynamicResource TextColor}"/>
+                        </Border>
+                    </Button>
+
+                    <Border
+                    Height="40"
+                    Width="250"
+                    Background="{DynamicResource InputBgColor}"
+                    Grid.Column="2"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Right"
+                    CornerRadius="5">
+                        <Grid>
+                            <TextBox
+                            x:Name="SearchBox"
+                            Foreground="{DynamicResource TextColor}"
+                            Padding="28,5,8,5"
+                            Background="Transparent"
+                            Height="40"
+                            BorderThickness="0"
+                            Width="250"/>
+
+                            <!-- Search icon -->
+                            <Viewbox Width="16"
+                                Height="16"
+                                HorizontalAlignment="Left"
+                                VerticalAlignment="Center"
+                                Margin="8,0,0,0"
+                                IsHitTestVisible="False">
+                                <Path Data="{StaticResource bx_search}"
+                                    Fill="{DynamicResource SecondaryTextColor}"/>
+                            </Viewbox>
+
+                            <!-- Placeholder overlay -->
+                            <TextBlock
+                            Text="Search"
+                            Foreground="{DynamicResource SecondaryTextColor}"
+                            VerticalAlignment="Center"
+                            Margin="28,0,8,0"
+                            IsHitTestVisible="False">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility"
+                                            Value="Collapsed"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Text.Length, ElementName=SearchBox}"
+                                                Value="0">
+                                                <Setter Property="Visibility"
+                                                    Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
                     </Border>
-                </Button>
+                </Grid>
+            </Border>
 
-                <!-- User Profile Dropdown (appears on the left side visually) -->
-                <Menu Background="Transparent"
-                      Grid.Column="2"
-                      VerticalAlignment="Center"
-                      HorizontalAlignment="Right">
-                    <MenuItem Background="Transparent"
-                              FlowDirection="LeftToRight">
-                        <MenuItem.Header>
-                            <StackPanel Orientation="Horizontal">
-                                <Ellipse Width="32"
-                                         Height="32"
-                                         Fill="LightGray"/>
-                                <TextBlock Text="{DynamicResource Username}"
-                                           Margin="8,0,0,0"
-                                           VerticalAlignment="Center"/>
-                                <TextBlock Text="&#xE70D;"
-                                           FontFamily="Segoe MDL2 Assets"
-                                           FontSize="12"
-                                           VerticalAlignment="Center"
-                                           Margin="5,0,0,0"/>
-                            </StackPanel>
-                        </MenuItem.Header>
-                        <MenuItem Header="{DynamicResource Profile}"/>
-                        <MenuItem Header="{DynamicResource Settings_Title}"/>
-                        <Separator/>
-                        <MenuItem Header="{DynamicResource Logout}"/>
-                    </MenuItem>
-                </Menu>
-            </Grid>
-        </Border>
-
-        <!-- Logo -->
-        <Border Panel.ZIndex="3"
+            <!-- Logo -->
+            <Border Panel.ZIndex="3"
                 x:Name="Logo"
                 Grid.Row="0"
                 Grid.Column="0"
@@ -124,41 +198,41 @@
                 Background="{DynamicResource BgColor}"
                 HorizontalAlignment="Left">
 
-            <WrapPanel
+                <WrapPanel
                 x:Name="LogoWrapper"
                 Height="60"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Center">
 
-                <Border x:Name="LogoIconWrapper"
+                    <Border x:Name="LogoIconWrapper"
                         Height="60"
                         Width="60">
-                    <TextBlock
+                        <TextBlock
                         x:Name="LogoIcon"
                         FontSize="36"
-                        Text="&#xE707;"
+                        Text=""
                         FontFamily="Segoe MDL2 Assets"
                         VerticalAlignment="Center"
                         HorizontalAlignment="Center"
                         Foreground="{DynamicResource TextColor}"/>
 
-                </Border>
+                    </Border>
 
-                <TextBlock x:Name="LogoText"
+                    <TextBlock x:Name="LogoText"
                            Width="180"
                            TextAlignment="Center"
-                           Text="LOGO"
+                           Text=""
                            FontSize="28"
                            FontWeight="Bold"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            Visibility="{Binding IsSidebarExpanded, Converter={StaticResource BoolToVis}, RelativeSource={RelativeSource AncestorType=Window}}"/>
 
-            </WrapPanel>
-        </Border>
+                </WrapPanel>
+            </Border>
 
-        <!-- Sidebar -->
-        <Border x:Name="SidebarContainer"
+            <!-- Sidebar -->
+            <Border x:Name="SidebarContainer"
                 Width="240"
                 Grid.Row="1"
                 Grid.Column="0"
@@ -166,37 +240,39 @@
                 HorizontalAlignment="Left"
                 Panel.ZIndex="2"
                 Background="{DynamicResource BgColor}">
-            <uc:Sidebar x:Name="Sidebar"
+                <uc:Sidebar x:Name="Sidebar"
                         IsSidebarExpanded="{Binding IsSidebarExpanded, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}"/>
-        </Border>
+            </Border>
 
-        <!-- Main Content -->
-        <Border Grid.Row="1"
+            <!-- Main Content -->
+            <Border Grid.Row="1"
                 Grid.Column="1"
-                Padding="20"
-                >
+                Padding="20">
 
-            <Border
+                <Border
                 CornerRadius="20"
                 Padding="20,10"
                 Background="{DynamicResource CardBgColor}">
-                <Border.Effect>
-                    <DropShadowEffect
+                    <Border.Effect>
+                        <DropShadowEffect
                         Color="#03000000"
                         Direction="270"
                         ShadowDepth="7"
                         BlurRadius="25"
                         Opacity=".2"/>
-                </Border.Effect>
+                    </Border.Effect>
 
 
 
-                <Frame x:Name="MainContentArea"
+                    <Frame x:Name="MainContentArea"
                        NavigationUIVisibility="Hidden"/>
+
+                </Border>
 
             </Border>
 
-        </Border>
-
+        </Grid>
     </Grid>
+
+
 </Window>

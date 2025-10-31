@@ -12,7 +12,7 @@ namespace PasswordManager.WPF.UserControls
 {
     public partial class Sidebar : UserControl
     {
-        public string WordDirection = "";
+        //public string WordDirection = "";
         private static string _bgColor = "#F6F6F9";
         private static string _bgWhite = "#FFF";
         private static string _textColor = "#363949";
@@ -48,7 +48,7 @@ namespace PasswordManager.WPF.UserControls
             DependencyProperty.RegisterAttached(
                 "IsActive",
                 typeof(bool),
-                typeof(Button),
+                typeof(Sidebar),
                 new PropertyMetadata(false));
 
         public static void SetIsActive(Button button, bool value)
@@ -86,9 +86,8 @@ namespace PasswordManager.WPF.UserControls
             InitializeComponent();
             SetButtonActive(Home);
 
-            // Ensure nested menu starts expanded by default
-            _isAllEntriesMenuOpen = true;
-            UpdateNestedMenuVisualState();
+            // No nested menu behavior anymore
+            _isAllEntriesMenuOpen = false;
 
             // Initialize sidebar state based on the dependency property
             _isSidebarOpen = IsSidebarExpanded;
@@ -166,8 +165,11 @@ namespace PasswordManager.WPF.UserControls
                     case "Home":
                         OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Home()));
                         break;
-                    case "Passwords":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Passwords()));
+                    case "AllEntries":
+                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new AllEntries()));
+                        break;
+                    case "Accounts":
+                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Accounts()));
                         break;
 
                     case "CreditCards":
@@ -176,8 +178,12 @@ namespace PasswordManager.WPF.UserControls
                     case "Addresses":
                         OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Addresses()));
                         break;
-
-
+                    case "Notes":
+                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Notes()));
+                        break;
+                    case "Docs":
+                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Documents()));
+                        break;
 
 
                     case "Settings":
@@ -190,12 +196,30 @@ namespace PasswordManager.WPF.UserControls
             }
         }
 
-        private void AllEntriesMenuClicked(object sender, RoutedEventArgs e)
-        {
-            _isAllEntriesMenuOpen = !_isAllEntriesMenuOpen;
-            UpdateNestedMenuVisualState();
+        //private void AllEntriesMenuClicked(object sender, RoutedEventArgs e)
+        //{
+        //    // Cancel dropdown behavior: always navigate to All Entries and update icon
+        //    ResetAllButtons();
+        //    SetButtonActive(AllEntriesMenu);
 
-        }
+        //    // Navigate to All Entries page
+        //    OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new AllEntries()));
+
+        //    // Ensure nested items remain hidden
+        //    _isAllEntriesMenuOpen = false;
+        //    if (NestedMenuItems != null)
+        //    {
+        //        NestedMenuItems.Visibility = Visibility.Collapsed;
+        //    }
+
+        //    // Change icon to indicate active state
+        //    AllEntriesMenu.ApplyTemplate();
+        //    var icon = AllEntriesMenu.Template.FindName("PART_LeftIcon", AllEntriesMenu) as Path;
+        //    if (icon != null)
+        //    {
+        //        icon.Data = (Geometry)FindResource("bx_arrow_up");
+        //    }
+        //}
 
         private void ResetAllButtons()
         {
@@ -206,22 +230,19 @@ namespace PasswordManager.WPF.UserControls
                 {
                     SetIsActive(btn, false);
                 }
-                else if (child is StackPanel stackPanel && stackPanel.Name == "AllEntriesContainer")
-                {
-                    // Reset nested menu buttons
-                    if (stackPanel.Children[1] is StackPanel nestedItems)
-                    {
-                        foreach (var nestedChild in nestedItems.Children)
-                        {
-                            if (nestedChild is Button nestedBtn)
-                            {
-                                SetIsActive(nestedBtn, false);
-                            }
-                        }
-                    }
-                }
             }
             SetIsActive(Settings, false);
+
+            //// Reset All Entries icon to default (down arrow)
+            //if (AllEntriesMenu != null)
+            //{
+            //    AllEntriesMenu.ApplyTemplate();
+            //    var icon = AllEntriesMenu.Template.FindName("PART_LeftIcon", AllEntriesMenu) as Path;
+            //    if (icon != null)
+            //    {
+            //        icon.Data = (Geometry)FindResource("bx_arrow_down");
+            //    }
+            //}
         }
 
         private void SetButtonActive(Button button)
@@ -276,33 +297,6 @@ namespace PasswordManager.WPF.UserControls
                         }
                     }
                 }
-                else if (child is StackPanel stackPanel && stackPanel.Name == "AllEntriesContainer")
-                {
-                    // Handle All Entries Container
-                    if (stackPanel.Children[0] is Button allEntriesMenuBtn)
-                    {
-                        allEntriesMenuBtn.Width = IsSidebarExpanded ? 240 : 60;
-
-                        if (allEntriesMenuBtn.Template.FindName("PART_LeftIcon", allEntriesMenuBtn) is Path leftIcon)
-                        {
-                            leftIcon.Visibility = Visibility.Visible;
-                        }
-                    }
-
-                    // Handle nested menu items
-                    if (stackPanel.Children[1] is StackPanel nestedItems)
-                    {
-                        nestedItems.Width = IsSidebarExpanded ? 240 : 60;
-
-                        foreach (var nestedChild in nestedItems.Children)
-                        {
-                            if (nestedChild is Button nestedBtn)
-                            {
-                                nestedBtn.Width = IsSidebarExpanded ? 240 : 60;
-                            }
-                        }
-                    }
-                }
             }
 
             // Update settings.
@@ -338,25 +332,25 @@ namespace PasswordManager.WPF.UserControls
             }
         }
 
-        private void UpdateNestedMenuVisualState()
-        {
-            if (NestedMenuItems != null)
-            {
-                NestedMenuItems.Visibility = _isAllEntriesMenuOpen ? Visibility.Visible : Visibility.Collapsed;
-            }
+        //private void UpdateNestedMenuVisualState()
+        //{
+        //    if (NestedMenuItems != null)
+        //    {
+        //        NestedMenuItems.Visibility = _isAllEntriesMenuOpen ? Visibility.Visible : Visibility.Collapsed;
+        //    }
 
-            if (AllEntriesMenu != null)
-            {
-                // Update arrow icon direction if present
-                AllEntriesMenu.ApplyTemplate();
-                var icon = AllEntriesMenu.Template.FindName("PART_LeftIcon", AllEntriesMenu) as Path;
-                if (icon != null)
-                {
-                    // Use up arrow when expanded, down arrow when collapsed
-                    icon.Data = (Geometry)FindResource(_isAllEntriesMenuOpen ? "bx_arrow_up" : "bx_arrow_down");
-                }
-            }
-        }
+        //    if (AllEntriesMenu != null)
+        //    {
+        //        // Update arrow icon direction if present
+        //        AllEntriesMenu.ApplyTemplate();
+        //        var icon = AllEntriesMenu.Template.FindName("PART_LeftIcon", AllEntriesMenu) as Path;
+        //        if (icon != null)
+        //        {
+        //            // Use up arrow when expanded, down arrow when collapsed
+        //            icon.Data = (Geometry)FindResource(_isAllEntriesMenuOpen ? "bx_arrow_up" : "bx_arrow_down");
+        //        }
+        //    }
+        //}
 
         // Event for navigation
         public event EventHandler<SidebarNavigationEventArgs> OnNavigationRequested;

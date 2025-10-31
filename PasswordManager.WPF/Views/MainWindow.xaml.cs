@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using PasswordManager.WPF.Helpers;
@@ -74,7 +75,7 @@ namespace PasswordManager.WPF.Views
             MainContentArea.Content = e.View;
         }
 
-        private void ToggleSidebar_Click(object sender, RoutedEventArgs e)
+        public void ToggleSidebar_Click(object sender, RoutedEventArgs e)
         {
             PerformAnimation();
 
@@ -140,5 +141,33 @@ namespace PasswordManager.WPF.Views
                 }
             }
         }
+
+
+
+
+
+
+        private void DragWindow(object sender, MouseButtonEventArgs e)
+        {
+            if (e.ChangedButton == MouseButton.Left)
+                this.DragMove();
+        }
+
+        private void Minimize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void Maximize_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState =
+                this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
+        }
+
+        private void Close_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
     }
 }

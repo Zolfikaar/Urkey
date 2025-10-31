@@ -1,8 +1,7 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-        <sys:String x:Key="AppTitle"
-                    xmlns:sys="clr-namespace:System;assembly=mscorlib">مدير كلمات المرور</sys:String>
+        <sys:String x:Key="AppTitle">مدير كلمات المرور</sys:String>
         <sys:String x:Key="AddButton">إضافة</sys:String>
         <sys:String x:Key="CancelButton">إلغاء</sys:String>
         <sys:String x:Key="Settings_Title">الإعدادات</sys:String>
@@ -21,11 +20,13 @@
         <!-- Sidebar titles -->
         <sys:String x:Key="HomeTitle">الرئيسية</sys:String>
         <sys:String x:Key="AllEntriesTitle">كل الإدخالات</sys:String>
-        <sys:String x:Key="PasswordsTitle">كلمات المرور</sys:String>
+        <sys:String x:Key="AccountsTitle">الحسابات</sys:String>
         <sys:String x:Key="BankCardsTitle">البطاقات البنكية</sys:String>
         <sys:String x:Key="AddressesTitle">العناوين</sys:String>
+        <sys:String x:Key="NotesTitle">الملاحظات</sys:String>
+        <sys:String x:Key="DocsTitle">المستندات</sys:String>
         <sys:String x:Key="SettingsTitle">اللإعدادات</sys:String>
-    
+
         <!-- Home Page Translations -->
         <sys:String x:Key="WelcomeHomeText">مرحباً بك في مدير كلمات المرور</sys:String>
         <sys:String x:Key="WelcomeSubtitle">إدارة آمنة ومرتبة لجميع كلمات المرور الخاصة بك</sys:String>
@@ -33,7 +34,36 @@
         <sys:String x:Key="VaultsTotal">المخازن</sys:String>
         <sys:String x:Key="SecurityPoints">نقاط الامان</sys:String>
 
+        <!-- Settings Page Translations -->
+        <sys:String x:Key="SidebarSettings_Title">إعدادات الشريط الجانبي</sys:String>
+        <sys:String x:Key="SidebarSettings_DefaultState">حالة الشريط الجانبي الافتراضية</sys:String>
+        <sys:String x:Key="SidebarSettings_Description">تعيين حالة توسيع الشريط الجانبي الافتراضية</sys:String>
+        <sys:String x:Key="SidebarState_Expanded">موسع</sys:String>
+        <sys:String x:Key="SidebarState_Shrunk">مقصور</sys:String>
 
+        <sys:String x:Key="ClipboardSettings_Title">إعدادات الحافظة</sys:String>
+        <sys:String x:Key="ClipboardSettings_ClearAfter">مسح الحافظة بعد</sys:String>
+        <sys:String x:Key="ClipboardSettings_Description">مسح الحافظة تلقائياً بعد الوقت المحدد</sys:String>
+        <sys:String x:Key="ClipboardTime_10Seconds">10 ثواني</sys:String>
+        <sys:String x:Key="ClipboardTime_30Seconds">30 ثانية</sys:String>
+        <sys:String x:Key="ClipboardTime_1Minute">دقيقة واحدة</sys:String>
+        <sys:String x:Key="ClipboardTime_Never">أبداً</sys:String>
 
+        <sys:String x:Key="UserAccount_Title">حساب المستخدم</sys:String>
+        <sys:String x:Key="UserAccount_Name">مستخدم ضيف</sys:String>
+        <sys:String x:Key="UserAccount_Description">إدارة إعدادات حسابك</sys:String>
+        <sys:String x:Key="SignOutButton">تسجيل الخروج</sys:String>
+
+        <sys:String x:Key="AutosaveAutofill_Title">الحفظ التلقائي والتعبئة التلقائية</sys:String>
+        <sys:String x:Key="AutosavePasswords">الحفظ التلقائي لكلمات المرور</sys:String>
+        <sys:String x:Key="AutofillPasswords">التعبئة التلقائية لكلمات المرور</sys:String>
+        <sys:String x:Key="AutosaveAddresses">الحفظ التلقائي للعناوين</sys:String>
+        <sys:String x:Key="AutofillAddresses">التعبئة التلقائية للعناوين</sys:String>
+        <sys:String x:Key="AutosaveBankCards">الحفظ التلقائي للبطاقات البنكية</sys:String>
+        <sys:String x:Key="AutofillBankCards">التعبئة التلقائية للبطاقات البنكية</sys:String>
+
+        <sys:String x:Key="SyncSettings_Title">إعدادات المزامنة</sys:String>
+        <sys:String x:Key="SyncSettings_SyncDevices">المزامنة عبر الأجهزة</sys:String>
+        <sys:String x:Key="SyncSettings_Description">مزامنة كلمات المرور والبيانات عبر جميع أجهزتك</sys:String>
 
 </ResourceDictionary>

@@ -1,28 +1,57 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Core brushes -->
-    <SolidColorBrush x:Key="BgColor" Color="#F7F8FB"/>
-    <SolidColorBrush x:Key="TextColor" Color="#1C1C28"/>
-    <SolidColorBrush x:Key="PrimaryColor" Color="#4F46E5"/>
-    <SolidColorBrush x:Key="InputBgColor" Color="#EFF1F7"/>
-    <SolidColorBrush x:Key="CardBgColor" Color="#FFFFFFFF"/>
-    <SolidColorBrush x:Key="BorderColor" Color="#E3E5EC"/>
-    <SolidColorBrush x:Key="SecondaryTextColor" Color="#5E6172"/>
-    <SolidColorBrush x:Key="HoverColor" Color="#ECEEF5"/>
+        <!-- Core Palette -->
+        <SolidColorBrush x:Key="PrimaryColor"
+                         Color="#818CF8"/>
+        <SolidColorBrush x:Key="PrimaryLight"
+                         Color="#B7BEFF"/>
+        <SolidColorBrush x:Key="PrimaryLightest"
+                         Color="#E0E4FF"/>
+        <SolidColorBrush x:Key="PrimaryDark"
+                         Color="#5B66D6"/>
+        <SolidColorBrush x:Key="PrimaryDarker"
+                         Color="#3A42A6"/>
 
-    <!-- Extended brushes -->
-    <SolidColorBrush x:Key="SidebarBackgroundColor" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="SidebarSelectedColor" Color="#E6E8FC"/>
-    <SolidColorBrush x:Key="TertiaryBackgroundColor" Color="#FAFAFE"/>
-    <SolidColorBrush x:Key="InputBorderColor" Color="#D0D2DA"/>
-    <SolidColorBrush x:Key="PlaceholderTextColor" Color="#9CA3AF"/>
-    <SolidColorBrush x:Key="SuccessColor" Color="#16A34A"/>
-    <SolidColorBrush x:Key="WarningColor" Color="#EAB308"/>
-    <SolidColorBrush x:Key="ErrorColor" Color="#DC2626"/>
+        <!-- Base Colors -->
+        <SolidColorBrush x:Key="BgColor"
+                         Color="#F6F6F9"/>
+        <!-- خلفية التطبيق العامة -->
+        <SolidColorBrush x:Key="CardBgColor"
+                         Color="#FFFFFF"/>
+        <!-- البطاقات والنوافذ الفرعية -->
+        <SolidColorBrush x:Key="InputBgColor"
+                         Color="#EDEFF3"/>
+        <!-- خلفية الحقول -->
+        <SolidColorBrush x:Key="BorderColor"
+                         Color="#E0E0E0"/>
+        <!-- حدود الحقول والعناصر -->
+        <SolidColorBrush x:Key="TextColor"
+                         Color="#363949"/>
+        <!-- النصوص العادية -->
+        <SolidColorBrush x:Key="TextMutedColor"
+                         Color="#6B6B7A"/>
+        <!-- النصوص الثانوية -->
+        <!-- Alias for small text used elsewhere -->
+        <SolidColorBrush x:Key="SecondaryTextColor"
+                         Color="#6B6B7A"/>
+        <SolidColorBrush x:Key="ErrorColor"
+                         Color="#E63946"/>
+        <!-- رسائل الخطأ -->
+        <SolidColorBrush x:Key="SuccessColor"
+                         Color="#4CAF50"/>
+        <!-- رسائل النجاح -->
 
-    <!-- Aliases -->
-    <SolidColorBrush x:Key="BackgroundBrush" Color="#F7F8FB"/>
-    <SolidColorBrush x:Key="TextBrush" Color="#1C1C28"/>
+        <!-- Component Examples -->
+        <SolidColorBrush x:Key="ButtonPrimaryBg"
+                         Color="{StaticResource PrimaryColor}"/>
+        <SolidColorBrush x:Key="ButtonPrimaryHoverBg"
+                         Color="{StaticResource PrimaryDark}"/>
+        <SolidColorBrush x:Key="ButtonPrimaryText"
+                         Color="#FFFFFF"/>
+
+        <!-- Sidebar selected background (distinct in light theme) -->
+        <SolidColorBrush x:Key="SidebarSelectedColor"
+                         Color="#EDEFF3"/>
 
 </ResourceDictionary>

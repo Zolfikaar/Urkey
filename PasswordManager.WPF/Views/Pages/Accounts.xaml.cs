@@ -18,9 +18,9 @@ namespace PasswordManager.WPF.Views.Pages
     /// <summary>
     /// Interaction logic for Passwords.xaml
     /// </summary>
-    public partial class Passwords : Page
+    public partial class Accounts : Page
     {
-        public Passwords()
+        public Accounts()
         {
             InitializeComponent();
         }

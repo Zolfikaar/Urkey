@@ -1,19 +1,23 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <SolidColorBrush x:Key="PrimaryColor"
-                 Color="{StaticResource PrimaryBrush}"/>
-    <SolidColorBrush x:Key="BgColor"
-                 Color="{StaticResource BgBrush}"/>
-    <SolidColorBrush x:Key="TextColor"
-                 Color="{StaticResource TextBrush}"/>
-    <SolidColorBrush x:Key="InputBgColor"
-                 Color="{StaticResource InputBgBrush}"/>
-    <SolidColorBrush x:Key="CardBgColor"
-                 Color="{StaticResource CardBgBrush}"/>
-    <SolidColorBrush x:Key="BorderColor"
-                 Color="{StaticResource BorderBrush}"/>
-    <SolidColorBrush x:Key="SecondaryTextColor"
-                 Color="{StaticResource SecondaryTextBrush}"/>
-    <SolidColorBrush x:Key="HoverColor"
-                 Color="{StaticResource HoverBrush}"/>
+  <SolidColorBrush x:Key="PrimaryColor"
+                   Color="{StaticResource PrimaryBrush}"/>
+  <SolidColorBrush x:Key="BgColor"
+                   Color="{StaticResource BgBrush}"/>
+  <SolidColorBrush x:Key="TextColor"
+                   Color="{StaticResource TextBrush}"/>
+  <SolidColorBrush x:Key="InputBgColor"
+                   Color="{StaticResource InputBgBrush}"/>
+  <SolidColorBrush x:Key="CardBgColor"
+                   Color="{StaticResource CardBgBrush}"/>
+  <SolidColorBrush x:Key="BorderColor"
+                   Color="{StaticResource BorderBrush}"/>
+  <SolidColorBrush x:Key="SecondaryTextColor"
+                   Color="{StaticResource SecondaryTextBrush}"/>
+  <SolidColorBrush x:Key="HoverColor"
+                   Color="{StaticResource HoverBrush}"/>
+
+  <!-- Sidebar selected background (fallbacks to hover if not theme-specific) -->
+  <SolidColorBrush x:Key="SidebarSelectedColor"
+                   Color="{StaticResource HoverBrush}"/>
 </ResourceDictionary>

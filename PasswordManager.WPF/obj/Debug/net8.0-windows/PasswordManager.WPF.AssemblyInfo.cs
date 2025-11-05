@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("PasswordManager.WPF")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+020f6952794b4275339ed4675c30364cb700fd78")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+3a937df49d06e2101b21aba742ec4e17a428c86d")]
 [assembly: System.Reflection.AssemblyProductAttribute("PasswordManager.WPF")]
 [assembly: System.Reflection.AssemblyTitleAttribute("PasswordManager.WPF")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

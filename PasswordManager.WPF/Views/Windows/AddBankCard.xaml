@@ -30,12 +30,14 @@
             </Grid.ColumnDefinitions>
             <Grid.Resources>
                 <Style TargetType="TextBlock">
+                    <Setter Property="FontFamily"
+                            Value="Cairo"/>
                     <Setter Property="Foreground"
                             Value="{DynamicResource TextColor}"/>
                     <Setter Property="VerticalAlignment"
                             Value="Center"/>
                     <Setter Property="Margin"
-                            Value="0,0,0,6"/>
+                            Value="0,0,10,6"/>
                 </Style>
                 <Style TargetType="TextBox">
                     <Setter Property="Foreground"
@@ -69,21 +71,21 @@
 
             <TextBlock Grid.Row="0"
                        Grid.Column="0"
-                       Text="Card Name"/>
+                       Text="{DynamicResource CardNameFieldTitle}"/>
             <TextBox x:Name="CardNameTextBox"
                      Grid.Row="0"
                      Grid.Column="1"/>
 
             <TextBlock Grid.Row="1"
                        Grid.Column="0"
-                       Text="Card Number"/>
+                       Text="{DynamicResource CardNumberFieldTitle}"/>
             <PasswordBox x:Name="CardNumberBox"
                          Grid.Row="1"
                          Grid.Column="1"/>
 
             <TextBlock Grid.Row="2"
                        Grid.Column="0"
-                       Text="Expiry Date"/>
+                       Text="{DynamicResource ExpiryDateFieldTitle}"/>
             <TextBox x:Name="ExpiryTextBox"
                      Grid.Row="2"
                      Grid.Column="1"
@@ -91,21 +93,21 @@
 
             <TextBlock Grid.Row="3"
                        Grid.Column="0"
-                       Text="CVV"/>
+                       Text="{DynamicResource CvvFieldTitle}"/>
             <PasswordBox x:Name="CvvBox"
                          Grid.Row="3"
                          Grid.Column="1"/>
 
             <TextBlock Grid.Row="4"
                        Grid.Column="0"
-                       Text="Bank"/>
+                       Text="{DynamicResource BankFieldTitle}"/>
             <TextBox x:Name="BankTextBox"
                      Grid.Row="4"
                      Grid.Column="1"/>
 
             <TextBlock Grid.Row="5"
                        Grid.Column="0"
-                       Text="Notes"/>
+                       Text="{DynamicResource NotesFieldTitle}"/>
             <TextBox x:Name="NotesTextBox"
                      Grid.Row="5"
                      Grid.Column="1"
@@ -118,12 +120,12 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         Margin="0,10,0,0">
-                <Button Content="Cancel"
+                <Button Content="{DynamicResource CancelBtnTitle}"
+                        Style="{DynamicResource SecondaryBtnStyle}"
                         Margin="0,0,10,0"
-                        Padding="16,8"
                         Click="OnCancelClick"/>
-                <Button Content="Save"
-                        Style="{DynamicResource PrimaryButtonStyle}"
+                <Button Content="{DynamicResource SaveBtnTitle}"
+                        Style="{DynamicResource PrimaryBtnStyle}"
                         Padding="16,8"
                         Click="OnSaveClick"/>
             </StackPanel>

@@ -22,6 +22,9 @@ namespace PasswordManager.WPF.Views.Windows
         public AddDocument()
         {
             InitializeComponent();
+            this.FlowDirection = App.Settings.Language == "ar"
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
             Loaded += OnLoaded;
         }
 

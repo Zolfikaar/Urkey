@@ -14,6 +14,9 @@ namespace PasswordManager.WPF.Views.Pages
         public Home()
         {
             InitializeComponent();
+            this.FlowDirection = App.Settings.Language == "ar"
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
         }
 
         private void ToggleMenu(object sender, RoutedEventArgs e)
@@ -57,6 +60,6 @@ namespace PasswordManager.WPF.Views.Pages
             win.ShowDialog();
         }
 
-        // Removed problematic implicit operator that was causing NotImplementedException
+        
     }
 }

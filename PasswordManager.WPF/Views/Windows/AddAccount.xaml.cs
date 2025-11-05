@@ -22,6 +22,9 @@ namespace PasswordManager.WPF.Views.Windows
         public AddAccount()
         {
             InitializeComponent();
+            this.FlowDirection = App.Settings.Language == "ar"
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
             Loaded += OnLoaded;
         }
 
@@ -44,14 +47,15 @@ namespace PasswordManager.WPF.Views.Windows
         public string Notes => NotesTextBox.Text;
 
         // Method to set initial values
-        public void SetValues(string accountName = "", string username = "", string password = "", string email = "", string website = "", string notes = "")
+        public bool SaveValues(string accountName = "", string username = "", string password = "", string email = "", string website = "", string notes = "")
         {
-            AccountNameTextBox.Text = accountName;
-            UsernameTextBox.Text = username;
-            PasswordBox.Password = password;
-            EmailTextBox.Text = email;
-            WebsiteTextBox.Text = website;
-            NotesTextBox.Text = notes;
+            if(string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(accountName))
+            {
+                return false;
+            } else
+            {
+                return true;
+            }
         }
 
         private void OnCancelClick(object sender, RoutedEventArgs e)
@@ -61,21 +65,31 @@ namespace PasswordManager.WPF.Views.Windows
 
         private void OnSaveClick(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(AccountNameTextBox.Text))
+            var _isSaved = false;
+
+            if (string.IsNullOrWhiteSpace(this.Username) || string.IsNullOrWhiteSpace(this.Email))
             {
-                MessageBox.Show("Account Name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("(User Name, Email) Fields can't be empty", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
+            else
+            {
+                _isSaved = SaveValues(AccountName, Username, Email, Password, Website, Notes);
+            }
 
-            // جمع القيم من الحقول
-            string accountName = AccountNameTextBox.Text;
-            string username = UsernameTextBox.Text;
-            string password = PasswordBox.Password;
-            string email = EmailTextBox.Text;
-            string website = WebsiteTextBox.Text;
-            string notes = NotesTextBox.Text;
+            if (_isSaved)
+            {
+                MessageBox.Show("(User Name, Email) Fields can't be empty", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Close();
+                return;
 
-            Close();
+            }
+            else
+            {
+
+                MessageBox.Show("Couldn't save the info, something went wrong", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+
+            }
         }
     }
 }

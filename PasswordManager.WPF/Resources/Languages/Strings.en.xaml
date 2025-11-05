@@ -69,4 +69,43 @@
     <sys:String x:Key="SyncSettings_SyncDevices">Sync Across Devices</sys:String>
     <sys:String x:Key="SyncSettings_Description">Sync your passwords and data across all your devices</sys:String>
 
+    <!-- Forms Translations -->
+    <sys:String x:Key="CancelBtnTitle">Cancel</sys:String>
+    <sys:String x:Key="SaveBtnTitle">Save</sys:String>
+    <!-- Add Account Form Fields Translations -->
+    <sys:String x:Key="AccountNameFieldTitle">Account Name</sys:String>
+    <sys:String x:Key="UserNameFieldTitle">User Name</sys:String>
+    <sys:String x:Key="PasswordFieldTitle">Password</sys:String>
+    <sys:String x:Key="EmailFieldTitle">Email</sys:String>
+    <sys:String x:Key="WebsiteFieldTitle">Website</sys:String>
+    <sys:String x:Key="NotesFieldTitle">Notes</sys:String>
+    
+    <!-- Add Bank Card Form Fields Translations -->
+    <sys:String x:Key="CardNameFieldTitle">Card Name</sys:String>
+    <sys:String x:Key="CardNumberFieldTitle">Card Number</sys:String>
+    <sys:String x:Key="ExpiryDateFieldTitle">Expiry Date</sys:String>
+    <sys:String x:Key="CvvFieldTitle">CVV</sys:String>
+    <sys:String x:Key="BankFieldTitle">Bank</sys:String>
+
+    <!-- Add Document Form Fields Translations -->
+    <sys:String x:Key="DocumentNameFieldTitle">Document Name</sys:String>
+    <sys:String x:Key="TypeFieldTitle">Type</sys:String>
+    <sys:String x:Key="NumberFieldTitle">Number</sys:String>
+    <sys:String x:Key="IssuerFieldTitle">Issuer</sys:String>
+
+    <!-- Add Address Form Fields Translations -->
+    <sys:String x:Key="AddressNameFieldTitle">Name</sys:String>
+    <sys:String x:Key="StreetFieldTitle">Street</sys:String>
+    <sys:String x:Key="CityFieldTitle">City</sys:String>
+    <sys:String x:Key="StateFieldTitle">State</sys:String>
+    <sys:String x:Key="ZipCodeFieldTitle">ZIP Code</sys:String>
+    <sys:String x:Key="CountryFieldTitle">Country</sys:String>
+
+    <!-- Add Notes Form Fields Translations -->
+    <sys:String x:Key="TitleFieldTitle">Title</sys:String>
+    <sys:String x:Key="ContentFieldTitle">Content</sys:String>
+    <sys:String x:Key="CategoryFieldTitle">Category</sys:String>
+    <sys:String x:Key="TagsFieldTitle">Tags</sys:String>
+
+
 </ResourceDictionary>

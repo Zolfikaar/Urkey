@@ -130,7 +130,7 @@
 
                                 <Button Grid.Column="1"
                                         Content="{DynamicResource ChangeBtn}"
-                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        Style="{StaticResource PrimaryBtnStyle}"
                                         FontSize="12"
                                         Padding="12,6"
                                         VerticalAlignment="Center"/>
@@ -222,7 +222,7 @@
                                 <Button x:Name="ThemeToggle"
                                         Grid.Column="1"
                                         Content="{DynamicResource ChangeBtn}"
-                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        Style="{StaticResource PrimaryBtnStyle}"
                                         FontSize="12"
                                         Padding="12,6"
                                         VerticalAlignment="Center"
@@ -479,7 +479,7 @@
                                 <Button x:Name="SignOutButton"
                                         Grid.Column="1"
                                         Content="{DynamicResource SignOutButton}"
-                                        Style="{StaticResource PrimaryButtonStyle}"
+                                        Style="{StaticResource PrimaryBtnStyle}"
                                         FontSize="12"
                                         Padding="12,6"
                                         VerticalAlignment="Center"/>

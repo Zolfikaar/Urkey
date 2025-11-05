@@ -68,4 +68,42 @@
         <sys:String x:Key="SyncSettings_SyncDevices">المزامنة عبر الأجهزة</sys:String>
         <sys:String x:Key="SyncSettings_Description">مزامنة كلمات المرور والبيانات عبر جميع أجهزتك</sys:String>
 
+        <!-- Forms Translations -->
+        <sys:String x:Key="CancelBtnTitle">إلغاء</sys:String>
+        <sys:String x:Key="SaveBtnTitle">حفظ</sys:String>
+        <!-- Add Account Form Fields Translations -->
+    <sys:String x:Key="AccountNameFieldTitle">اسم الحساب</sys:String>
+    <sys:String x:Key="UserNameFieldTitle">اسم المستخدم</sys:String>
+        <sys:String x:Key="PasswordFieldTitle">كلمة المرور</sys:String>
+    <sys:String x:Key="EmailFieldTitle">البريد الالكتروني</sys:String>
+        <sys:String x:Key="WebsiteFieldTitle">الموقع</sys:String>
+        <sys:String x:Key="NotesFieldTitle">ملاحظات</sys:String>
+
+        <!-- Add Bank Card Form Fields Translations -->
+        <sys:String x:Key="CardNameFieldTitle">اسم البطاقة</sys:String>
+        <sys:String x:Key="CardNumberFieldTitle">رقم البطاقة</sys:String>
+        <sys:String x:Key="ExpiryDateFieldTitle">تاريخ الانتهاء</sys:String>
+        <sys:String x:Key="CvvFieldTitle">CVV</sys:String>
+        <sys:String x:Key="BankFieldTitle">البنك</sys:String>
+
+        <!-- Add Document Form Fields Translations -->
+        <sys:String x:Key="DocumentNameFieldTitle">اسم المستند</sys:String>
+        <sys:String x:Key="TypeFieldTitle">النوع</sys:String>
+        <sys:String x:Key="NumberFieldTitle">الرقم</sys:String>
+        <sys:String x:Key="IssuerFieldTitle">المُصدر</sys:String>
+
+        <!-- Add Address Form Fields Translations -->
+        <sys:String x:Key="AddressNameFieldTitle">الاسم</sys:String>
+        <sys:String x:Key="StreetFieldTitle">الشارع</sys:String>
+        <sys:String x:Key="CityFieldTitle">المدينة</sys:String>
+        <sys:String x:Key="StateFieldTitle">الولاية</sys:String>
+        <sys:String x:Key="ZipCodeFieldTitle">الرمز البريدي</sys:String>
+        <sys:String x:Key="CountryFieldTitle">الدولة</sys:String>
+
+        <!-- Add Notes Form Fields Translations -->
+        <sys:String x:Key="TitleFieldTitle">العنوان</sys:String>
+        <sys:String x:Key="ContentFieldTitle">المحتوى</sys:String>
+        <sys:String x:Key="CategoryFieldTitle">القسم</sys:String>
+        <sys:String x:Key="TagsFieldTitle">الوسوم</sys:String>
+
 </ResourceDictionary>

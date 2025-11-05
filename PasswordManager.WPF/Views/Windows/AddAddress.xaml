@@ -23,6 +23,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
@@ -30,12 +31,14 @@
             </Grid.ColumnDefinitions>
             <Grid.Resources>
                 <Style TargetType="TextBlock">
+                    <Setter Property="FontFamily"
+                            Value="Cairo"/>
                     <Setter Property="Foreground"
                             Value="{DynamicResource TextColor}"/>
                     <Setter Property="VerticalAlignment"
                             Value="Center"/>
                     <Setter Property="Margin"
-                            Value="0,0,0,6"/>
+                            Value="0,0,10,6"/>
                 </Style>
                 <Style TargetType="TextBox">
                     <Setter Property="Foreground"
@@ -55,49 +58,49 @@
 
             <TextBlock Grid.Row="0"
                        Grid.Column="0"
-                       Text="Name"/>
+                       Text="{DynamicResource AddressNameFieldTitle}"/>
             <TextBox x:Name="NameTextBox"
                      Grid.Row="0"
                      Grid.Column="1"/>
 
             <TextBlock Grid.Row="1"
                        Grid.Column="0"
-                       Text="Street"/>
+                       Text="{DynamicResource StreetFieldTitle}"/>
             <TextBox x:Name="StreetTextBox"
                      Grid.Row="1"
                      Grid.Column="1"/>
 
             <TextBlock Grid.Row="2"
                        Grid.Column="0"
-                       Text="City"/>
+                       Text="{DynamicResource CityFieldTitle}"/>
             <TextBox x:Name="CityTextBox"
                      Grid.Row="2"
                      Grid.Column="1"/>
 
             <TextBlock Grid.Row="3"
                        Grid.Column="0"
-                       Text="State"/>
+                       Text="{DynamicResource StateFieldTitle}"/>
             <TextBox x:Name="StateTextBox"
                      Grid.Row="3"
                      Grid.Column="1"/>
 
             <TextBlock Grid.Row="4"
                        Grid.Column="0"
-                       Text="ZIP Code"/>
+                       Text="{DynamicResource ZipCodeFieldTitle}"/>
             <TextBox x:Name="ZipTextBox"
                      Grid.Row="4"
                      Grid.Column="1"/>
 
             <TextBlock Grid.Row="5"
                        Grid.Column="0"
-                       Text="Country"/>
+                       Text="{DynamicResource CountryFieldTitle}"/>
             <TextBox x:Name="CountryTextBox"
                      Grid.Row="5"
                      Grid.Column="1"/>
 
             <TextBlock Grid.Row="6"
                        Grid.Column="0"
-                       Text="Notes"/>
+                       Text="{DynamicResource NotesFieldTitle}"/>
             <TextBox x:Name="NotesTextBox"
                      Grid.Row="6"
                      Grid.Column="1"
@@ -110,12 +113,12 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         Margin="0,10,0,0">
-                <Button Content="Cancel"
+                <Button Content="{DynamicResource CancelBtnTitle}"
+                        Style="{DynamicResource SecondaryBtnStyle}"
                         Margin="0,0,10,0"
-                        Padding="16,8"
                         Click="OnCancelClick"/>
-                <Button Content="Save"
-                        Style="{DynamicResource PrimaryButtonStyle}"
+                <Button Content="{DynamicResource SaveBtnTitle}"
+                        Style="{DynamicResource PrimaryBtnStyle}"
                         Padding="16,8"
                         Click="OnSaveClick"/>
             </StackPanel>

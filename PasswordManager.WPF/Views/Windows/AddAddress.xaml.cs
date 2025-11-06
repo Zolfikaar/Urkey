@@ -42,18 +42,18 @@ namespace PasswordManager.WPF.Views.Windows
         public string Name => NameTextBox.Text;
         public string Street => StreetTextBox.Text;
         public string City => CityTextBox.Text;
-        public string State => StateTextBox.Text;
+        public string Governorate => GovernorateTextBox.Text;
         public string Zip => ZipTextBox.Text;
         public string Country => CountryTextBox.Text;
         public string Notes => NotesTextBox.Text;
 
         // Method to set initial values
-        public void SetValues(string name = "", string street = "", string city = "", string state = "", string zip = "", string country = "", string notes = "")
+        public void SetValues(string name = "", string street = "", string city = "", string governorate = "", string zip = "", string country = "", string notes = "")
         {
             NameTextBox.Text = name;
             StreetTextBox.Text = street;
             CityTextBox.Text = city;
-            StateTextBox.Text = state;
+            GovernorateTextBox.Text = governorate;
             ZipTextBox.Text = zip;
             CountryTextBox.Text = country;
             NotesTextBox.Text = notes;
@@ -76,7 +76,7 @@ namespace PasswordManager.WPF.Views.Windows
             string name = NameTextBox.Text;
             string street = StreetTextBox.Text;
             string city = CityTextBox.Text;
-            string state = StateTextBox.Text;
+            string state = GovernorateTextBox.Text;
             string zip = ZipTextBox.Text;
             string country = CountryTextBox.Text;
             string notes = NotesTextBox.Text;

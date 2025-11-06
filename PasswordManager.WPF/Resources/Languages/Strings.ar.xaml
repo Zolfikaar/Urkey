@@ -91,12 +91,15 @@
         <sys:String x:Key="TypeFieldTitle">النوع</sys:String>
         <sys:String x:Key="NumberFieldTitle">الرقم</sys:String>
         <sys:String x:Key="IssuerFieldTitle">المُصدر</sys:String>
+        <sys:String x:Key="DocumentImageTitle">صورة المستند</sys:String>
+        <sys:String x:Key="MaxImageSizeTitle">اقصى حجم للصورة 500 كيلو بايت⚠️</sys:String>
 
-        <!-- Add Address Form Fields Translations -->
+
+    <!-- Add Address Form Fields Translations -->
         <sys:String x:Key="AddressNameFieldTitle">الاسم</sys:String>
         <sys:String x:Key="StreetFieldTitle">الشارع</sys:String>
         <sys:String x:Key="CityFieldTitle">المدينة</sys:String>
-        <sys:String x:Key="StateFieldTitle">الولاية</sys:String>
+        <sys:String x:Key="GovernorateFieldTitle">المحافظة</sys:String>
         <sys:String x:Key="ZipCodeFieldTitle">الرمز البريدي</sys:String>
         <sys:String x:Key="CountryFieldTitle">الدولة</sys:String>
 

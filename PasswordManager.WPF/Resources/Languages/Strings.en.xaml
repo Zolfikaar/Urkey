@@ -92,12 +92,15 @@
     <sys:String x:Key="TypeFieldTitle">Type</sys:String>
     <sys:String x:Key="NumberFieldTitle">Number</sys:String>
     <sys:String x:Key="IssuerFieldTitle">Issuer</sys:String>
+    <sys:String x:Key="DocumentImageTitle">Document Image</sys:String>
+    <sys:String x:Key="MaxImageSizeTitle">⚠️ Max image size: 500 KB</sys:String>
+    
 
     <!-- Add Address Form Fields Translations -->
     <sys:String x:Key="AddressNameFieldTitle">Name</sys:String>
     <sys:String x:Key="StreetFieldTitle">Street</sys:String>
     <sys:String x:Key="CityFieldTitle">City</sys:String>
-    <sys:String x:Key="StateFieldTitle">State</sys:String>
+    <sys:String x:Key="GovernorateFieldTitle">Governorate</sys:String>
     <sys:String x:Key="ZipCodeFieldTitle">ZIP Code</sys:String>
     <sys:String x:Key="CountryFieldTitle">Country</sys:String>
 

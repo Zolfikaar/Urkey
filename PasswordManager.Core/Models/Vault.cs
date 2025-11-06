@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace PasswordManager.Core.Models
 {
     public class Vault
     {
-        public List<Credential> Credentials { get; set; } = new List<Credential>();
+        public List<VaultEntry> Entries { get; set; } = new List<VaultEntry>();
     }
 }

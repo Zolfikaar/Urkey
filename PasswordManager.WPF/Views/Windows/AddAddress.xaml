@@ -79,8 +79,8 @@
 
             <TextBlock Grid.Row="3"
                        Grid.Column="0"
-                       Text="{DynamicResource StateFieldTitle}"/>
-            <TextBox x:Name="StateTextBox"
+                       Text="{DynamicResource GovernorateFieldTitle}"/>
+            <TextBox x:Name="GovernorateTextBox"
                      Grid.Row="3"
                      Grid.Column="1"/>
 

@@ -13,7 +13,7 @@ namespace PasswordManager.Core.Services
         /// Initialize the service with a master password.
         /// Derives a key from the password using PBKDF2.
         /// </summary>
-        public static void Initialize(string masterPassword)
+        public static void Initialize(string masterPassword = "123456")
         {
             // Use a fixed application salt (later you can persist a unique salt per user/vault)
             byte[] salt = Encoding.UTF8.GetBytes("YourAppFixedSalt123!");

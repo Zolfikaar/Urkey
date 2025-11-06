@@ -73,7 +73,11 @@ namespace PasswordManager.WPF.Views
         private void Sidebar_OnNavigationRequested(object sender, SidebarNavigationEventArgs e)
         {
             if (e.View is FrameworkElement view)
-                view.DataContext = _mainViewModel;
+            {
+                // Only set DataContext if it's not already set (some pages set their own ViewModel)
+                if (view.DataContext == null)
+                    view.DataContext = _mainViewModel;
+            }
 
             MainContentArea.Content = e.View;
         }

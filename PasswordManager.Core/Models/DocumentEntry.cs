@@ -6,7 +6,7 @@
         public string Type { get; set; } = string.Empty; // e.g., ID, Passport, License
         public string Number { get; set; } = string.Empty;
         public string Issuer {  get; set; } = string.Empty;
-        public DateOnly ExpiryDate { get; set; }
+        public DateOnly? ExpiryDate { get; set; }
         public string? Notes { get; set; }
 
         // اسم الملف أو وصفه

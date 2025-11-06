@@ -18,7 +18,16 @@ namespace PasswordManager.WPF.ViewModels
         private readonly VaultRepository _repo;
         private Vault _vault;
 
-        public ObservableCollection<DocumentEntry> Documents { get; }
+        private ObservableCollection<DocumentEntry> _documents = new();
+        public ObservableCollection<DocumentEntry> Documents
+        {
+            get => _documents;
+            set
+            {
+                _documents = value;
+                OnPropertyChanged(nameof(Documents));
+            }
+        }
 
         private DocumentEntry? _selectedDocument;
         public DocumentEntry? SelectedDocument
@@ -32,7 +41,7 @@ namespace PasswordManager.WPF.ViewModels
         }
 
         // الأوامر
-        public ICommand AddCommand { get; }
+        public ICommand SaveDocCommand { get; }
         public ICommand ReloadCommand { get; }
         public ICommand PreviewCommand { get; }
         public ICommand OpenFolderCommand { get; }
@@ -42,34 +51,55 @@ namespace PasswordManager.WPF.ViewModels
             _repo = new VaultRepository(); // المسار يحدد تلقائيًا إلى AppData\PasswordManager
             _vault = _repo.LoadVault();
 
-            var docs = _vault.Entries.OfType<DocumentEntry>();
-            Documents = new ObservableCollection<DocumentEntry>(docs);
+            // تحميل الوثائق من القبو
+            Reload();
 
-            AddCommand = new RelayCommand(_ => AddDocument());
+            SaveDocCommand = new RelayCommand<DocumentEntry>(SaveNewDocument, CanSaveDocument);
             ReloadCommand = new RelayCommand(_ => Reload());
             PreviewCommand = new RelayCommand(_ => Preview(), _ => SelectedDocument != null);
             OpenFolderCommand = new RelayCommand(_ => OpenFolder(), _ => SelectedDocument != null);
         }
 
-        private void AddDocument()
+        public void SaveNewDocument(DocumentEntry? newDoc)
         {
-            // فتح نافذة إضافة مستند جديد
-            var addWindow = new AddDocument
+            try
             {
-                Owner = Application.Current.MainWindow
-            };
-            addWindow.ShowDialog();
+                if (newDoc is null)
+                {
+                    MessageBox.Show("Error saving document: Document is null", "Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
 
-            // إعادة تحميل البيانات بعد الإضافة
-            Reload();
+                // 🔹 تحويل الصورة إلى Base64 إذا موجودة
+                if (!string.IsNullOrWhiteSpace(newDoc.ExternalImagePath) && File.Exists(newDoc.ExternalImagePath))
+                {
+                    newDoc.FileContentBase64 = ImageService.ToBase64(newDoc.ExternalImagePath);
+                }
+
+                _vault.Entries.Add(newDoc);
+                _repo.SaveVault(_vault);
+                Documents.Add(newDoc);
+
+                MessageBox.Show("Document saved successfully!", "Success",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error saving document: {ex.Message}",
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public void Reload()
         {
             _vault = _repo.LoadVault();
             Documents.Clear();
+
             foreach (var doc in _vault.Entries.OfType<DocumentEntry>())
                 Documents.Add(doc);
+
+            OnPropertyChanged(nameof(Documents));
         }
 
         private void Preview()
@@ -77,7 +107,7 @@ namespace PasswordManager.WPF.ViewModels
             if (SelectedDocument == null)
             {
                 MessageBox.Show("Select a document first.", "Info",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -85,7 +115,7 @@ namespace PasswordManager.WPF.ViewModels
                 !File.Exists(SelectedDocument.ExternalImagePath))
             {
                 MessageBox.Show("This document has no attached image.", "Info",
-                                MessageBoxButton.OK, MessageBoxImage.Information);
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
@@ -102,13 +132,20 @@ namespace PasswordManager.WPF.ViewModels
                 !File.Exists(SelectedDocument.ExternalImagePath))
             {
                 MessageBox.Show("Image file not found.", "Warning",
-                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
             var psi = new System.Diagnostics.ProcessStartInfo("explorer.exe",
                 $"/select,\"{SelectedDocument.ExternalImagePath}\"");
             System.Diagnostics.Process.Start(psi);
+        }
+
+        private bool CanSaveDocument(DocumentEntry? entry)
+        {
+            return entry is not null &&
+                   !string.IsNullOrWhiteSpace(entry.Type) &&
+                   !string.IsNullOrWhiteSpace(entry.Number);
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;

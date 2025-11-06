@@ -1,11 +1,8 @@
 ﻿using PasswordManager.Core.Models;
-using PasswordManager.Core.Repository;
-using PasswordManager.Core.Services;
 using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
-using PasswordManager.WPF.ViewModels;
 
 namespace PasswordManager.WPF.Views.Windows
 {
@@ -13,7 +10,9 @@ namespace PasswordManager.WPF.Views.Windows
     {
         private const long MaxImageSize = 500 * 1024; // 500 KB
         private string? _selectedImagePath;
-        private DocumentsViewModel _DocVM;
+
+        // ⬅️ الوثيقة الناتجة عن الإضافة
+        public DocumentEntry? Document { get; private set; }
 
         public AddDocument()
         {
@@ -22,84 +21,47 @@ namespace PasswordManager.WPF.Views.Windows
                 ? FlowDirection.RightToLeft
                 : FlowDirection.LeftToRight;
             Loaded += OnLoaded;
-
-            _DocVM = new DocumentsViewModel();
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            ApplyTheme();
-        }
+        private void OnLoaded(object sender, RoutedEventArgs e) => ApplyTheme();
 
         private void ApplyTheme()
         {
             var currentTheme = SystemParameters.HighContrast ? "Dark" : "Light";
+            // theme logic later
         }
 
-        // خصائص تسهّل الوصول إلى القيم
-        public string DocumentName => DocumentNameTextBox.Text;
-        public string Type => TypeTextBox.Text;
-        public string Number => NumberTextBox.Text;
-        public string Issuer => IssuerTextBox.Text;
-        public string Expiry => ExpiryTextBox.Text;
-        public string Notes => NotesTextBox.Text;
-
-        // لتعبئة القيم عند الحاجة
-        public void SetValues(string documentName = "", string type = "", string number = "", string issuer = "", string expiry = "", string notes = "")
-        {
-            DocumentNameTextBox.Text = documentName;
-            TypeTextBox.Text = type;
-            NumberTextBox.Text = number;
-            IssuerTextBox.Text = issuer;
-            ExpiryTextBox.Text = expiry;
-            NotesTextBox.Text = notes;
-        }
-
-        private void OnCancelClick(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+        private void OnCancelClick(object sender, RoutedEventArgs e) => Close();
 
         private void OnSaveClick(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(DocumentNameTextBox.Text))
             {
-                MessageBox.Show("Document Name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                MessageBox.Show("Document name is required.", "Validation Error",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            try
+            DateOnly? parsed = null;
+            var text = ExpiryTextBox.Text?.Trim();
+            if (!string.IsNullOrEmpty(text) && DateOnly.TryParse(text, out var d))
+                parsed = d;
+
+            // ✅ إنشاء كائن الوثيقة من بيانات المستخدم
+            Document = new DocumentEntry
             {
-                var repo = new VaultRepository(); // المسار يحدد تلقائيًا إلى AppData
-                var vault = repo.LoadVault();
+                Name = DocumentNameTextBox.Text ?? string.Empty,
+                Type = TypeTextBox.Text ?? string.Empty,
+                Number = NumberTextBox.Text ?? string.Empty,
+                Issuer = IssuerTextBox.Text ?? string.Empty,
+                Notes = NotesTextBox.Text,
+                ExpiryDate = parsed,
+                ExternalImagePath = _selectedImagePath
+            };
 
-                var doc = new DocumentEntry
-                {
-                    Title = DocumentName,
-                    Type = Type,
-                    Number = Number,
-                    Notes = Notes,
-                };
-
-                // نحفظ الصورة إذا كانت موجودة
-                if (!string.IsNullOrEmpty(_selectedImagePath))
-                {
-                    string vaultDir = Path.GetDirectoryName(repo.GetVaultPath())!;
-                    string encryptedImagePath = FileHelper.SaveDocumentImage(_selectedImagePath, vaultDir);
-                    doc.ExternalImagePath = encryptedImagePath;
-                    doc.FileName = System.IO.Path.GetFileName(_selectedImagePath);
-                }
-
-                // نضيف الإدخال إلى Vault ونحفظ
-                repo.AddEntry(doc);
-
-                MessageBox.Show("Document saved successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                Close();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error saving document: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
+            // ✅ علّم الصفحة الأم أن العملية تمت بنجاح
+            DialogResult = true;
+            Close();
         }
 
         private void OnBrowseImageClick(object sender, RoutedEventArgs e)
@@ -130,8 +92,5 @@ namespace PasswordManager.WPF.Views.Windows
                 PreviewImage.Source = bitmap;
             }
         }
-
-        
-
     }
 }

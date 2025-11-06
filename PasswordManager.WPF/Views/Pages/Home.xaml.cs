@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows;
 using System.Windows.Controls;
+using PasswordManager.WPF.ViewModels;
 using PasswordManager.WPF.Views.Windows;
 
 
@@ -41,9 +42,14 @@ namespace PasswordManager.WPF.Views.Pages
 
         private void OnAddDocument_Click(object sender, RoutedEventArgs e)
         {
-            var win = new AddDocument();
-            win.Owner = Application.Current.MainWindow;
-            win.ShowDialog();
+            var win = new AddDocument { Owner = Application.Current.MainWindow };
+
+            if (win.ShowDialog() == true && win.Document != null)
+            {
+                // Create a DocumentsViewModel instance to save the document
+                var vm = new DocumentsViewModel();
+                vm.SaveNewDocument(win.Document);
+            }
         }
 
         private void OnAddAddress_Click(object sender, RoutedEventArgs e)

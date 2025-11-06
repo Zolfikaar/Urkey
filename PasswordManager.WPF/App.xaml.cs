@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using PasswordManager.Core.Services;
 using PasswordManager.WPF.Helpers;
 
 namespace PasswordManager.WPF
@@ -10,6 +11,9 @@ namespace PasswordManager.WPF
         protected override void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            // تهيئة مؤقتة لخدمة التشفير أثناء التطوير
+            EncryptionService.Initialize();
 
             Settings = SettingsHelper.LoadSettings();
 

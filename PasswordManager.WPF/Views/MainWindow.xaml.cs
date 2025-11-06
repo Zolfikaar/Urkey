@@ -19,6 +19,9 @@ namespace PasswordManager.WPF.Views
         private readonly string _burgerIcon = "\uE700";
         private readonly string _closeIcon = "\uE711";
 
+        private Rect _restoreBounds; // لحفظ موقع وحجم النافذة قبل التكبير
+        private bool _isCustomMaximized = false;
+
         public event PropertyChangedEventHandler PropertyChanged;
         public static event EventHandler<bool> SidebarStateChanged;
 
@@ -79,7 +82,6 @@ namespace PasswordManager.WPF.Views
         {
             PerformAnimation();
 
-            // تأخير بسيط لمزامنة الحركة
             var delay = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
             delay.Tick += (s, args) =>
             {
@@ -89,7 +91,6 @@ namespace PasswordManager.WPF.Views
 
                 UpdateLogoTextVisibility(IsSidebarExpanded);
 
-                // حفظ التفضيل الجديد 🔒
                 App.Settings.SidebarExpanded = IsSidebarExpanded;
                 SettingsHelper.SaveSettings(App.Settings);
 
@@ -113,7 +114,6 @@ namespace PasswordManager.WPF.Views
 
             SidebarContainer.BeginAnimation(WidthProperty, animation);
             Logo.BeginAnimation(WidthProperty, animation);
-
             if (LogoWrapper != null)
                 LogoWrapper.BeginAnimation(WidthProperty, animation);
         }
@@ -143,31 +143,6 @@ namespace PasswordManager.WPF.Views
         }
 
 
-
-
-
-
-        private void DragWindow(object sender, MouseButtonEventArgs e)
-        {
-            if (e.ChangedButton == MouseButton.Left)
-                this.DragMove();
-        }
-
-        private void Minimize_Click(object sender, RoutedEventArgs e)
-        {
-            this.WindowState = WindowState.Minimized;
-        }
-
-        private void Maximize_Click(object sender, RoutedEventArgs e)
-        {
-            this.WindowState =
-                this.WindowState == WindowState.Maximized ? WindowState.Normal : WindowState.Maximized;
-        }
-
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            this.Close();
-        }
 
     }
 }

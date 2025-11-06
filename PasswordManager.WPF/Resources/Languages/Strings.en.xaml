@@ -94,6 +94,7 @@
     <sys:String x:Key="IssuerFieldTitle">Issuer</sys:String>
     <sys:String x:Key="DocumentImageTitle">Document Image</sys:String>
     <sys:String x:Key="MaxImageSizeTitle">⚠️ Max image size: 500 KB</sys:String>
+    <sys:String x:Key="AttachImageTitle">Attach Image</sys:String>
     
 
     <!-- Add Address Form Fields Translations -->

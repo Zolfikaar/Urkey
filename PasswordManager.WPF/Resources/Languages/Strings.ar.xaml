@@ -72,10 +72,10 @@
         <sys:String x:Key="CancelBtnTitle">إلغاء</sys:String>
         <sys:String x:Key="SaveBtnTitle">حفظ</sys:String>
         <!-- Add Account Form Fields Translations -->
-    <sys:String x:Key="AccountNameFieldTitle">اسم الحساب</sys:String>
-    <sys:String x:Key="UserNameFieldTitle">اسم المستخدم</sys:String>
+        <sys:String x:Key="AccountNameFieldTitle">اسم الحساب</sys:String>
+        <sys:String x:Key="UserNameFieldTitle">اسم المستخدم</sys:String>
         <sys:String x:Key="PasswordFieldTitle">كلمة المرور</sys:String>
-    <sys:String x:Key="EmailFieldTitle">البريد الالكتروني</sys:String>
+        <sys:String x:Key="EmailFieldTitle">البريد الالكتروني</sys:String>
         <sys:String x:Key="WebsiteFieldTitle">الموقع</sys:String>
         <sys:String x:Key="NotesFieldTitle">ملاحظات</sys:String>
 
@@ -92,10 +92,10 @@
         <sys:String x:Key="NumberFieldTitle">الرقم</sys:String>
         <sys:String x:Key="IssuerFieldTitle">المُصدر</sys:String>
         <sys:String x:Key="DocumentImageTitle">صورة المستند</sys:String>
-        <sys:String x:Key="MaxImageSizeTitle">اقصى حجم للصورة 500 كيلو بايت⚠️</sys:String>
+        <sys:String x:Key="MaxImageSizeTitle">⚠️اقصى حجم للصورة 500 كيلو بايت</sys:String>
+        <sys:String x:Key="AttachImageTitle">إرفاق صورة</sys:String>
 
-
-    <!-- Add Address Form Fields Translations -->
+        <!-- Add Address Form Fields Translations -->
         <sys:String x:Key="AddressNameFieldTitle">الاسم</sys:String>
         <sys:String x:Key="StreetFieldTitle">الشارع</sys:String>
         <sys:String x:Key="CityFieldTitle">المدينة</sys:String>

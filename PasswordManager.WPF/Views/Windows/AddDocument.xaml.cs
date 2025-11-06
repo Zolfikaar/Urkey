@@ -5,6 +5,7 @@ using System;
 using System.IO;
 using System.Windows;
 using System.Windows.Media.Imaging;
+using PasswordManager.WPF.ViewModels;
 
 namespace PasswordManager.WPF.Views.Windows
 {
@@ -12,6 +13,7 @@ namespace PasswordManager.WPF.Views.Windows
     {
         private const long MaxImageSize = 500 * 1024; // 500 KB
         private string? _selectedImagePath;
+        private DocumentsViewModel _DocVM;
 
         public AddDocument()
         {
@@ -20,6 +22,8 @@ namespace PasswordManager.WPF.Views.Windows
                 ? FlowDirection.RightToLeft
                 : FlowDirection.LeftToRight;
             Loaded += OnLoaded;
+
+            _DocVM = new DocumentsViewModel();
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)

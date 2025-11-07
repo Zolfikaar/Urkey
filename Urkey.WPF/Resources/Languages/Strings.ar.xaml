@@ -1,0 +1,128 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+        <sys:String x:Key="AppTitle">اوركي</sys:String>
+        <sys:String x:Key="AddButton">إضافة</sys:String>
+        <sys:String x:Key="CancelButton">إلغاء</sys:String>
+        <sys:String x:Key="Settings_Title">الإعدادات</sys:String>
+        <sys:String x:Key="MainWindowTitle">اوركي</sys:String>
+        <sys:String x:Key="ChangeBtn">تغيير</sys:String>
+        <sys:String x:Key="LanguageSettings_Title">إعدادات اللغة</sys:String>
+        <sys:String x:Key="LanguageSettings_Description">قم بتغيير لغة التطبيق الرئيسية</sys:String>
+        <sys:String x:Key="SecuritySettings_Title">إعدادات الأمان</sys:String>
+        <sys:String x:Key="MasterPassword_Title">تغيير كلمة المرور الرئيسية</sys:String>
+        <sys:String x:Key="MasterPassword_Description">قم بتغيير كلمة المرور الرئيسية لحماية جميع كلمات المرور</sys:String>
+        <sys:String x:Key="ThemeSettings_Title">إعدادات الخلفية</sys:String>
+        <sys:String x:Key="ThemeSettings_Description">قم بتغيير لون خلفية التطبيق الرئيسية</sys:String>
+        <sys:String x:Key="Username">اسم المستخدم</sys:String>
+        <sys:String x:Key="Profile">الملف الشخصي</sys:String>
+        <sys:String x:Key="Logout">تسجيل الخروج</sys:String>
+        <!-- Sidebar titles -->
+        <sys:String x:Key="HomeTitle">الرئيسية</sys:String>
+        <sys:String x:Key="AllEntriesTitle">كل الإدخالات</sys:String>
+        <sys:String x:Key="AccountsTitle">الحسابات</sys:String>
+        <sys:String x:Key="BankCardsTitle">البطاقات البنكية</sys:String>
+        <sys:String x:Key="AddressesTitle">العناوين</sys:String>
+        <sys:String x:Key="NotesTitle">الملاحظات</sys:String>
+        <sys:String x:Key="DocsTitle">المستندات</sys:String>
+        <sys:String x:Key="PasswordCheckTitle">فحص كلمات المرور</sys:String>
+        <sys:String x:Key="PasswordGeneratorTitle">مولد الرموز</sys:String>
+        <sys:String x:Key="SettingsTitle">اللإعدادات</sys:String>
+
+        <!-- Home Page Translations -->
+        <sys:String x:Key="WelcomeHomeText">مرحباً بك في مدير كلمات المرور</sys:String>
+        <sys:String x:Key="WelcomeSubtitle">إدارة آمنة ومرتبة لجميع كلمات المرور الخاصة بك</sys:String>
+        <sys:String x:Key="PasswordsTotal">إجمالي كلمات المرور</sys:String>
+        <sys:String x:Key="VaultsTotal">المخازن</sys:String>
+        <sys:String x:Key="SecurityPoints">نقاط الامان</sys:String>
+
+        <!-- Settings Page Translations -->
+        <sys:String x:Key="SidebarSettings_Title">إعدادات الشريط الجانبي</sys:String>
+        <sys:String x:Key="SidebarSettings_DefaultState">حالة الشريط الجانبي الافتراضية</sys:String>
+        <sys:String x:Key="SidebarSettings_Description">تعيين حالة توسيع الشريط الجانبي الافتراضية</sys:String>
+        <sys:String x:Key="SidebarState_Expanded">موسع</sys:String>
+        <sys:String x:Key="SidebarState_Shrunk">مقصور</sys:String>
+
+        <sys:String x:Key="ClipboardSettings_Title">إعدادات الحافظة</sys:String>
+        <sys:String x:Key="ClipboardSettings_ClearAfter">مسح الحافظة بعد</sys:String>
+        <sys:String x:Key="ClipboardSettings_Description">مسح الحافظة تلقائياً بعد الوقت المحدد</sys:String>
+        <sys:String x:Key="ClipboardTime_10Seconds">10 ثواني</sys:String>
+        <sys:String x:Key="ClipboardTime_30Seconds">30 ثانية</sys:String>
+        <sys:String x:Key="ClipboardTime_1Minute">دقيقة واحدة</sys:String>
+        <sys:String x:Key="ClipboardTime_Never">أبداً</sys:String>
+
+        <sys:String x:Key="UserAccount_Title">حساب المستخدم</sys:String>
+        <sys:String x:Key="UserAccount_Name">مستخدم ضيف</sys:String>
+        <sys:String x:Key="UserAccount_Description">إدارة إعدادات حسابك</sys:String>
+        <sys:String x:Key="SignOutButton">تسجيل الخروج</sys:String>
+
+        <sys:String x:Key="AutosaveAutofill_Title">الحفظ التلقائي والتعبئة التلقائية</sys:String>
+        <sys:String x:Key="AutosavePasswords">الحفظ التلقائي لكلمات المرور</sys:String>
+        <sys:String x:Key="AutofillPasswords">التعبئة التلقائية لكلمات المرور</sys:String>
+        <sys:String x:Key="AutosaveAddresses">الحفظ التلقائي للعناوين</sys:String>
+        <sys:String x:Key="AutofillAddresses">التعبئة التلقائية للعناوين</sys:String>
+        <sys:String x:Key="AutosaveBankCards">الحفظ التلقائي للبطاقات البنكية</sys:String>
+        <sys:String x:Key="AutofillBankCards">التعبئة التلقائية للبطاقات البنكية</sys:String>
+
+        <sys:String x:Key="SyncSettings_Title">إعدادات المزامنة</sys:String>
+        <sys:String x:Key="SyncSettings_SyncDevices">المزامنة عبر الأجهزة</sys:String>
+        <sys:String x:Key="SyncSettings_Description">مزامنة كلمات المرور والبيانات عبر جميع أجهزتك</sys:String>
+
+        <!-- Forms Translations -->
+        <sys:String x:Key="CancelBtnTitle">إلغاء</sys:String>
+        <sys:String x:Key="SaveBtnTitle">حفظ</sys:String>
+        <!-- Add Account Form Fields Translations -->
+        <sys:String x:Key="AccountNameFieldTitle">اسم الحساب</sys:String>
+        <sys:String x:Key="UserNameFieldTitle">اسم المستخدم</sys:String>
+        <sys:String x:Key="PasswordFieldTitle">كلمة المرور</sys:String>
+        <sys:String x:Key="EmailFieldTitle">البريد الالكتروني</sys:String>
+        <sys:String x:Key="WebsiteFieldTitle">الموقع</sys:String>
+        <sys:String x:Key="NotesFieldTitle">ملاحظات</sys:String>
+
+        <!-- Add Bank Card Form Fields Translations -->
+        <sys:String x:Key="CardNameFieldTitle">اسم البطاقة</sys:String>
+        <sys:String x:Key="CardNumberFieldTitle">رقم البطاقة</sys:String>
+        <sys:String x:Key="ExpiryDateFieldTitle">تاريخ الانتهاء</sys:String>
+        <sys:String x:Key="CvvFieldTitle">CVV</sys:String>
+        <sys:String x:Key="BankFieldTitle">البنك</sys:String>
+
+        <!-- Add Document Form Fields Translations -->
+        <sys:String x:Key="DocumentNameFieldTitle">اسم المستند</sys:String>
+        <sys:String x:Key="TypeFieldTitle">النوع</sys:String>
+        <sys:String x:Key="NumberFieldTitle">الرقم</sys:String>
+        <sys:String x:Key="IssuerFieldTitle">المُصدر</sys:String>
+        <sys:String x:Key="DocumentImageTitle">صورة المستند</sys:String>
+        <sys:String x:Key="MaxImageSizeTitle">⚠️اقصى حجم للصورة 500 كيلو بايت</sys:String>
+        <sys:String x:Key="AttachImageTitle">إرفاق صورة</sys:String>
+
+        <!-- Add Address Form Fields Translations -->
+        <sys:String x:Key="AddressNameFieldTitle">الاسم</sys:String>
+        <sys:String x:Key="StreetFieldTitle">الشارع</sys:String>
+        <sys:String x:Key="CityFieldTitle">المدينة</sys:String>
+        <sys:String x:Key="GovernorateFieldTitle">المحافظة</sys:String>
+        <sys:String x:Key="ZipCodeFieldTitle">الرمز البريدي</sys:String>
+        <sys:String x:Key="CountryFieldTitle">الدولة</sys:String>
+
+        <!-- Add Notes Form Fields Translations -->
+        <sys:String x:Key="TitleFieldTitle">العنوان</sys:String>
+        <sys:String x:Key="ContentFieldTitle">المحتوى</sys:String>
+        <sys:String x:Key="CategoryFieldTitle">القسم</sys:String>
+        <sys:String x:Key="TagsFieldTitle">الوسوم</sys:String>
+
+        <!-- Documents Page Translations -->
+        <sys:String x:Key="DocumentsTitle">المستندات</sys:String>
+        <sys:String x:Key="AddDocumentButton">+ إضافة مستند</sys:String>
+        <sys:String x:Key="ReloadButton">إعادة التحميل</sys:String>
+        <sys:String x:Key="DocumentType">مستند</sys:String>
+        <sys:String x:Key="SelectDocumentToPreview">اختر مستنداً للمعاينة</sys:String>
+        <sys:String x:Key="EditButton">تعديل</sys:String>
+        <sys:String x:Key="DeleteButton">حذف</sys:String>
+        <sys:String x:Key="DownloadButton">تحميل</sys:String>
+        <sys:String x:Key="FavoriteButton">مفضلة</sys:String>
+        <sys:String x:Key="MoreOptionsButton">خيارات إضافية</sys:String>
+        <sys:String x:Key="ZoomResetButton">إعادة تعيين</sys:String>
+        <sys:String x:Key="SecurityWarningTitle">تحذير أمني</sys:String>
+        <sys:String x:Key="SecurityWarningMessage">⚠️ للأمان الأفضل، يُنصح بحذف الملف الأصلي بعد إضافة المستند. النسخة المشفرة محفوظة بأمان في خزنتك.</sys:String>
+        <sys:String x:Key="OtherType">أخرى</sys:String>
+
+</ResourceDictionary>

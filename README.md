@@ -1,2 +1,2 @@
-# password-manager 
-Desktop based app for managing password with mobile & browser extension
+# Urkey
+Desktop based app for managing password and more, with mobile & browser extension

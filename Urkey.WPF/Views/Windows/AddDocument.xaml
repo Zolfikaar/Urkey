@@ -1,0 +1,178 @@
+﻿<Window x:Class="Urkey.WPF.Views.Windows.AddDocument"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="Add Document"
+        Width="520"
+        Background="{DynamicResource BgColor}"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        SizeToContent="Height">
+
+    <Border Style="{DynamicResource CardStyle}"
+            Margin="20">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.Resources>
+                <Style TargetType="TextBlock">
+                    <Setter Property="FontFamily"
+                            Value="Cairo"/>
+                    <Setter Property="Foreground"
+                            Value="{DynamicResource TextColor}"/>
+                    <Setter Property="VerticalAlignment"
+                            Value="Center"/>
+                    <Setter Property="Margin"
+                            Value="0,0,10,6"/>
+                </Style>
+
+                <Style TargetType="TextBox">
+                    <Setter Property="Foreground"
+                            Value="{DynamicResource TextColor}"/>
+                    <Setter Property="Background"
+                            Value="{DynamicResource InputBgColor}"/>
+                    <Setter Property="BorderBrush"
+                            Value="{DynamicResource BorderColor}"/>
+                    <Setter Property="BorderThickness"
+                            Value="1"/>
+                    <Setter Property="Padding"
+                            Value="10"/>
+                    <Setter Property="Margin"
+                            Value="0,0,0,12"/>
+                </Style>
+            </Grid.Resources>
+
+            <!-- الاسم -->
+            <TextBlock Grid.Row="0"
+                       Grid.Column="0"
+                       Text="{DynamicResource DocumentNameFieldTitle}"/>
+            <TextBox x:Name="DocumentNameTextBox"
+                     Grid.Row="0"
+                     Grid.Column="1"/>
+
+            <!-- النوع -->
+            <TextBlock Grid.Row="1"
+                       Grid.Column="0"
+                       Text="{DynamicResource TypeFieldTitle}"/>
+            <TextBox x:Name="TypeTextBox"
+                     Grid.Row="1"
+                     Grid.Column="1"/>
+
+            <!-- الرقم -->
+            <TextBlock Grid.Row="2"
+                       Grid.Column="0"
+                       Text="{DynamicResource NumberFieldTitle}"/>
+            <TextBox x:Name="NumberTextBox"
+                     Grid.Row="2"
+                     Grid.Column="1"/>
+
+            <!-- الجهة المصدرة -->
+            <TextBlock Grid.Row="3"
+                       Grid.Column="0"
+                       Text="{DynamicResource IssuerFieldTitle}"/>
+            <TextBox x:Name="IssuerTextBox"
+                     Grid.Row="3"
+                     Grid.Column="1"/>
+
+            <!-- تاريخ الانتهاء -->
+            <TextBlock Grid.Row="4"
+                       Grid.Column="0"
+                       Text="{DynamicResource ExpiryDateFieldTitle}"/>
+            <TextBox x:Name="ExpiryTextBox"
+                     Grid.Row="4"
+                     Grid.Column="1"/>
+
+            <!-- الملاحظات -->
+            <TextBlock Grid.Row="5"
+                       Grid.Column="0"
+                       Text="{DynamicResource NotesFieldTitle}"/>
+            <TextBox x:Name="NotesTextBox"
+                     Grid.Row="5"
+                     Grid.Column="1"
+                     AcceptsReturn="True"
+                     Height="80"
+                     TextWrapping="Wrap"/>
+
+            <!-- الصورة -->
+            <TextBlock Grid.Row="6"
+                       Grid.Column="0"
+                       Text="{DynamicResource DocumentImageTitle}"/>
+            <StackPanel Grid.Row="6"
+                        Grid.Column="1"
+                        Orientation="Vertical">
+
+
+                <Grid VerticalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel VerticalAlignment="Center"
+                                Grid.Column="0">
+                        <Button x:Name="BrowseImageButton"
+                                Content="{DynamicResource AttachImageTitle}"
+                                Style="{DynamicResource SecondaryBtnStyle}"
+                                Margin="0,20,10,0"
+                                Width="130"
+                                HorizontalAlignment="Left"
+                                Click="OnBrowseImageClick"/>
+                        <TextBlock x:Name="SelectedImageName"
+                                   VerticalAlignment="Center"
+                                   Foreground="{DynamicResource TextColor}"
+                                   TextTrimming="CharacterEllipsis"/>
+                    </StackPanel>
+
+                    <!-- معاينة مصغّرة -->
+                    <Border BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            Margin="0,0,0,0"
+                            HorizontalAlignment="Right"
+                            Grid.Column="1"
+                            Width="120"
+                            Height="120">
+                        <Image x:Name="PreviewImage"
+                               Stretch="UniformToFill"/>
+                    </Border>
+                </Grid>
+                <!-- ملاحظة بالحجم -->
+                <TextBlock Text="{DynamicResource MaxImageSizeTitle}"
+                           Foreground="DarkOrange"
+                           FontSize="12"
+                           Margin="0,0,0,4"/>
+            </StackPanel>
+
+            <!-- الأزرار -->
+            <StackPanel Grid.Row="7"
+                        Grid.ColumnSpan="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,10,0,0">
+                <Button Content="{DynamicResource CancelBtnTitle}"
+                        Style="{DynamicResource SecondaryBtnStyle}"
+                        Margin="0,0,10,0"
+                        Click="OnCancelClick"/>
+                <Button Content="{DynamicResource SaveBtnTitle}"
+                        Style="{DynamicResource PrimaryBtnStyle}"
+                        Padding="16,8"
+                        Click="OnSaveClick"/>
+            </StackPanel>
+        </Grid>
+    </Border>
+</Window>

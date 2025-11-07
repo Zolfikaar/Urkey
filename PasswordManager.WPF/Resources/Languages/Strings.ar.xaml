@@ -109,4 +109,20 @@
         <sys:String x:Key="CategoryFieldTitle">القسم</sys:String>
         <sys:String x:Key="TagsFieldTitle">الوسوم</sys:String>
 
+        <!-- Documents Page Translations -->
+        <sys:String x:Key="DocumentsTitle">المستندات</sys:String>
+        <sys:String x:Key="AddDocumentButton">+ إضافة مستند</sys:String>
+        <sys:String x:Key="ReloadButton">إعادة التحميل</sys:String>
+        <sys:String x:Key="DocumentType">مستند</sys:String>
+        <sys:String x:Key="SelectDocumentToPreview">اختر مستنداً للمعاينة</sys:String>
+        <sys:String x:Key="EditButton">تعديل</sys:String>
+        <sys:String x:Key="DeleteButton">حذف</sys:String>
+        <sys:String x:Key="DownloadButton">تحميل</sys:String>
+        <sys:String x:Key="FavoriteButton">مفضلة</sys:String>
+        <sys:String x:Key="MoreOptionsButton">خيارات إضافية</sys:String>
+        <sys:String x:Key="ZoomResetButton">إعادة تعيين</sys:String>
+        <sys:String x:Key="SecurityWarningTitle">تحذير أمني</sys:String>
+        <sys:String x:Key="SecurityWarningMessage">⚠️ للأمان الأفضل، يُنصح بحذف الملف الأصلي بعد إضافة المستند. النسخة المشفرة محفوظة بأمان في خزنتك.</sys:String>
+        <sys:String x:Key="OtherType">أخرى</sys:String>
+
 </ResourceDictionary>

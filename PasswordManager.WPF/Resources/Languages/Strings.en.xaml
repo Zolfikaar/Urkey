@@ -111,5 +111,20 @@
     <sys:String x:Key="CategoryFieldTitle">Category</sys:String>
     <sys:String x:Key="TagsFieldTitle">Tags</sys:String>
 
+    <!-- Documents Page Translations -->
+    <sys:String x:Key="DocumentsTitle">Documents</sys:String>
+    <sys:String x:Key="AddDocumentButton">+ Add document</sys:String>
+    <sys:String x:Key="ReloadButton">Reload</sys:String>
+    <sys:String x:Key="DocumentType">Document</sys:String>
+    <sys:String x:Key="SelectDocumentToPreview">Select a document to preview</sys:String>
+    <sys:String x:Key="EditButton">Edit</sys:String>
+    <sys:String x:Key="DeleteButton">Delete</sys:String>
+    <sys:String x:Key="DownloadButton">Download</sys:String>
+    <sys:String x:Key="FavoriteButton">Favorite</sys:String>
+    <sys:String x:Key="MoreOptionsButton">More options</sys:String>
+    <sys:String x:Key="ZoomResetButton">Reset</sys:String>
+    <sys:String x:Key="SecurityWarningTitle">Security Warning</sys:String>
+    <sys:String x:Key="SecurityWarningMessage">⚠️ For better security, consider deleting the original file after adding the document. The encrypted copy is safely stored in your vault.</sys:String>
+    <sys:String x:Key="OtherType">Other</sys:String>
 
 </ResourceDictionary>

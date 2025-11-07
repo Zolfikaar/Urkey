@@ -40,7 +40,8 @@ namespace PasswordManager.Core.Services
             ms.Write(aes.IV, 0, aes.IV.Length);
 
             using (var cs = new CryptoStream(ms, encryptor, CryptoStreamMode.Write))
-            using (var sw = new StreamWriter(cs))
+            // استخدام UTF8 encoding بشكل صريح لضمان كتابة صحيحة
+            using (var sw = new StreamWriter(cs, Encoding.UTF8))
             {
                 sw.Write(plainText);
             }
@@ -64,7 +65,8 @@ namespace PasswordManager.Core.Services
             using var decryptor = aes.CreateDecryptor();
             using var ms = new MemoryStream(fullCipher, iv.Length, fullCipher.Length - iv.Length);
             using var cs = new CryptoStream(ms, decryptor, CryptoStreamMode.Read);
-            using var sr = new StreamReader(cs);
+            // استخدام UTF8 encoding بشكل صريح لضمان قراءة صحيحة
+            using var sr = new StreamReader(cs, Encoding.UTF8);
 
             return sr.ReadToEnd();
         }

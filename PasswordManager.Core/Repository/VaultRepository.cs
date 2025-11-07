@@ -60,5 +60,10 @@ namespace PasswordManager.Core.Repository
         }
 
         public string GetVaultPath() => _vaultFilePath;
+        
+        /// <summary>
+        /// Gets the vault directory path (where vault.json and DocumentsFiles folder are located)
+        /// </summary>
+        public string GetVaultDirectory() => _vaultDirectory;
     }
 }

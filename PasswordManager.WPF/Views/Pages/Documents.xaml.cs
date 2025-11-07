@@ -15,12 +15,23 @@ namespace PasswordManager.WPF.Views.Pages
 
             _DocVM = new DocumentsViewModel();
             DataContext = _DocVM;
+
+            // Apply language direction
+            this.FlowDirection = App.Settings.Language == "ar"
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
         }
 
         private void OnPageLoaded(object sender, RoutedEventArgs e)
         {
             // Reload documents when the page is shown to get the latest data
+            var currentSelection = _DocVM.SelectedDocument;
             _DocVM.Reload();
+            // Restore selection if it still exists
+            if (currentSelection != null && _DocVM.Documents.Contains(currentSelection))
+            {
+                _DocVM.SelectedDocument = currentSelection;
+            }
         }
 
         private void OnAddDocument_Click(object sender, RoutedEventArgs e)

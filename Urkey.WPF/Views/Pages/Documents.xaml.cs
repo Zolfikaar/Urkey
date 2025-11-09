@@ -54,5 +54,30 @@ namespace Urkey.WPF.Views.Pages
                 _DocVM.Reload();
             }
         }
+
+        private void ToggleMoreOptionsMenu(object sender, RoutedEventArgs e)
+        {
+            MoreOptionsPopup.IsOpen = !MoreOptionsPopup.IsOpen;
+        }
+
+        private void ShowDetails_Click(object sender, RoutedEventArgs e)
+        {
+            if (_DocVM.SelectedDocument == null) return;
+
+            MoreOptionsPopup.IsOpen = false;
+            
+            var detailsWindow = new DocumentDetails(_DocVM.SelectedDocument)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            detailsWindow.ShowDialog();
+        }
+
+        private void PreviewImage_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (_DocVM.SelectedDocument == null) return;
+            
+            _DocVM.PreviewCommand.Execute(_DocVM.SelectedDocument);
+        }
     }
 }

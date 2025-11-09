@@ -6,6 +6,15 @@
              xmlns:local="clr-namespace:Urkey.WPF.UserControls"
              mc:Ignorable="d">
         <UserControl.Resources>
+                <!-- Tooltip Style for Sidebar Buttons (only visible when collapsed) -->
+                <Style x:Key="SidebarButtonTooltipStyle" TargetType="ToolTip">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=UserControl}}" Value="False">
+                            <Setter Property="Visibility" Value="Visible"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
 
                 <!-- Style for Sidebar Buttons -->
                 <Style x:Key="SidebarButtonStyle"
@@ -230,57 +239,93 @@
                                                 Click="SidebarBtnClicked"
                                                 x:Name="Home"
                                                 Tag="{StaticResource bx_home}"
-                                                Content="{DynamicResource HomeTitle}"/>
+                                                Content="{DynamicResource HomeTitle}">
+                                            <Button.ToolTip>
+                                                <ToolTip Content="{DynamicResource HomeTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
+                                            </Button.ToolTip>
+                                        </Button>
 
                                         <!-- All Entries as a normal item -->
                                         <Button Style="{StaticResource SidebarButtonStyle}"
                                                 Click="SidebarBtnClicked"
                                                 x:Name="AllEntries"
                                                 Tag="{StaticResource bx_app}"
-                                                Content="{DynamicResource AllEntriesTitle}"/>
+                                                Content="{DynamicResource AllEntriesTitle}">
+                                            <Button.ToolTip>
+                                                <ToolTip Content="{DynamicResource AllEntriesTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
+                                            </Button.ToolTip>
+                                        </Button>
 
                                         <!-- Former nested items moved to top level -->
                                         <Button Style="{StaticResource SidebarButtonStyle}"
                                                 Click="SidebarBtnClicked"
                                                 x:Name="Accounts"
                                                 Tag="{StaticResource bx_userAccount}"
-                                                Content="{DynamicResource AccountsTitle}"/>
+                                                Content="{DynamicResource AccountsTitle}">
+                                            <Button.ToolTip>
+                                                <ToolTip Content="{DynamicResource AccountsTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
+                                            </Button.ToolTip>
+                                        </Button>
 
                                         <Button Style="{StaticResource SidebarButtonStyle}"
                                                 Click="SidebarBtnClicked"
                                                 x:Name="CreditCards"
                                                 Tag="{StaticResource bx_credit_card}"
-                                                Content="{DynamicResource BankCardsTitle}"/>
+                                                Content="{DynamicResource BankCardsTitle}">
+                                            <Button.ToolTip>
+                                                <ToolTip Content="{DynamicResource BankCardsTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
+                                            </Button.ToolTip>
+                                        </Button>
 
                                         <Button Style="{StaticResource SidebarButtonStyle}"
                                                 Click="SidebarBtnClicked"
                                                 x:Name="Addresses"
                                                 Tag="{StaticResource bx_address}"
-                                                Content="{DynamicResource AddressesTitle}"/>
+                                                Content="{DynamicResource AddressesTitle}">
+                                            <Button.ToolTip>
+                                                <ToolTip Content="{DynamicResource AddressesTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
+                                            </Button.ToolTip>
+                                        </Button>
 
                                         <Button Style="{StaticResource SidebarButtonStyle}"
                                                 Click="SidebarBtnClicked"
                                                 x:Name="Notes"
                                                 Tag="{StaticResource bx_notes}"
-                                                Content="{DynamicResource NotesTitle}"/>
+                                                Content="{DynamicResource NotesTitle}">
+                                            <Button.ToolTip>
+                                                <ToolTip Content="{DynamicResource NotesTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
+                                            </Button.ToolTip>
+                                        </Button>
 
                                         <Button Style="{StaticResource SidebarButtonStyle}"
                                                 Click="SidebarBtnClicked"
                                                 x:Name="Docs"
                                                 Tag="{StaticResource bx_doc}"
-                                                Content="{DynamicResource DocsTitle}"/>
+                                                Content="{DynamicResource DocsTitle}">
+                                            <Button.ToolTip>
+                                                <ToolTip Content="{DynamicResource DocsTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
+                                            </Button.ToolTip>
+                                        </Button>
 
                                         <Button Style="{StaticResource SidebarButtonStyle}"
                                                 Click="SidebarBtnClicked"
                                                 x:Name="PasswordCheck"
                                                 Tag="{StaticResource bx_passwords}"
-                                                Content="{DynamicResource PasswordCheckTitle}"/>
+                                                Content="{DynamicResource PasswordCheckTitle}">
+                                            <Button.ToolTip>
+                                                <ToolTip Content="{DynamicResource PasswordCheckTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
+                                            </Button.ToolTip>
+                                        </Button>
 
                                         <Button Style="{StaticResource SidebarButtonStyle}"
                                                 Click="SidebarBtnClicked"
                                                 x:Name="PasswordGenerator"
                                                 Tag="{StaticResource bx_password_gen}"
-                                                Content="{DynamicResource PasswordGeneratorTitle}"/>
+                                                Content="{DynamicResource PasswordGeneratorTitle}">
+                                            <Button.ToolTip>
+                                                <ToolTip Content="{DynamicResource PasswordGeneratorTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
+                                            </Button.ToolTip>
+                                        </Button>
 
                 </StackPanel>
 
@@ -291,7 +336,11 @@
                                         Tag="{StaticResource bx_settings}"
                                         Click="SidebarBtnClicked"
                                         x:Name="Settings"
-                                        Content="{DynamicResource SettingsTitle}"/>
+                                        Content="{DynamicResource SettingsTitle}">
+                                    <Button.ToolTip>
+                                        <ToolTip Content="{DynamicResource SettingsTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
+                                    </Button.ToolTip>
+                                </Button>
 
 
 

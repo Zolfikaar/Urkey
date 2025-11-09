@@ -10,17 +10,26 @@ namespace Urkey.WPF.Views.Windows
     {
         private const long MaxImageSize = 500 * 1024; // 500 KB
         private string? _selectedImagePath;
+        private string? _originalImagePath; // Original encrypted image path when editing
+        private readonly DocumentEntry? _editDocument;
 
         // ⬅️ الوثيقة الناتجة عن الإضافة
         public DocumentEntry? Document { get; private set; }
 
-        public AddDocument()
+        public AddDocument(DocumentEntry? documentToEdit = null)
         {
             InitializeComponent();
+            _editDocument = documentToEdit;
             this.FlowDirection = App.Settings.Language == "ar"
                 ? FlowDirection.RightToLeft
                 : FlowDirection.LeftToRight;
             Loaded += OnLoaded;
+            
+            if (_editDocument != null)
+            {
+                Title = "Edit Document";
+                LoadDocumentData();
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e) => ApplyTheme();
@@ -29,6 +38,49 @@ namespace Urkey.WPF.Views.Windows
         {
             var currentTheme = SystemParameters.HighContrast ? "Dark" : "Light";
             // theme logic later
+        }
+
+        private void LoadDocumentData()
+        {
+            if (_editDocument == null) return;
+
+            DocumentNameTextBox.Text = _editDocument.Name;
+            TypeTextBox.Text = _editDocument.Type;
+            NumberTextBox.Text = _editDocument.Number;
+            IssuerTextBox.Text = _editDocument.Issuer;
+            NotesTextBox.Text = _editDocument.Notes;
+            
+            if (_editDocument.ExpiryDate.HasValue)
+            {
+                ExpiryTextBox.Text = _editDocument.ExpiryDate.Value.ToString("dd/MM/yyyy");
+            }
+
+            // Load image if exists
+            if (!string.IsNullOrEmpty(_editDocument.ExternalImagePath) && 
+                System.IO.File.Exists(_editDocument.ExternalImagePath))
+            {
+                _originalImagePath = _editDocument.ExternalImagePath; // Store original encrypted path
+                try
+                {
+                    string tempPath = Urkey.Core.Services.FileHelper.ExtractDocumentImage(_editDocument.ExternalImagePath);
+                    if (System.IO.File.Exists(tempPath))
+                    {
+                        // Don't set _selectedImagePath here - only set it if user selects a new image
+                        SelectedImageName.Text = "Current image loaded";
+                        
+                        var bitmap = new BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(tempPath);
+                        bitmap.DecodePixelWidth = 120;
+                        bitmap.EndInit();
+                        PreviewImage.Source = bitmap;
+                    }
+                }
+                catch
+                {
+                    // Ignore errors loading image
+                }
+            }
         }
 
         private void OnCancelClick(object sender, RoutedEventArgs e) => Close();
@@ -58,6 +110,12 @@ namespace Urkey.WPF.Views.Windows
                 ExpiryDate = parsed,
                 ExternalImagePath = _selectedImagePath
             };
+
+            // If editing and no new image selected, keep the original encrypted image path
+            if (_editDocument != null && string.IsNullOrEmpty(_selectedImagePath))
+            {
+                Document.ExternalImagePath = _originalImagePath;
+            }
 
             // ✅ علّم الصفحة الأم أن العملية تمت بنجاح
             DialogResult = true;

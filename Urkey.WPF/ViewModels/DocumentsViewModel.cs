@@ -102,9 +102,9 @@ namespace Urkey.WPF.ViewModels
             EditCommand = new RelayCommand<DocumentEntry>(Edit, doc => doc != null);
             DeleteCommand = new RelayCommand<DocumentEntry>(Delete, doc => doc != null);
             DownloadCommand = new RelayCommand<DocumentEntry>(Download, doc => doc != null && !string.IsNullOrEmpty(doc.ExternalImagePath));
-            ZoomInCommand = new RelayCommand(_ => ZoomLevel += 0.1, _ => PreviewImage != null);
-            ZoomOutCommand = new RelayCommand(_ => ZoomLevel -= 0.1, _ => PreviewImage != null);
-            ZoomResetCommand = new RelayCommand(_ => ZoomLevel = 1.0, _ => PreviewImage != null);
+            ZoomInCommand = new RelayCommand<object?>(_ => ZoomLevel += 0.1, _ => PreviewImage != null);
+            ZoomOutCommand = new RelayCommand<object?>(_ => ZoomLevel -= 0.1, _ => PreviewImage != null);
+            ZoomResetCommand = new RelayCommand<object?>(_ => ZoomLevel = 1.0, _ => PreviewImage != null);
             DismissWarningCommand = new RelayCommand(_ => ShowSecurityWarning = false);
         }
 
@@ -186,11 +186,11 @@ namespace Urkey.WPF.ViewModels
                 return;
             }
 
-            var previewWindow = new DocumentPreview(doc.ExternalImagePath)
+            var previewWindow = new DocumentPreview(doc.ExternalImagePath, doc)
             {
                 Owner = Application.Current.MainWindow
             };
-            previewWindow.ShowDialog();
+            previewWindow.Show();
         }
 
         private void LoadPreviewImage()
@@ -225,7 +225,7 @@ namespace Urkey.WPF.ViewModels
                     bitmap.EndInit();
                     bitmap.Freeze();
                     PreviewImage = bitmap;
-                    ZoomLevel = 1.0; // Reset zoom when loading new image
+                    ZoomLevel = 0.5; // Start with smaller zoom to fit the image in the preview area
                 }
                 else
                 {
@@ -274,14 +274,11 @@ namespace Urkey.WPF.ViewModels
             var doc = document ?? SelectedDocument;
             if (doc == null) return;
 
-            var editWindow = new AddDocument
+            var editWindow = new AddDocument(doc)
             {
-                Owner = Application.Current.MainWindow,
-                Title = "Edit Document"
+                Owner = Application.Current.MainWindow
             };
 
-            // TODO: Load document data into edit window
-            // For now, just show the window
             if (editWindow.ShowDialog() == true && editWindow.Document != null)
             {
                 // Update document

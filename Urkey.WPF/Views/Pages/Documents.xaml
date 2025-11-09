@@ -2,12 +2,40 @@
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:vm="clr-namespace:Urkey.WPF.ViewModels"
+      xmlns:converters="clr-namespace:Urkey.WPF.Converters"
+      Height="670"
       Title="Documents"
       Loaded="OnPageLoaded"
       Background="{DynamicResource BgColor}">
 
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
+        <converters:DocumentThumbnailConverter x:Key="ThumbnailConverter"/>
+        <Style x:Key="MenuButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="12,8"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="4"
+                                Padding="{TemplateBinding Padding}"
+                                TextElement.Foreground="{TemplateBinding Foreground}">
+                            <ContentPresenter/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Page.Resources>
 
     <Grid>
@@ -33,6 +61,8 @@
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
+                
+
                 <!-- Header -->
                 <TextBlock Grid.Row="0" 
                           Text="{DynamicResource DocumentsTitle}" 
@@ -47,18 +77,20 @@
                            Margin="20,0,20,10">
                     <Button Content="{DynamicResource AddDocumentButton}" 
                            Click="OnAddDocument_Click"
-                           Padding="16,10"
-                           FontWeight="Bold"
-                           Background="{DynamicResource PrimaryColor}"
-                           Foreground="White"
-                           BorderThickness="0"
-                           Cursor="Hand"
-                           
+                           Style="{DynamicResource PrimaryBtnStyle}"
                            Margin="0,0,8,0"/>
-                    <Button Content="{DynamicResource ReloadButton}" 
-                           Command="{Binding ReloadCommand}"
+                    <Button Command="{Binding ReloadCommand}"
                            Padding="12,8"
-                           Style="{DynamicResource SecondaryBtnStyle}"/>
+                           Style="{DynamicResource SecondaryBtnStyle}"
+                           ToolTip="{DynamicResource ReloadButton}">
+                        <StackPanel Orientation="Horizontal">
+                            <Path Data="{StaticResource bx_app}" 
+                                  Fill="{DynamicResource TextColor}"
+                                  Width="16" Height="16"
+                                  Margin="0,0,6,0"/>
+                            <TextBlock Text="{DynamicResource ReloadButton}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
 
                 <!-- Security Warning -->
@@ -94,25 +126,38 @@
                 </Border>
 
                 <!-- Documents List -->
-                <ListBox Grid.Row="3"
+                <ListBox Grid.Row="3" 
                         ItemsSource="{Binding Documents}"
                         SelectedItem="{Binding SelectedDocument, Mode=TwoWay}"
                         BorderThickness="0"
                         Background="Transparent"
                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                        Margin="20,0">
+                        Margin="0">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="0"/>
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border Margin="0,0,0,8" 
+                            <Border
+                                  Margin="0,0,0,0" 
                                   Padding="12"
                                   CornerRadius="4"
-                                  Cursor="Hand">
+                                  Cursor="Hand"
+                                  BorderThickness="0"
+                                  HorizontalAlignment="Stretch">
                                 <Border.Style>
                                     <Style TargetType="Border">
                                         <Setter Property="Background" Value="Transparent"/>
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsSelected}" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource SidebarSelectedColor}"/>
+                                                <Setter Property="Background" Value="Transparent"/>
+                                                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}"/>
+                                                <Setter Property="BorderThickness" Value="2"/>
                                             </DataTrigger>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
@@ -123,24 +168,62 @@
                                                     <Condition Binding="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=IsMouseOver}" Value="True"/>
                                                 </MultiDataTrigger.Conditions>
                                                 <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
+                                                <Setter Property="BorderBrush" Value="{DynamicResource PrimaryColor}"/>
+                                                <Setter Property="BorderThickness" Value="2"/>
                                             </MultiDataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </Border.Style>
-                                <StackPanel>
-                                    <TextBlock Text="{Binding Name}" 
-                                             FontSize="16" 
-                                             FontWeight="SemiBold"
-                                             Foreground="{DynamicResource TextColor}"
-                                             Margin="0,0,0,4"/>
-                                    <TextBlock FontSize="12" 
-                                             Foreground="{DynamicResource SecondaryTextColor}">
-                                        <Run Text="{DynamicResource DocumentType}"/>
-                                        <Run Text=" ("/>
-                                        <Run Text="{Binding ExpiryDate, StringFormat='{}{0:dd/MM/yyyy}', FallbackValue=''}"/>
-                                        <Run Text=")"/>
-                                    </TextBlock>
-                                </StackPanel>
+                                <Grid HorizontalAlignment="Stretch">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel 
+                                        Grid.Column="0" 
+                                               VerticalAlignment="Center"
+                                               Margin="0,0,12,0">
+                                        <TextBlock Text="{Binding Name}" 
+                                                 FontSize="16" 
+                                                 FontWeight="SemiBold"
+                                                 Foreground="{DynamicResource TextColor}"
+                                                 Margin="0,0,0,4"
+                                                 Cursor="Hand"/>
+                                        <TextBlock FontSize="12" 
+                                                 Foreground="{DynamicResource SecondaryTextColor}"
+                                                 Cursor="Hand">
+                                            <Run Text="{DynamicResource DocumentType}"/>
+                                            <Run Text=" ("/>
+                                            <Run Text="{Binding ExpiryDate, StringFormat='{}{0:dd/MM/yyyy}', FallbackValue=''}"/>
+                                            <Run Text=")"/>
+                                        </TextBlock>
+                                    </StackPanel>
+                                    <Border Grid.Column="1"
+                                           Width="60"
+                                           Height="60"
+                                           Background="{DynamicResource InputBgColor}"
+                                           BorderBrush="{DynamicResource BorderColor}"
+                                           BorderThickness="1"
+                                           CornerRadius="4"
+                                           Cursor="Hand">
+                                        <Image Source="{Binding Converter={StaticResource ThumbnailConverter}}"
+                                              Stretch="Uniform"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Cursor="Hand">
+                                            <Image.Style>
+                                                <Style TargetType="Image">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding Converter={StaticResource ThumbnailConverter}}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Image.Style>
+                                        </Image>
+                                    </Border>
+                                </Grid>
                             </Border>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
@@ -163,21 +246,51 @@
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
                 <!-- Preview Header -->
                 <Border Grid.Row="0" 
-                       Padding="20,16"
+                       Padding="20,0"
                        BorderBrush="{DynamicResource BorderColor}" 
-                       BorderThickness="0,0,0,1">
+                       BorderThickness="0,0,0,1"
+                       Height="60"
+                       VerticalAlignment="Center">
+                    <Border.Resources>
+                        <Style x:Key="CircularButtonStyle" TargetType="Button">
+                            <Setter Property="Background" Value="Transparent"/>
+                            <Setter Property="BorderThickness" Value="0"/>
+                            <Setter Property="Width" Value="40"/>
+                            <Setter Property="Height" Value="40"/>
+                            <Setter Property="Cursor" Value="Hand"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="{TemplateBinding Background}"
+                                               CornerRadius="20"
+                                               Width="{TemplateBinding Width}"
+                                               Height="{TemplateBinding Height}">
+                                            <ContentPresenter HorizontalAlignment="Center" 
+                                                            VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
+                                </Trigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Resources>
                     <Grid>
                         <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="auto"/>
                         </Grid.ColumnDefinitions>
+                        <!-- Selected Document Name  -->
                         <StackPanel Grid.Column="0">
                             <TextBlock FontSize="20" 
                                      FontWeight="Bold"
@@ -193,152 +306,213 @@
                                     </Style>
                                 </TextBlock.Style>
                             </TextBlock>
-                            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                <TextBlock FontSize="12"
-                                         Foreground="{DynamicResource SecondaryTextColor}"
-                                         Margin="0,0,8,0">
-                                    <TextBlock.Style>
-                                        <Style TargetType="TextBlock">
-                                            <Setter Property="Text" Value="{Binding SelectedDocument.Type}"/>
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding SelectedDocument}" Value="{x:Null}">
-                                                    <Setter Property="Text" Value="{DynamicResource OtherType}"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </TextBlock.Style>
-                                </TextBlock>
-                                <TextBlock FontSize="12"
-                                         Foreground="{DynamicResource SecondaryTextColor}">
-                                    <Run Text="{DynamicResource DocumentType}"/>
-                                    <Run Text=" ("/>
-                                    <Run Text="{Binding SelectedDocument.ExpiryDate, StringFormat='{}{0:dd/MM/yyyy}', FallbackValue=''}"/>
-                                    <Run Text=")"/>
-                                </TextBlock>
-                            </StackPanel>
+                            
+                            <TextBlock FontSize="12"
+                                     Foreground="{DynamicResource SecondaryTextColor}"
+                                     Margin="0,4,0,0">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="{Binding SelectedDocument.Type}"/>
+                                        <Setter Property="Visibility" Value="Visible"/>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedDocument}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Collapsed"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
                         </StackPanel>
+
+                        <!-- Diplay order -->
                         <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            <Button Content="⭐" 
-                                   ToolTip="{DynamicResource FavoriteButton}"
-                                   Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                                   Background="Transparent"
-                                   BorderThickness="0"
-                                   Padding="8"
-                                   Margin="0,0,4,0"/>
-                            <Button Content="✏️" 
+                            
+                        </StackPanel>
+
+                        <!-- Action Buttons -->
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                            <Button Style="{StaticResource CircularButtonStyle}"
+                                   Margin="0,0,8,0"
+                                   ToolTip="{DynamicResource FavoriteButton}">
+                                <Path Data="{StaticResource bx_favorite}" 
+                                     Fill="{DynamicResource TextColor}"
+                                     Width="20" Height="20"/>
+                            </Button>
+                            <Button Style="{StaticResource CircularButtonStyle}"
+                                   Margin="0,0,8,0"
                                    ToolTip="{DynamicResource EditButton}"
                                    Command="{Binding EditCommand}"
-                                   CommandParameter="{Binding SelectedDocument}"
-                                   Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                                   Background="Transparent"
-                                   BorderThickness="0"
-                                   Padding="8"
-                                   Margin="0,0,4,0"/>
-                            <Button Content="⋯" 
+                                   CommandParameter="{Binding SelectedDocument}">
+                                <Path Data="{StaticResource bx_edit}" 
+                                     Fill="{DynamicResource TextColor}"
+                                     Width="20" Height="20"/>
+                            </Button>
+                            <Button x:Name="MoreOptionsButton"
+                                   Style="{StaticResource CircularButtonStyle}"
                                    ToolTip="{DynamicResource MoreOptionsButton}"
-                                   Style="{StaticResource {x:Static ToolBar.ButtonStyleKey}}"
-                                   Background="Transparent"
-                                   BorderThickness="0"
-                                   Padding="8"/>
+                                   Click="ToggleMoreOptionsMenu">
+                                <Path Data="{StaticResource bx_show_more}" 
+                                     Fill="{DynamicResource TextColor}"
+                                     Width="20" Height="20"/>
+                            </Button>
                         </StackPanel>
                     </Grid>
                 </Border>
 
-                <!-- Zoom Controls -->
-                <Border Grid.Row="1" 
-                       Padding="20,8"
-                       BorderBrush="{DynamicResource BorderColor}" 
-                       BorderThickness="0,0,0,1"
-                       Visibility="{Binding PreviewImage, Converter={StaticResource BoolToVis}}">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <Button Content="−" 
-                               Command="{Binding ZoomOutCommand}"
-                               Width="32" Height="32"
-                               FontSize="18"
-                               Margin="0,0,8,0"/>
-                        <Slider Value="{Binding ZoomLevel}" 
-                               Minimum="0.5" 
-                               Maximum="3.0" 
-                               Width="200"
-                               TickFrequency="0.1"
-                               IsSnapToTickEnabled="True"
-                               Margin="0,0,8,0"/>
-                        <Button Content="+" 
-                               Command="{Binding ZoomInCommand}"
-                               Width="32" Height="32"
-                               FontSize="18"
-                               Margin="0,0,8,0"/>
-                        <Button Content="{DynamicResource ZoomResetButton}" 
-                               Command="{Binding ZoomResetCommand}"
-                               Padding="8,4"
-                               FontSize="12"/>
-                    </StackPanel>
-                </Border>
+                <!-- More Options Popup -->
+                <Popup x:Name="MoreOptionsPopup"
+                       PlacementTarget="{Binding ElementName=MoreOptionsButton}"
+                       Placement="Bottom"
+                       StaysOpen="False"
+                       AllowsTransparency="True">
+                    <Grid>
+                        <Rectangle Fill="{DynamicResource CardBgColor}"
+                                   RadiusX="8"
+                                   RadiusY="8"
+                                   Stroke="{DynamicResource BorderColor}"
+                                   StrokeThickness="1"/>
+                        <Border Background="Transparent"
+                                CornerRadius="8"
+                                Padding="8"
+                                MinWidth="150">
+                            <StackPanel>
+                                <Button Command="{Binding DownloadCommand}"
+                                        CommandParameter="{Binding SelectedDocument}"
+                                        Style="{StaticResource MenuButtonStyle}"
+                                        Foreground="{DynamicResource TextColor}"
+                                        HorizontalContentAlignment="Left"
+                                        Padding="12,8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource bx_save}" 
+                                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              Width="16" Height="16"
+                                              Margin="0,0,8,0"/>
+                                        <TextBlock Text="{DynamicResource DownloadButton}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{Binding DeleteCommand}"
+                                        CommandParameter="{Binding SelectedDocument}"
+                                        Style="{StaticResource MenuButtonStyle}"
+                                        Foreground="#F44336"
+                                        HorizontalContentAlignment="Left"
+                                        Padding="12,8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource bx_delete}" 
+                                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              Width="16" Height="16"
+                                              Margin="0,0,8,0"/>
+                                        <TextBlock Text="{DynamicResource DeleteButton}" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Click="ShowDetails_Click"
+                                        Style="{StaticResource MenuButtonStyle}"
+                                        Foreground="{DynamicResource TextColor}"
+                                        HorizontalContentAlignment="Left"
+                                        Padding="12,8">
+                                    <StackPanel Orientation="Horizontal">
+                                        <Path Data="{StaticResource bx_app}" 
+                                              Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                              Width="16" Height="16"
+                                              Margin="0,0,8,0"/>
+                                        <TextBlock Text="Details" VerticalAlignment="Center"/>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </Popup>
+
+                
 
                 <!-- Preview Image -->
-                <ScrollViewer Grid.Row="2" 
-                             HorizontalScrollBarVisibility="Auto" 
-                             VerticalScrollBarVisibility="Auto"
-                             CanContentScroll="True">
-                    <Image Source="{Binding PreviewImage}"
-                          Stretch="Uniform"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Margin="20">
-                        <Image.RenderTransform>
-                            <ScaleTransform ScaleX="{Binding ZoomLevel}" 
-                                          ScaleY="{Binding ZoomLevel}"
-                                          CenterX="0.5"
-                                          CenterY="0.5"/>
-                        </Image.RenderTransform>
-                    </Image>
-                </ScrollViewer>
-
-                <!-- Action Buttons -->
-                <Border Grid.Row="3" 
-                       Padding="20,12"
-                       BorderBrush="{DynamicResource BorderColor}" 
-                       BorderThickness="0,1,0,0"
-                       Visibility="{Binding PreviewImage, Converter={StaticResource BoolToVis}}">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                        <Button Content="{DynamicResource DownloadButton}" 
-                               Command="{Binding DownloadCommand}"
-                               CommandParameter="{Binding SelectedDocument}"
-                               Padding="16,8"
-                               Margin="0,0,8,0"
-                               Style="{DynamicResource SecondaryBtnStyle}"/>
-                        <Button Content="{DynamicResource DeleteButton}" 
-                               Command="{Binding DeleteCommand}"
-                               CommandParameter="{Binding SelectedDocument}"
-                               Padding="16,8"
-                               Background="#F44336"
-                               Foreground="White"
-                               BorderThickness="0"
-                               Cursor="Hand"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- Empty State -->
-                <TextBlock Grid.Row="2"
-                          Text="{DynamicResource SelectDocumentToPreview}"
-                          FontSize="16"
-                          Foreground="{DynamicResource SecondaryTextColor}"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
+                <Border x:Name="PreviewImageContainer"
+                       Grid.Row="1" 
+                       Background="{DynamicResource BgColor}"
+                       Cursor="Hand">
+                    <Border.Style>
+                        <Style TargetType="Border">
                             <Setter Property="Visibility" Value="Visible"/>
                             <Style.Triggers>
                                 <DataTrigger Binding="{Binding PreviewImage}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding PreviewImage, Converter={StaticResource BoolToVis}}" Value="Visible">
                                     <Setter Property="Visibility" Value="Collapsed"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                    </Border.Style>
+                    <Grid>
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto" 
+                                     VerticalScrollBarVisibility="Auto"
+                                     Background="Transparent">
+                            <Grid HorizontalAlignment="Center" 
+                                 VerticalAlignment="Center">
+                                <Image Source="{Binding PreviewImage}"
+                                      Stretch="Uniform"
+                                      MaxWidth="600"
+                                      MaxHeight="600"
+                                      RenderTransformOrigin="0.5,0.5"
+                                      Cursor="Hand"
+                                      MouseLeftButtonDown="PreviewImage_MouseLeftButtonDown">
+                                    <Image.LayoutTransform>
+                                        <ScaleTransform ScaleX="{Binding ZoomLevel}" 
+                                                      ScaleY="{Binding ZoomLevel}"/>
+                                    </Image.LayoutTransform>
+                                </Image>
+                            </Grid>
+                        </ScrollViewer>
+                        
+                        <!-- Zoom Icon Overlay (shown on hover) -->
+                        <Border x:Name="ZoomIconOverlay"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Background="#80000000"
+                               CornerRadius="50"
+                               Width="60"
+                               Height="60"
+                               Opacity="0"
+                               IsHitTestVisible="False">
+                            <Border.Style>
+                                <Style TargetType="Border">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Border, AncestorLevel=2}}" Value="True">
+                                            <Setter Property="Opacity" Value="1"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
+                            <Path Data="{StaticResource bx_search}" 
+                                 Fill="White"
+                                 Width="30" 
+                                 Height="30"
+                                 HorizontalAlignment="Center"
+                                 VerticalAlignment="Center"
+                                 Stretch="Uniform"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                
+
+                <!-- Empty State -->
+                <Border Grid.Row="1"
+                        Background="{DynamicResource BgColor}"
+                        VerticalAlignment="Stretch"
+                        HorizontalAlignment="Stretch">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding PreviewImage}" Value="{x:Null}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <TextBlock Text="{DynamicResource SelectDocumentToPreview}"
+                              FontSize="16"
+                              Foreground="{DynamicResource SecondaryTextColor}"
+                              HorizontalAlignment="Center"
+                              VerticalAlignment="Center"/>
+                </Border>
             </Grid>
         </Border>
     </Grid>

@@ -4,37 +4,178 @@
         Title="Document Preview"
         Height="600" Width="800"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
+        ResizeMode="CanResize"
         Background="{DynamicResource BgColor}">
+    <Window.Resources>
+        <Style x:Key="CircularButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Width" Value="40"/>
+            <Setter Property="Height" Value="40"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                               CornerRadius="20"
+                               Width="{TemplateBinding Width}"
+                               Height="{TemplateBinding Height}">
+                            <ContentPresenter HorizontalAlignment="Center" 
+                                            VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
 
     <Border Style="{DynamicResource CardStyle}" Margin="20" Padding="10">
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <!-- الصورة -->
-            <ScrollViewer Grid.Row="0" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-                <Image x:Name="DocumentImage"
-                       Stretch="Uniform"
-                       MaxHeight="520"
-                       MaxWidth="760"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center"/>
-            </ScrollViewer>
+            <Grid Grid.Row="0" Height="60" VerticalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
 
-            <!-- الأزرار -->
-            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-                <Button Content="Export Image"
-                        Style="{DynamicResource SecondaryBtnStyle}"
-                        Margin="0,0,10,0"
-                        Click="OnExportClick"/>
-                <Button Content="Close"
-                        Style="{DynamicResource PrimaryBtnStyle}"
-                        Padding="16,8"
-                        Click="OnCloseClick"/>
-            </StackPanel>
+                <!-- Document Title -->
+                <StackPanel Grid.Column="0">
+                    <TextBlock FontSize="20" 
+                              FontWeight="Bold"
+                              Foreground="{DynamicResource TextColor}"
+                              Text="{Binding DocumentName}"/>
+                    <TextBlock FontSize="12"
+                              Foreground="{DynamicResource SecondaryTextColor}"
+                              Margin="0,4,0,0"
+                              Text="{Binding DocumentType}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DocumentType}" Value="">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+
+                <!-- Zoom Controls -->
+                <StackPanel Grid.Column="1" 
+                           Orientation="Horizontal" 
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center">
+                    <Button Command="{Binding ZoomOutCommand}"
+                            Style="{StaticResource CircularButtonStyle}"
+                            Margin="0,0,8,0"
+                            ToolTip="Zoom Out">
+                        <TextBlock Text="−" 
+                                  VerticalAlignment="Center" 
+                                  HorizontalAlignment="Center"
+                                  FontSize="18"
+                                  Foreground="{DynamicResource TextColor}"/>
+                    </Button>
+                    <Slider Value="{Binding ZoomLevel}" 
+                           Minimum="0.5" 
+                           Maximum="3.0" 
+                           Width="200"
+                           TickFrequency="0.1"
+                           IsSnapToTickEnabled="True"
+                           Margin="0,0,8,0"
+                           VerticalAlignment="Center"
+                           Cursor="Hand"
+                           ToolTip="Zoom Level"/>
+                    <Button Command="{Binding ZoomInCommand}"
+                            Style="{StaticResource CircularButtonStyle}"
+                            Margin="0,0,8,0"
+                            ToolTip="Zoom In">
+                        <TextBlock Text="+" 
+                                  VerticalAlignment="Center" 
+                                  HorizontalAlignment="Center"
+                                  FontSize="18"
+                                  Foreground="{DynamicResource TextColor}"/>
+                    </Button>
+                    <Button Command="{Binding ZoomResetCommand}"
+                            Style="{StaticResource CircularButtonStyle}"
+                            ToolTip="Reset Zoom">
+                        <TextBlock Text="{DynamicResource ZoomResetButton}" 
+                                  VerticalAlignment="Center"
+                                  HorizontalAlignment="Center"
+                                  FontSize="12"
+                                  Foreground="{DynamicResource TextColor}"/>
+                    </Button>
+                </StackPanel>
+
+                <!-- Action Buttons -->
+                <StackPanel Grid.Column="2" 
+                           Orientation="Horizontal" 
+                           HorizontalAlignment="Right" 
+                           Margin="0,0,0,0">
+                    <Button Style="{StaticResource CircularButtonStyle}"
+                           Margin="0,0,8,0"
+                           ToolTip="Rotate"
+                           Command="{Binding RotateCommand}">
+                        <Path Data="{StaticResource bx_rotate}" 
+                             Fill="{DynamicResource TextColor}"
+                             Width="20" Height="20"/>
+                    </Button>
+                    <Button Style="{StaticResource CircularButtonStyle}"
+                           Margin="0,0,8,0"
+                           ToolTip="Edit"
+                           Click="OnEditClick">
+                        <Path Data="{StaticResource bx_edit}" 
+                             Fill="{DynamicResource TextColor}"
+                             Width="20" Height="20"/>
+                    </Button>
+                    <Button Style="{StaticResource CircularButtonStyle}"
+                           Margin="0,0,8,0"
+                           ToolTip="Download"
+                           Click="OnDownloadClick">
+                        <Path Data="{StaticResource bx_download}" 
+                             Fill="{DynamicResource TextColor}"
+                             Width="20" Height="20"/>
+                    </Button>
+                    <Button Style="{StaticResource CircularButtonStyle}"
+                           ToolTip="Delete"
+                           Click="OnDeleteClick">
+                        <Path Data="{StaticResource bx_delete}" 
+                             Fill="{DynamicResource TextColor}"
+                             Width="20" Height="20"/>
+                    </Button>
+                </StackPanel>
+            </Grid>
+
+            
+            
+            <!-- Document Image -->
+            <Grid Grid.Row="1" 
+                  Background="{DynamicResource BgColor}"
+                  x:Name="ImageContainer">
+                <Image Source="{Binding PreviewImage}"
+                      Stretch="None"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center"
+                      RenderTransformOrigin="0.5,0.5">
+                    <Image.LayoutTransform>
+                        <TransformGroup>
+                            <RotateTransform Angle="{Binding RotationAngle}"/>
+                            <ScaleTransform ScaleX="{Binding ZoomLevel}" 
+                                          ScaleY="{Binding ZoomLevel}"/>
+                        </TransformGroup>
+                    </Image.LayoutTransform>
+                </Image>
+            </Grid>
         </Grid>
     </Border>
 </Window>

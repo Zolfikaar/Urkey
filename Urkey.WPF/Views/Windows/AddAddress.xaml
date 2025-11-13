@@ -6,7 +6,6 @@
         xmlns:local="clr-namespace:Urkey.WPF.Views.Windows"
         mc:Ignorable="d"
         Title="Add Address"
-        Height="520"
         Width="520"
         Background="{DynamicResource BgColor}"
         WindowStartupLocation="CenterOwner"

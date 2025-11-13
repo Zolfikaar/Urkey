@@ -1,132 +1,277 @@
-﻿<Window x:Class="Urkey.WPF.Views.Windows.AddAccount"
+<Window x:Class="Urkey.WPF.Views.Windows.AddAccount"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Urkey.WPF.Views.Windows"
+        xmlns:conv="clr-namespace:Urkey.WPF.Converters"
         mc:Ignorable="d"
-        Title="Add Account"
-        Height="520"
+        Title="{DynamicResource AddAccountTitle}"
+        FlowDirection="{DynamicResource AppFlowDirection}"
+        
         Width="520"
         Background="{DynamicResource BgColor}"
         WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
-        SizeToContent="Height">
-    <Border Style="{DynamicResource CardStyle}"
-            Margin="20">
-        <Grid>
+        ResizeMode="CanResize"
+        SizeToContent="Manual"
+        ShowInTaskbar="True"
+        MinWidth="520"
+        MinHeight="520">
+
+    <Window.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+    </Window.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Border Style="{DynamicResource CardStyle}" Margin="20">
+        <Grid Grid.IsSharedSizeScope="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="80" />
             </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
+
             <Grid.Resources>
+                <!-- الأنماط العامة -->
                 <Style TargetType="TextBlock">
-                    <Setter Property="FontFamily"
-                            Value="Cairo"/>
-                    <Setter Property="Foreground"
-                            Value="{DynamicResource TextColor}"/>
-                    <Setter Property="VerticalAlignment"
-                            Value="Center"/>
-                    <Setter Property="Margin"
-                            Value="0,0,10,6"/>
+                    <Setter Property="FontFamily" Value="Cairo"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="0,0,10,6"/>
                 </Style>
                 <Style TargetType="TextBox">
-                    <Setter Property="Foreground"
-                            Value="{DynamicResource TextColor}"/>
-                    <Setter Property="Background"
-                            Value="{DynamicResource InputBgColor}"/>
-                    <Setter Property="BorderBrush"
-                            Value="{DynamicResource BorderColor}"/>
-                    <Setter Property="BorderThickness"
-                            Value="1"/>
-                    <Setter Property="Padding"
-                            Value="10"/>
-                    <Setter Property="Margin"
-                            Value="0,0,0,12"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                    <Setter Property="Background" Value="{DynamicResource InputBgColor}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Padding" Value="10"/>
+                    <Setter Property="Margin" Value="0,0,0,12"/>
+                    <Setter Property="Height" Value="40"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="MinWidth" Value="0"/>
+                    <Setter Property="VerticalContentAlignment" Value="Center"/>
                 </Style>
                 <Style TargetType="PasswordBox">
-                    <Setter Property="Foreground"
-                            Value="{DynamicResource TextColor}"/>
-                    <Setter Property="Background"
-                            Value="{DynamicResource InputBgColor}"/>
-                    <Setter Property="BorderBrush"
-                            Value="{DynamicResource BorderColor}"/>
-                    <Setter Property="BorderThickness"
-                            Value="1"/>
-                    <Setter Property="Padding"
-                            Value="10"/>
-                    <Setter Property="Margin"
-                            Value="0,0,0,12"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                    <Setter Property="Background" Value="{DynamicResource InputBgColor}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Padding" Value="10"/>
+                    <Setter Property="Margin" Value="0,0,0,12"/>
+                    <Setter Property="Height" Value="40"/>
+                    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                    <Setter Property="MinWidth" Value="0"/>
+                </Style>
+
+                <!-- Compact icon-only square button (e.g., eye/copy) -->
+                <Style x:Key="IconOnlyBtnStyle" TargetType="Button">
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                    <Setter Property="Width" Value="40"/>
+                    <Setter Property="Height" Value="40"/>
+                    <Setter Property="MinWidth" Value="40"/>
+                    <Setter Property="Padding" Value="0"/>
+                    <Setter Property="Margin" Value="6,0,0,0"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                        CornerRadius="8"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                    <Viewbox Width="18" Height="18" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <Path Data="{TemplateBinding Tag}"
+                                              Fill="{TemplateBinding Foreground}"
+                                              Stretch="Uniform"
+                                              HorizontalAlignment="Center"
+                                              VerticalAlignment="Center"
+                                              Margin="0"/>
+                                    </Viewbox>
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Cursor" Value="Hand" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                 </Style>
             </Grid.Resources>
+            <!-- Header: type and account name -->
+            <Grid Grid.Row="0" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{DynamicResource AccountTypeTitle}"/>
+                <ComboBox x:Name="AccountTypeCombo" Grid.Column="1" SelectionChanged="OnAccountTypeChanged" Height="40">
+                    <ComboBoxItem Content="{DynamicResource WebsiteType}"/>
+                    <ComboBoxItem Content="{DynamicResource AccountsType}"/>
+                    <ComboBoxItem Content="{DynamicResource OtherType}"/>
+                </ComboBox>
+            </Grid>
 
-            <TextBlock Grid.Row="0"
-                       Grid.Column="0"
-                       Text="{DynamicResource AccountNameFieldTitle}"/>
-            <TextBox x:Name="AccountNameTextBox"
-                     Grid.Row="0"
-                     Grid.Column="1"/>
+            <Grid Grid.Row="1" Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="{DynamicResource AccountNameFieldTitle}"/>
+                <TextBox x:Name="AccountNameTextBox" Grid.Column="1" Text="{Binding ServiceName, Mode=TwoWay}"/>
+            </Grid>
 
-            <TextBlock Grid.Row="1"
-                       Grid.Column="0"
-                       Text="{DynamicResource UserNameFieldTitle}"/>
-            <TextBox x:Name="UsernameTextBox"
-                     Grid.Row="1"
-                     Grid.Column="1"/>
+            <!-- Type-specific top group (Website/App/Other) -->
+            <Border Grid.Row="2" Style="{DynamicResource CardStyle}" Padding="16">
+                <StackPanel>
+                    <DockPanel Margin="0,0,0,8">
+                        <TextBlock Text="{DynamicResource NewItemTitle}" FontWeight="Bold" DockPanel.Dock="Left"/>
+                        <TextBlock Text="{DynamicResource DetailsTitle}" Foreground="{DynamicResource SubTextColor}" Margin="6,0,0,0"/>
+                    </DockPanel>
+                    <StackPanel x:Name="WebsitePanel">
+                        <TextBlock Text="{DynamicResource WebsiteFieldTitle}" />
+                        <TextBox x:Name="WebsiteTextBox" Text="{Binding Url, Mode=TwoWay}"/>
+                    </StackPanel>
 
-            <TextBlock Grid.Row="2"
-                       Grid.Column="0"
-                       Text="{DynamicResource PasswordFieldTitle}"/>
-            <PasswordBox x:Name="PasswordBox"
-                         Grid.Row="2"
-                         Grid.Column="1"/>
+                    <StackPanel x:Name="ApplicationPanel">
+                        <TextBlock Text="{DynamicResource AppNameFieldTitle}" />
+                        <DockPanel LastChildFill="True">
+                            <Button Content="{DynamicResource ChooseAppButtonTitle}"
+                                    Style="{DynamicResource SecondaryBtnStyle}"
+                                    MinWidth="110"
+                                    Height="40"
+                                    Click="OnChooseApplicationClick"/>
+                        </DockPanel>
+                        <TextBlock x:Name="SelectedAppNameText"
+                                   Visibility="Collapsed"
+                                   Foreground="{DynamicResource TextColor}"
+                                   FontWeight="SemiBold"
+                                   Margin="0,6,0,0"
+                                   TextTrimming="CharacterEllipsis"/>
+                        <TextBlock x:Name="SelectedAppPathText"
+                                   Visibility="Collapsed"
+                                   Foreground="{DynamicResource SubTextColor}"
+                                   FontSize="12"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,2,0,0"/>
+                        <TextBlock Text="{DynamicResource LicenseKeyFieldTitle}" />
+                        <TextBox x:Name="LicenseKeyTextBox" Text="{Binding LicenseKey, Mode=TwoWay}"/>
+                    </StackPanel>
 
-            <TextBlock Grid.Row="3"
-                       Grid.Column="0"
-                       Text="{DynamicResource EmailFieldTitle}"/>
-            <TextBox x:Name="EmailTextBox"
-                     Grid.Row="3"
-                     Grid.Column="1"/>
+                    <StackPanel x:Name="OtherPanel">
+                        <TextBlock Text="{DynamicResource CategoryFieldTitle}" />
+                        <TextBox x:Name="CategoryTextBox" Text="{Binding Category, Mode=TwoWay}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
 
-            <TextBlock Grid.Row="4"
-                       Grid.Column="0"
-                       Text="{DynamicResource WebsiteFieldTitle}"/>
-            <TextBox x:Name="WebsiteTextBox"
-                     Grid.Row="4"
-                     Grid.Column="1"/>
+            <!-- Accounts section -->
+            <Border Grid.Row="3" Margin="0,12,0,0" Style="{DynamicResource CardStyle}" Padding="16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" SharedSizeGroup="Label"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Row="5"
-                       Grid.Column="0"
-                       Text="{DynamicResource NotesFieldTitle}"/>
-            <TextBox x:Name="NotesTextBox"
-                     Grid.Row="5"
-                     Grid.Column="1"
-                     AcceptsReturn="True"
-                     Height="80"
-                     TextWrapping="Wrap"/>
+                    <DockPanel Grid.Row="0" Grid.ColumnSpan="2" Margin="0,0,0,8">
+                        <TextBlock x:Name="CredentialsHeader" Text="{DynamicResource CredentialsTitle}" FontWeight="Bold" DockPanel.Dock="Left"/>
+                    </DockPanel>
 
-            <StackPanel Grid.Row="6"
-                        Grid.ColumnSpan="2"
-                        Orientation="Horizontal"
-                        HorizontalAlignment="Right"
-                        Margin="0,10,0,0">
-                <Button Content="{DynamicResource CancelBtnTitle}"
-                        Style="{DynamicResource SecondaryBtnStyle}"
-                        Click="OnCancelClick"/>
-                <Button Content="{DynamicResource SaveBtnTitle}"
-                        Style="{DynamicResource PrimaryBtnStyle}"
-                        Padding="16,8"
-                        Click="OnSaveClick"/>
-            </StackPanel>
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource UserNameFieldTitle}"/>
+                    <TextBox x:Name="UsernameTextBox" Grid.Row="1" Grid.Column="1" Text="{Binding Username, Mode=TwoWay}"/>
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource EmailFieldTitle}"/>
+                    <TextBox x:Name="EmailTextBox" Grid.Row="2" Grid.Column="1" Text="{Binding Email, Mode=TwoWay}"/>
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource PasswordFieldTitle}"/>
+                    <Grid Grid.Row="3" Grid.Column="1" Grid.IsSharedSizeScope="False" HorizontalAlignment="Stretch">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <PasswordBox x:Name="PasswordBox" Grid.Column="0"/>
+                        <TextBox x:Name="PasswordRevealBox" Grid.Column="0" Visibility="Collapsed"/>
+                        <Button Grid.Column="1"
+                                Style="{StaticResource IconOnlyBtnStyle}"
+                                Click="OnToggleShowPassword_Click"
+                                Tag="{DynamicResource bx_eye}">
+                            <Button.ToolTip>
+                                <ToolTip Content="{DynamicResource ShowBtnTitle}"/>
+                            </Button.ToolTip>
+                        </Button>
+                        <Button Grid.Column="2"
+                                Style="{StaticResource IconOnlyBtnStyle}"
+                                Click="OnCopyPassword_Click"
+                                Tag="{DynamicResource bx_copy}">
+                            <Button.ToolTip>
+                                <ToolTip Content="{DynamicResource CopyBtnTitle}"/>
+                            </Button.ToolTip>
+                        </Button>
+                    </Grid>
+
+                    <StackPanel Grid.Row="4" Grid.ColumnSpan="2" Orientation="Vertical" Margin="0,6,0,0">
+                        <ToggleButton x:Name="PwdHistToggle" Content="{DynamicResource PasswordChangeHistoryTitle}"
+                                      HorizontalAlignment="Left"
+                                      Click="OnTogglePasswordHistory_Click"
+                                      Style="{DynamicResource PrimaryToggleButtonStyle}"/>
+                        <Border x:Name="PwdHistoryPanel" Visibility="Collapsed" Margin="0,6,0,0"
+                                Background="{DynamicResource InputBgColor}" BorderBrush="{DynamicResource BorderColor}" BorderThickness="1" CornerRadius="6" Padding="8">
+                            <StackPanel>
+                                <TextBlock x:Name="PwdHistoryEmptyMessage"
+                                           Text="{DynamicResource NoHistoryMessage}"
+                                           Foreground="{DynamicResource SecondaryTextColor}"
+                                           HorizontalAlignment="Center"
+                                           Visibility="Collapsed"
+                                           Margin="0,4,0,4"/>
+                                <ItemsControl x:Name="PwdHistoryList"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="5" Grid.ColumnSpan="2" Orientation="Vertical" Margin="0,6,0,0">
+                        <TextBlock Text="{DynamicResource AddCommentTitle}" Foreground="{DynamicResource PrimaryColor}" Cursor="Hand" MouseLeftButtonUp="OnAddCommentClicked"/>
+                        <TextBox x:Name="CommentTextBox" Visibility="Collapsed" Height="60" TextWrapping="Wrap"/>
+                    </StackPanel>
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{DynamicResource NotesFieldTitle}"/>
+                    <TextBox x:Name="NotesTextBox" Grid.Row="6" Grid.Column="1" AcceptsReturn="True" Height="80" TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
+
+            <!-- Footer -->
+            <DockPanel Grid.Row="4" Margin="0,12,0,0">
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                    <TextBlock Text="{DynamicResource AutologinTitle}" Margin="0,0,8,0"/>
+                    <ToggleButton Content="{DynamicResource DisabledText}" Width="90" Style="{DynamicResource PrimaryToggleButtonStyle}"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
+                    <Button Content="{DynamicResource CancelBtnTitle}"
+                            Style="{DynamicResource SecondaryBtnStyle}"
+                            MinWidth="90" Height="50"
+                            Click="OnCancelClick"
+                            IsCancel="True"/>
+                    <Button Content="{DynamicResource SaveBtnTitle}"
+                            Style="{DynamicResource PrimaryBtnStyle}"
+                            MinWidth="90" Height="50"
+                            Click="OnSaveClick"
+                            IsDefault="True"/>
+                </StackPanel>
+            </DockPanel>
         </Grid>
-    </Border>
+        </Border>
+    </ScrollViewer>
 </Window>

@@ -7,6 +7,7 @@
         ResizeMode="CanResize"
         Background="{DynamicResource BgColor}">
     <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style x:Key="CircularButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
@@ -87,7 +88,7 @@
                                   Foreground="{DynamicResource TextColor}"/>
                     </Button>
                     <Slider Value="{Binding ZoomLevel}" 
-                           Minimum="0.5" 
+                           Minimum="0.05" 
                            Maximum="3.0" 
                            Width="200"
                            TickFrequency="0.1"
@@ -156,26 +157,75 @@
                 </StackPanel>
             </Grid>
 
-            
-            
-            <!-- Document Image -->
-            <Grid Grid.Row="1" 
-                  Background="{DynamicResource BgColor}"
-                  x:Name="ImageContainer">
-                <Image Source="{Binding PreviewImage}"
-                      Stretch="None"
+            <!-- Document Image Container -->
+            <ScrollViewer Grid.Row="1" 
+                         Background="{DynamicResource BgColor}"
+                         HorizontalScrollBarVisibility="Auto"
+                         VerticalScrollBarVisibility="Auto"
+                         x:Name="ImageScrollViewer"
+                         HorizontalContentAlignment="Center"
+                         VerticalContentAlignment="Center">
+                <Grid x:Name="ImageContainer"
                       HorizontalAlignment="Center"
-                      VerticalAlignment="Center"
-                      RenderTransformOrigin="0.5,0.5">
-                    <Image.LayoutTransform>
-                        <TransformGroup>
-                            <RotateTransform Angle="{Binding RotationAngle}"/>
-                            <ScaleTransform ScaleX="{Binding ZoomLevel}" 
-                                          ScaleY="{Binding ZoomLevel}"/>
-                        </TransformGroup>
-                    </Image.LayoutTransform>
-                </Image>
-            </Grid>
+                      VerticalAlignment="Center">
+                    <Image Source="{Binding PreviewImage}"
+                          Stretch="None"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          RenderTransformOrigin="0.5,0.5"
+                          SnapsToDevicePixels="True"
+                          RenderOptions.BitmapScalingMode="HighQuality"
+                          RenderOptions.CachingHint="Cache">
+                        <Image.LayoutTransform>
+                            <TransformGroup>
+                                <!-- Rotation transform (includes EXIF correction) -->
+                                <RotateTransform Angle="{Binding RotationAngle}"/>
+                                <!-- Zoom/scale transform -->
+                                <ScaleTransform ScaleX="{Binding ZoomLevel}" 
+                                              ScaleY="{Binding ZoomLevel}"/>
+                            </TransformGroup>
+                        </Image.LayoutTransform>
+                    </Image>
+                </Grid>
+            </ScrollViewer>
+
+            <!-- Debug HUD (toggleable) -->
+            <Border Grid.Row="1"
+                   Background="#80000000"
+                   Padding="8"
+                   HorizontalAlignment="Left"
+                   VerticalAlignment="Top"
+                   Margin="10"
+                   CornerRadius="4"
+                   Visibility="{Binding ShowDebug, Converter={StaticResource BooleanToVisibilityConverter}}"
+                   IsHitTestVisible="False">
+                <StackPanel>
+                    <TextBlock Text="Debug Info" 
+                              Foreground="White" 
+                              FontWeight="Bold"
+                              Margin="0,0,0,4"/>
+                    <TextBlock Foreground="White" FontSize="10">
+                        <Run Text="Image: "/>
+                        <Run Text="{Binding PreviewImage.PixelWidth, Mode=OneWay, StringFormat='{}{0}'}"/>
+                        <Run Text=" × "/>
+                        <Run Text="{Binding PreviewImage.PixelHeight, Mode=OneWay, StringFormat='{}{0}'}"/>
+                    </TextBlock>
+                    <TextBlock Foreground="White" FontSize="10">
+                        <Run Text="Viewport: "/>
+                        <Run Text="{Binding ElementName=ImageScrollViewer, Path=ViewportWidth, Mode=OneWay, StringFormat='{}{0:F0}'}"/>
+                        <Run Text=" × "/>
+                        <Run Text="{Binding ElementName=ImageScrollViewer, Path=ViewportHeight, Mode=OneWay, StringFormat='{}{0:F0}'}"/>
+                    </TextBlock>
+                    <TextBlock Foreground="White" FontSize="10">
+                        <Run Text="Zoom: "/>
+                        <Run Text="{Binding ZoomLevel, StringFormat='{}{0:F2}'}"/>
+                    </TextBlock>
+                    <TextBlock Foreground="White" FontSize="10">
+                        <Run Text="Rotation: "/>
+                        <Run Text="{Binding RotationAngle, StringFormat='{}{0:F0}°'}"/>
+                    </TextBlock>
+                </StackPanel>
+            </Border>
         </Grid>
     </Border>
 </Window>

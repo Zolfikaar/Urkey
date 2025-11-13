@@ -1,28 +1,165 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using Urkey.Core.Models;
+using Urkey.WPF.ViewModels;
+using Urkey.WPF.Views.Windows;
 
 namespace Urkey.WPF.Views.Pages
 {
-    /// <summary>
-    /// Interaction logic for Passwords.xaml
-    /// </summary>
     public partial class Accounts : Page
     {
         public Accounts()
         {
             InitializeComponent();
+        }
+
+        private void ToggleMenu(object sender, RoutedEventArgs e)
+        {
+            AddMenuPopup.IsOpen = !AddMenuPopup.IsOpen;
+        }
+
+        
+
+        private void OnAddBankCard_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AddBankCard();
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+        }
+
+        private void OnAddDocument_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AddDocument { Owner = Application.Current.MainWindow };
+            if (win.ShowDialog() == true && win.Document != null)
+            {
+                var vm = new DocumentsViewModel();
+                vm.SaveNewDocument(win.Document);
+            }
+        }
+
+        private void OnAddAddress_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AddAddress();
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+        }
+
+        private void OnAddNote_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new AddNote();
+            win.Owner = Application.Current.MainWindow;
+            win.ShowDialog();
+        }
+
+        private void OnAddWebsite_Click(object sender, RoutedEventArgs e)
+        {
+            AddMenuPopup.IsOpen = false;
+            var win = new AddAccount("Website");
+            win.Owner = Application.Current.MainWindow;
+            var ok = win.ShowDialog();
+            if (ok == true && DataContext is AccountsViewModel vm) vm.AddOrRefreshAccount(win.ResultEntry);
+        }
+
+        private void OnAddApplication_Click(object sender, RoutedEventArgs e)
+        {
+            AddMenuPopup.IsOpen = false;
+            var win = new AddAccount("Application");
+            win.Owner = Application.Current.MainWindow;
+            var ok = win.ShowDialog();
+            if (ok == true && DataContext is AccountsViewModel vm) vm.AddOrRefreshAccount(win.ResultEntry);
+        }
+
+        private void OnAddOther_Click(object sender, RoutedEventArgs e)
+        {
+            AddMenuPopup.IsOpen = false;
+            var win = new AddAccount("Other");
+            win.Owner = Application.Current.MainWindow;
+            var ok = win.ShowDialog();
+            if (ok == true && DataContext is AccountsViewModel vm) vm.AddOrRefreshAccount(win.ResultEntry);
+        }
+
+        private string GetSelectedCategory()
+        {
+            if (DataContext is AccountsViewModel vm)
+            {
+                var selected = vm.SelectedCategory ?? "Website";
+                if (string.Equals(selected, "All categories", StringComparison.OrdinalIgnoreCase))
+                    return "Website";
+                if (string.Equals(selected, "Accounts", StringComparison.OrdinalIgnoreCase))
+                    return "Application";
+                return selected;
+            }
+            return "Website";
+        }
+
+        private void OnAddAccount_Click(object sender, RoutedEventArgs e)
+        {
+            var type = GetSelectedCategory();
+            var win = new AddAccount(type) { Owner = Application.Current.MainWindow };
+            var ok = win.ShowDialog();
+            if (ok == true && DataContext is AccountsViewModel vm) vm.AddOrRefreshAccount(win.ResultEntry);
+        }
+
+        private void OnMoreOptionsClick(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is AccountsViewModel vm && vm.SelectedAccount == null)
+                return;
+
+            if (sender is Button button && button.ContextMenu != null)
+            {
+                button.ContextMenu.DataContext = button.DataContext;
+                button.ContextMenu.PlacementTarget = button;
+                button.ContextMenu.IsOpen = true;
+            }
+        }
+
+        private void OnDetailsClick(object sender, RoutedEventArgs e)
+        {
+            if (DataContext is AccountsViewModel vm && vm.SelectedAccount != null)
+            {
+                var win = new AccountDetails
+                {
+                    Owner = Application.Current.MainWindow,
+                    DataContext = vm.SelectedAccount
+                };
+                win.ShowDialog();
+            }
+        }
+
+        private void OnOpenPreviewClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement fe && fe.DataContext is AccountEntry entry)
+            {
+                var win = new AccountPreview
+                {
+                    Owner = Application.Current.MainWindow,
+                    DataContext = entry
+                };
+                win.Show();
+            }
+        }
+
+        private void OnDataGridDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is AccountsViewModel vm && vm.SelectedAccount != null)
+            {
+                var win = new AccountPreview
+                {
+                    Owner = Application.Current.MainWindow,
+                    DataContext = vm.SelectedAccount
+                };
+                win.Show();
+            }
+        }
+
+        private void OnGridCardClicked(object sender, MouseButtonEventArgs e)
+        {
+            if (DataContext is AccountsViewModel vm && sender is Border border && border.DataContext is AccountEntry entry)
+            {
+                vm.SelectedAccount = entry;
+            }
         }
     }
 }

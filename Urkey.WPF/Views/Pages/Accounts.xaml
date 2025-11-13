@@ -1,20 +1,657 @@
-﻿<Page x:Class="Urkey.WPF.Views.Pages.Accounts"
+<Page x:Class="Urkey.WPF.Views.Pages.Accounts"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Urkey.WPF.Views.Pages"
-      mc:Ignorable="d"
-      d:DesignHeight="450"
-      d:DesignWidth="800"
-      Title="{DynamicResource AccountsTitle}"
-      Foreground="{DynamicResource TextColor}">
+      xmlns:vm="clr-namespace:Urkey.WPF.ViewModels"
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      Background="Transparent"
+      FlowDirection="{DynamicResource AppFlowDirection}">
 
-  <Grid>
-    <TextBlock VerticalAlignment="Center"
-               HorizontalAlignment="Center"
-               FontSize="30"
-               FontWeight="Bold"
-               Text="Accounts"/>
-  </Grid>
+    <Page.DataContext>
+        <vm:AccountsViewModel />
+    </Page.DataContext>
+
+    <Page.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+        <Style x:Key="SidebarColumnStyle" TargetType="ColumnDefinition">
+            <Setter Property="Width" Value="240"/>
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsGridView}" Value="True">
+                    <Setter Property="Width" Value="0"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- Topbar icon button style (matches Documents action buttons hover) -->
+        <Style x:Key="TopbarIconBtnStyle" TargetType="Button">
+            <Setter Property="Width" Value="44"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="22"
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="AccountActionButtonStyle"
+               TargetType="Button"
+               BasedOn="{StaticResource SecondaryBtnStyle}">
+            <Setter Property="Visibility" Value="Collapsed"/>
+            <Setter Property="Margin" Value="0,10,0,0"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <!-- Content is replaced with icons below where used -->
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding AccountType}" Value="Website">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding AccountType}" Value="Application">
+                    <Setter Property="Visibility" Value="Visible"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <!-- Topbar plain button style with no hover background change -->
+        <Style x:Key="TopbarPlainBtnStyle" TargetType="Button">
+            <Setter Property="MinWidth" Value="44"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Background" Value="{DynamicResource InputBgColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0,0,8,0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Page.Resources>
+
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- Header -->
+            <RowDefinition Height="*"/>
+            <!-- Content -->
+        </Grid.RowDefinitions>
+
+        <!-- Header bar -->
+        <DockPanel Grid.Row="0" Margin="10">
+            <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
+                <Grid>
+                    <Button x:Name="AddButton"
+                        Content="{DynamicResource AddAccountTitle}"
+                            Background="{DynamicResource PrimaryColor}"
+                            Foreground="White"
+                            FontWeight="Bold"
+                            Padding="16,10"
+                            Click="ToggleMenu"
+                            HorizontalAlignment="Left"
+                            VerticalAlignment="Top">
+                        <Button.Template>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                        CornerRadius="8"
+                                        Padding="{TemplateBinding Padding}">
+                                    <StackPanel Orientation="Horizontal"
+                                                HorizontalAlignment="Center">
+                                        <Path Data="{StaticResource bx_plus}"
+                                              Fill="White"
+                                              Margin="0,0,6,0"/>
+                                        <TextBlock Text="{TemplateBinding Content}"
+                                                   VerticalAlignment="Center"/>
+                                        <Path Data="M0,0 L6,6 L12,0 Z"
+                                              Fill="White"
+                                              Width="10"
+                                              Height="6"
+                                              Margin="6,0,0,0"/>
+                                    </StackPanel>
+                                </Border>
+                            </ControlTemplate>
+                        </Button.Template>
+                    </Button>
+
+                    <Popup x:Name="AddMenuPopup"
+                           PlacementTarget="{Binding ElementName=AddButton}"
+                           Placement="Bottom"
+                           StaysOpen="False"
+                           AllowsTransparency="True">
+                        <Grid>
+                            <Rectangle Fill="{DynamicResource CardBgColor}"
+                                       RadiusX="8"
+                                       RadiusY="8"
+                                       Stroke="{DynamicResource BorderColor}"
+                                       StrokeThickness="1"/>
+                            <Border Background="Transparent"
+                                    CornerRadius="8"
+                                    Padding="8"
+                                    MinWidth="170">
+                                <StackPanel>
+                                    <StackPanel.Resources>
+                                        <Style x:Key="MenuButtonStyle"
+                                               TargetType="Button">
+                                            <Setter Property="Background"
+                                                    Value="Transparent"/>
+                                            <Setter Property="BorderThickness"
+                                                    Value="0"/>
+                                            <Setter Property="Cursor"
+                                                    Value="Hand"/>
+                                            <Setter Property="HorizontalContentAlignment"
+                                                    Value="Left"/>
+                                            <Setter Property="Padding"
+                                                    Value="12,8"/>
+                                            <Setter Property="Margin"
+                                                    Value="2"/>
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border Background="{TemplateBinding Background}"
+                                                                CornerRadius="4"
+                                                                Padding="{TemplateBinding Padding}"
+                                                                TextElement.Foreground="{TemplateBinding Foreground}">
+                                                            <ContentPresenter/>
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver"
+                                                                     Value="True">
+                                                                <Setter Property="Background"
+                                                                        Value="{DynamicResource HoverColor}"/>
+                                                                <Setter Property="Foreground"
+                                                                        Value="{DynamicResource PrimaryColor}"/>
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </StackPanel.Resources>
+                                    <Button Click="OnAddWebsite_Click"
+                                            Style="{StaticResource MenuButtonStyle}"
+                                            Foreground="{DynamicResource TextColor}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource bx_website}"
+                                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                  Width="20"
+                                                  Height="20"
+                                                  Margin="0,0,12,0"/>
+                                            <TextBlock Text="Website"
+                                                       FontSize="14"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Click="OnAddApplication_Click"
+                                            Style="{StaticResource MenuButtonStyle}"
+                                            Foreground="{DynamicResource TextColor}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource bx_app}"
+                                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                  Width="20"
+                                                  Height="20"
+                                                  Margin="0,0,12,0"/>
+                                            <TextBlock Text="App"
+                                                       FontSize="14"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Click="OnAddOther_Click"
+                                            Style="{StaticResource MenuButtonStyle}"
+                                            Foreground="{DynamicResource TextColor}">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path Data="{StaticResource bx_other}"
+                                                  Fill="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
+                                                  Width="20"
+                                                  Height="20"
+                                                  Margin="0,0,12,0"/>
+                                            <TextBlock Text="Other"
+                                                       FontSize="14"
+                                                       VerticalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Button>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </Popup>
+                </Grid>
+
+            <ComboBox x:Name="CategoryCombo"
+                      Width="180"
+                      Height="40"
+                      Margin="12,0,10,0"
+                      ItemsSource="{Binding Categories}"
+                      SelectedItem="{Binding SelectedCategory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                      />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0,0,0,0">
+                <Button Width="44"
+                        Height="44"
+                        Margin="0,0,8,0"
+                        Style="{StaticResource TopbarIconBtnStyle}"
+                        Command="{Binding ToggleFavoriteCommand}">
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="Favorite"/>
+                    </ToolTipService.ToolTip>
+                    <Viewbox Width="20" Height="20">
+                        <Path Data="{StaticResource bx_favorite}">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Setter Property="Fill" Value="{DynamicResource TextColor}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding SelectedAccount.IsFavorite}" Value="True">
+                                            <Setter Property="Fill" Value="{DynamicResource PrimaryColor}"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                            <Setter Property="Fill" Value="{DynamicResource PrimaryColor}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+                    </Viewbox>
+                </Button>
+                <Button Width="44"
+                        Height="44"
+                        Margin="0,0,8,0"
+                        Style="{StaticResource TopbarIconBtnStyle}"
+                        Command="{Binding EditAccountCommand}">
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="Edit"/>
+                    </ToolTipService.ToolTip>
+                    <Viewbox Width="20" Height="20">
+                        <Path Data="{StaticResource bx_edit}">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Setter Property="Fill" Value="{DynamicResource TextColor}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                            <Setter Property="Fill" Value="{DynamicResource PrimaryColor}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+                    </Viewbox>
+                </Button>
+                <Button Width="44"
+                        Height="44"
+                        Style="{StaticResource TopbarIconBtnStyle}"
+                        Click="OnMoreOptionsClick">
+                    <ToolTipService.ToolTip>
+                        <ToolTip Content="More options"/>
+                    </ToolTipService.ToolTip>
+                    <Button.ContextMenu>
+                        <ContextMenu Placement="Bottom"
+                                     DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}">
+                            <MenuItem Header="Details" Click="OnDetailsClick"/>
+                            <MenuItem Header="Delete"
+                                      Command="{Binding DeleteAccountCommand}"/>
+                            <MenuItem Header="Open"
+                                      Command="{Binding OpenAccountCommand}"
+                                      CommandParameter="{Binding SelectedAccount}"/>
+                        </ContextMenu>
+                    </Button.ContextMenu>
+                    <Viewbox Width="20" Height="20">
+                        <Path Data="{StaticResource bx_show_more}">
+                            <Path.Style>
+                                <Style TargetType="Path">
+                                    <Setter Property="Fill" Value="{DynamicResource TextColor}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsMouseOver, RelativeSource={RelativeSource AncestorType=Button}}" Value="True">
+                                            <Setter Property="Fill" Value="{DynamicResource PrimaryColor}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Path.Style>
+                        </Path>
+                    </Viewbox>
+                </Button>
+            </StackPanel>
+        </DockPanel>
+
+        <!-- Main Content -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Style="{StaticResource SidebarColumnStyle}"/>
+                <!-- Sidebar -->
+                <ColumnDefinition Width="*"/>
+                <!-- Details or Grid -->
+            </Grid.ColumnDefinitions>
+
+            <!-- Sidebar (Accounts list) -->
+            <Border Grid.Column="0"
+                    Background="{DynamicResource CardBgColor}"
+                    Margin="10"
+                    CornerRadius="10"
+                    BorderBrush="{DynamicResource BorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Visibility="{Binding IsListView, Converter={StaticResource BoolToVisibility}}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ListBox ItemsSource="{Binding FilteredAccounts}"
+                             SelectedItem="{Binding SelectedAccount}"
+                             Style="{StaticResource SidebarListBoxStyle}">
+                        <ListBox.ItemContainerStyle>
+                            <StaticResource ResourceKey="SidebarListBoxItemStyle"/>
+                        </ListBox.ItemContainerStyle>
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Margin="4"
+                                        CornerRadius="8"
+                                        Background="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Background}"
+                                        Padding="10">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="{Binding ServiceName}" 
+                                                   FontWeight="Bold"
+                                                   Foreground="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Foreground}"/>
+                                            <TextBlock Text="★"
+                                                       Margin="6,0,0,0"
+                                                       Foreground="{DynamicResource PrimaryColor}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding IsFavorite}" Value="True">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </StackPanel>
+                                        <TextBlock Text="{Binding Username}" 
+                                                   Foreground="{Binding RelativeSource={RelativeSource AncestorType=ListBoxItem}, Path=Foreground}" 
+                                                   FontSize="12"/>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
+            </Border>
+
+            <!-- Main Area (switch between List and Grid) -->
+            <Grid Grid.Column="1" Margin="10">
+                <Grid x:Name="ListViewContainer" Visibility="{Binding IsListView, Converter={StaticResource BoolToVisibility}}">
+                    <DataGrid ItemsSource="{Binding FilteredAccounts}"
+                              SelectedItem="{Binding SelectedAccount}"
+                              AutoGenerateColumns="False"
+                              HeadersVisibility="Column"
+                              IsReadOnly="True"
+                              Margin="0,10,0,0"
+                              BorderThickness="0"
+                              RowHeight="40"
+                              Background="Transparent"
+                              Foreground="{DynamicResource TextColor}"
+                              GridLinesVisibility="All"
+                              HorizontalGridLinesBrush="{DynamicResource BorderColor}"
+                              VerticalGridLinesBrush="{DynamicResource BorderColor}"
+                              MouseDoubleClick="OnDataGridDoubleClick">
+                        <DataGrid.Resources>
+                            <Style TargetType="DataGridColumnHeader">
+                                <Setter Property="Background" Value="{DynamicResource InputBgColor}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+                                <Setter Property="FontWeight" Value="SemiBold"/>
+                            </Style>
+                            <Style x:Key="DataGridTextCellStyle" TargetType="TextBlock">
+                                <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.Resources>
+                        <DataGrid.RowStyle>
+                            <Style TargetType="DataGridRow">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+                                <Setter Property="SnapsToDevicePixels" Value="True"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
+                                        <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+                                        <Setter Property="TextElement.Foreground" Value="{DynamicResource PrimaryColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.CellStyle>
+                            <Style TargetType="DataGridCell">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </DataGrid.CellStyle>
+                        <DataGrid.Columns>
+                            <DataGridTemplateColumn Header="" Width="40">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="★"
+                                                   HorizontalAlignment="Center"
+                                                   Foreground="{DynamicResource PrimaryColor}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsFavorite}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Service" Binding="{Binding ServiceName}" Width="2*"
+                                               ElementStyle="{StaticResource DataGridTextCellStyle}"
+                                               EditingElementStyle="{StaticResource DataGridTextCellStyle}"/>
+                            <DataGridTextColumn Header="Username" Binding="{Binding Username}" Width="*"
+                                               ElementStyle="{StaticResource DataGridTextCellStyle}"
+                                               EditingElementStyle="{StaticResource DataGridTextCellStyle}"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"
+                                               ElementStyle="{StaticResource DataGridTextCellStyle}"
+                                               EditingElementStyle="{StaticResource DataGridTextCellStyle}"/>
+                            <DataGridTextColumn Header="Type" Binding="{Binding AccountType}" Width="*"
+                                               ElementStyle="{StaticResource DataGridTextCellStyle}"
+                                               EditingElementStyle="{StaticResource DataGridTextCellStyle}"/>
+                            <DataGridTextColumn Header="URL / Path" Width="2*">
+                                <DataGridTextColumn.Binding>
+                                    <PriorityBinding>
+                                        <Binding Path="Url"/>
+                                        <Binding Path="ApplicationPath"/>
+                                    </PriorityBinding>
+                                </DataGridTextColumn.Binding>
+                                <DataGridTextColumn.ElementStyle>
+                                    <StaticResource ResourceKey="DataGridTextCellStyle"/>
+                                </DataGridTextColumn.ElementStyle>
+                                <DataGridTextColumn.EditingElementStyle>
+                                    <StaticResource ResourceKey="DataGridTextCellStyle"/>
+                                </DataGridTextColumn.EditingElementStyle>
+                            </DataGridTextColumn>
+                            <DataGridTemplateColumn Header="Action" Width="1.6*">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <!-- Open Preview (eye) -->
+                                            <Button Width="36" Height="36" Margin="0,0,8,0" Style="{StaticResource IconBtnStyle}"
+                                                    ToolTip="Open"
+                                                    Click="OnOpenPreviewClick">
+                                                <Viewbox Width="18" Height="18">
+                                                    <Path Data="{StaticResource bx_eye}">
+                                                        <Path.Style>
+                                                            <Style TargetType="Path">
+                                                                <Setter Property="Fill" Value="{DynamicResource TextColor}"/>
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                                        <Setter Property="Fill" Value="{DynamicResource PrimaryColor}"/>
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </Path.Style>
+                                                    </Path>
+                                                </Viewbox>
+                                            </Button>
+                                            <!-- Open action (website/app) -->
+                                            <Button Style="{StaticResource IconBtnStyle}"
+                                                    Command="{Binding DataContext.OpenAccountCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                    CommandParameter="{Binding}"
+                                                    Margin="0">
+                                                <Button.Content>
+                                                    <Viewbox Width="18" Height="18">
+                                                        <Path>
+                                                            <Path.Style>
+                                                                <Style TargetType="Path">
+                                                                    <Setter Property="Data" Value="{StaticResource bx_app}"/>
+                                                                    <Setter Property="Fill" Value="{DynamicResource TextColor}"/>
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding AccountType}" Value="Website">
+                                                                            <Setter Property="Data" Value="{StaticResource bx_open_in_browser}"/>
+                                                                        </DataTrigger>
+                                                                        <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=DataGridRow}}" Value="True">
+                                                                            <Setter Property="Fill" Value="{DynamicResource PrimaryColor}"/>
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </Path.Style>
+                                                        </Path>
+                                                    </Viewbox>
+                                                </Button.Content>
+                                            </Button>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+
+                <Grid x:Name="GridViewContainer" Visibility="{Binding IsGridView, Converter={StaticResource BoolToVisibility}}">
+                    <ScrollViewer VerticalScrollBarVisibility="Auto">
+                        <ItemsControl ItemsSource="{Binding FilteredAccounts}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Width="220" Height="170"
+                                            Margin="8"
+                                            Padding="10"
+                                            Background="{DynamicResource CardBgColor}"
+                                            CornerRadius="12"
+                                            Cursor="Hand"
+                                            Effect="{StaticResource SoftShadow}"
+                                            MouseLeftButtonUp="OnGridCardClicked">
+                                        <StackPanel>
+                                            <StackPanel Orientation="Horizontal">
+                                            <TextBlock Text="{Binding ServiceName}" 
+                                                       FontWeight="Bold"
+                                                       Foreground="{DynamicResource TextColor}"
+                                                       TextWrapping="Wrap"/>
+                                                <TextBlock Text="★"
+                                                           Margin="6,0,0,0"
+                                                           Foreground="{DynamicResource PrimaryColor}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsFavorite}" Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+                                            <TextBlock Text="{Binding AccountType}"
+                                                       Foreground="{DynamicResource PrimaryColor}"
+                                                       FontSize="11"
+                                                       Margin="0,2,0,0"/>
+                                            <TextBlock Text="{Binding Username}" 
+                                                       Foreground="{DynamicResource SubTextColor}" 
+                                                       FontSize="12" Margin="0,4,0,0"/>
+                                            <TextBlock Text="{Binding Email}" 
+                                                       Foreground="{DynamicResource SubTextColor}" 
+                                                       FontSize="11"
+                                                       TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Text="{Binding Url}" 
+                                                       Foreground="{DynamicResource PrimaryColor}" 
+                                                       FontSize="11"
+                                                       TextTrimming="CharacterEllipsis">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding AccountType}" Value="Website">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <TextBlock Text="{Binding ApplicationPath}" 
+                                                       Foreground="{DynamicResource SubTextColor}" 
+                                                       FontSize="11"
+                                                       TextTrimming="CharacterEllipsis">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed"/>
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding AccountType}" Value="Application">
+                                                                <Setter Property="Visibility" Value="Visible"/>
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <Button Style="{StaticResource AccountActionButtonStyle}"
+                                                    Command="{Binding DataContext.OpenAccountCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                    CommandParameter="{Binding}"/>
+                                        </StackPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </ScrollViewer>
+                </Grid>
+            </Grid>
+        </Grid>
+    </Grid>
 </Page>

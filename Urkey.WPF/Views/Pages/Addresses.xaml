@@ -1,4 +1,4 @@
-﻿<Page x:Class="Urkey.WPF.Views.Pages.Addresses"
+<Page x:Class="Urkey.WPF.Views.Pages.Addresses"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -6,7 +6,8 @@
       xmlns:local="clr-namespace:Urkey.WPF.Views.Pages"
       mc:Ignorable="d"
       Title="Addresses"
-      Foreground="{DynamicResource TextColor}">
+      Foreground="{DynamicResource TextColor}"
+      Background="Transparent">
 
   <Grid>
     <TextBlock VerticalAlignment="Center"

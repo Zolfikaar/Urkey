@@ -1,9 +1,10 @@
-﻿using System;
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
+using System.Windows.Navigation;
 using System.Windows.Threading;
 using Urkey.WPF.Helpers;
 using Urkey.WPF.UserControls;
@@ -44,6 +45,7 @@ namespace Urkey.WPF.Views
         public MainWindow()
         {
             InitializeComponent();
+            MainContentArea.Navigated += MainContentArea_Navigated;
 
             // 🟢 تطبيق اللغة والثيم المحفوظين
             LanguageManager.ApplyLanguage(App.Settings.Language);
@@ -68,6 +70,7 @@ namespace Urkey.WPF.Views
             // 🏠 تحميل الصفحة الرئيسية
             var homePage = new Home { DataContext = _mainViewModel };
             MainContentArea.Content = homePage;
+            UpdateViewTogglerForContent();
         }
 
         private void Sidebar_OnNavigationRequested(object sender, SidebarNavigationEventArgs e)
@@ -80,6 +83,7 @@ namespace Urkey.WPF.Views
             }
 
             MainContentArea.Content = e.View;
+            UpdateViewTogglerForContent();
         }
 
         public void ToggleSidebar_Click(object sender, RoutedEventArgs e)
@@ -147,6 +151,52 @@ namespace Urkey.WPF.Views
         }
 
 
+        private void UpdateViewTogglerForContent()
+        {
+            if (GlobalViewToggler == null) return;
+
+            var content = MainContentArea.Content;
+            bool shouldHide =
+                content is Home ||
+                content is AllEntries ||
+                content is PasswordCheck ||
+                content is PasswordGenerator;
+
+            GlobalViewToggler.Visibility = shouldHide ? Visibility.Collapsed : Visibility.Visible;
+
+            if (content is FrameworkElement fe)
+            {
+                GlobalViewToggler.DataContext = fe.DataContext;
+            }
+            else
+            {
+                GlobalViewToggler.DataContext = null;
+            }
+        }
+
+        private void MainContentArea_Navigated(object sender, NavigationEventArgs e)
+        {
+            UpdateViewTogglerForContent();
+        }
+
+        private void OnGlobalSearchTextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                var text = (sender as TextBox)?.Text ?? string.Empty;
+
+                var content = MainContentArea.Content as FrameworkElement;
+                var dc = content?.DataContext;
+                if (dc == null) return;
+
+                var prop = dc.GetType().GetProperty("SearchText");
+                if (prop != null && prop.CanWrite && prop.PropertyType == typeof(string))
+                {
+                    prop.SetValue(dc, text);
+                }
+            }
+            catch { }
+        }
 
     }
 }

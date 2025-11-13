@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -39,8 +39,8 @@ namespace Urkey.WPF.Views.Windows
         }
 
         // Exposed properties for easy access
-        public string Title => TitleTextBox.Text;
-        public string Content => ContentTextBox.Text;
+        public new string Title => TitleTextBox.Text;
+        public new string Content => ContentTextBox.Text;
         public string Category => CategoryTextBox.Text;
         public string Tags => TagsTextBox.Text;
 

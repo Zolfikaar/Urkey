@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Windows;
-using System.Windows.Documents;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Urkey.Core.Models;
 using Urkey.Core.Repository;
 using Urkey.Core.Services;
 using Urkey.WPF.ViewModels;
-using Urkey.WPF.Views.Windows;
 
 namespace Urkey.WPF.Views.Windows
 {
@@ -18,13 +18,39 @@ namespace Urkey.WPF.Views.Windows
         private readonly DocumentEntry? _document;
         private string? _tempExtractedPath;
         private DocumentPreviewViewModel? _viewModel;
+        private EventHandler? _layoutHandler;
 
         public DocumentPreview(string encryptedImagePath, DocumentEntry? document = null)
         {
             InitializeComponent();
             _encryptedImagePath = encryptedImagePath;
             _document = document;
+            Loaded += OnWindowLoaded;
+            Closing += OnWindowClosing;
+        }
+
+        private void OnWindowLoaded(object sender, RoutedEventArgs e)
+        {
             LoadImage();
+        }
+
+        private void OnWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // Cleanup: Remove layout handler to prevent leaks
+            if (_layoutHandler != null && ImageScrollViewer != null)
+            {
+                ImageScrollViewer.LayoutUpdated -= _layoutHandler;
+            }
+
+            // Cleanup: Delete temp file
+            try
+            {
+                if (_tempExtractedPath != null && File.Exists(_tempExtractedPath))
+                {
+                    File.Delete(_tempExtractedPath);
+                }
+            }
+            catch { /* Ignore cleanup errors */ }
         }
 
         private void LoadImage()
@@ -39,47 +65,225 @@ namespace Urkey.WPF.Views.Windows
                     return;
                 }
 
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.UriSource = new Uri(_tempExtractedPath);
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.EndInit();
-                bitmap.Freeze();
+                // Load bitmap with EXIF handling and downscaling
+                var (bitmap, exifRotation) = LoadOptimizedBitmap(_tempExtractedPath);
 
-                // Calculate container size (accounting for margins and padding)
-                // Use default size initially, will be updated when window is loaded
-                double containerWidth = 760; // 800 - 40 (margins/padding)
-                double containerHeight = 520; // 600 - 80 (header + margins/padding)
-
+                // Create ViewModel with document info
                 _viewModel = new DocumentPreviewViewModel(
-                    bitmap, 
+                    bitmap,
                     _document?.Name ?? "Document Preview",
-                    _document?.Type ?? string.Empty,
-                    containerWidth,
-                    containerHeight);
-                DataContext = _viewModel;
-                
-                // Update zoom when window is loaded with actual size
-                Loaded += (s, e) =>
+                    _document?.Type ?? string.Empty);
+
+                // Apply EXIF rotation if present
+                if (exifRotation != 0)
                 {
-                    if (_viewModel != null && bitmap != null)
-                    {
-                        double actualWidth = ActualWidth - 60;
-                        double actualHeight = ActualHeight - 100;
-                        if (actualWidth > 0 && actualHeight > 0 && bitmap.PixelWidth > 0 && bitmap.PixelHeight > 0)
-                        {
-                            double widthRatio = actualWidth / bitmap.PixelWidth;
-                            double heightRatio = actualHeight / bitmap.PixelHeight;
-                            double fitZoom = Math.Min(widthRatio, heightRatio) * 0.95;
-                            _viewModel.ZoomLevel = fitZoom;
-                        }
-                    }
-                };
+                    _viewModel.RotationAngle = exifRotation;
+                }
+
+                DataContext = _viewModel;
+
+                // Schedule fit-to-screen calculation after layout completes
+                ScheduleFitToScreen();
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        /// <summary>
+        /// Loads and optimizes bitmap with EXIF orientation handling and smart downscaling.
+        /// Returns the bitmap and any EXIF rotation angle (0-360).
+        /// </summary>
+        private (BitmapImage bitmap, double exifRotation) LoadOptimizedBitmap(string path)
+        {
+            BitmapImage bitmap = new BitmapImage();
+            double exifRotation = 0;
+            int targetMaxDimension = 2400; // Target max dimension for downscaling
+
+            using (var stream = File.OpenRead(path))
+            {
+                var decoder = BitmapDecoder.Create(
+                    stream,
+                    BitmapCreateOptions.PreservePixelFormat,
+                    BitmapCacheOption.OnLoad);
+
+                if (decoder.Frames.Count == 0)
+                    throw new InvalidOperationException("No frames in image");
+
+                var frame = decoder.Frames[0];
+                int originalWidth = frame.PixelWidth;
+                int originalHeight = frame.PixelHeight;
+
+                // Read EXIF orientation from metadata
+                // Try multiple metadata query paths for compatibility
+                var metadata = frame.Metadata as BitmapMetadata;
+                if (metadata != null)
+                {
+                    try
+                    {
+                        object? orientation = null;
+                        
+                        // Try different EXIF orientation query paths
+                        string[] orientationPaths = {
+                            "System.Photo.Orientation",
+                            "/app1/ifd/{ushort=274}",
+                            "/ifd/{ushort=274}"
+                        };
+
+                        foreach (var queryPath in orientationPaths)
+                        {
+                            try
+                            {
+                                if (metadata.ContainsQuery(queryPath))
+                                {
+                                    orientation = metadata.GetQuery(queryPath);
+                                    if (orientation != null) break;
+                                }
+                            }
+                            catch { /* Try next query path */ }
+                        }
+
+                        if (orientation != null)
+                        {
+                            ushort orientationValue = Convert.ToUInt16(orientation);
+                            // Map EXIF orientation to rotation angle
+                            // 1 = Normal (0°), 3 = 180°, 6 = 90° CW, 8 = 270° CW (90° CCW)
+                            exifRotation = orientationValue switch
+                            {
+                                3 => 180,  // Rotate 180
+                                6 => 90,   // Rotate 90 CW
+                                8 => 270,  // Rotate 270 CW (90 CCW)
+                                _ => 0     // Normal or unknown
+                            };
+                        }
+                    }
+                    catch
+                    {
+                        // If EXIF reading fails, continue without rotation
+                    }
+                }
+
+                // Calculate downscaling if needed
+                int decodeWidth = originalWidth;
+                int decodeHeight = originalHeight;
+
+                if (originalWidth > targetMaxDimension || originalHeight > targetMaxDimension)
+                {
+                    double scale = Math.Min(
+                        targetMaxDimension / (double)originalWidth,
+                        targetMaxDimension / (double)originalHeight);
+                    decodeWidth = (int)(originalWidth * scale);
+                    decodeHeight = (int)(originalHeight * scale);
+                }
+
+                // Initialize bitmap with optimized dimensions
+                bitmap.BeginInit();
+                bitmap.UriSource = new Uri(path);
+                bitmap.DecodePixelWidth = decodeWidth;
+                bitmap.DecodePixelHeight = decodeHeight;
+                bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                bitmap.EndInit();
+            }
+
+            bitmap.Freeze();
+            return (bitmap, exifRotation);
+        }
+
+        /// <summary>
+        /// Schedules fit-to-screen calculation after layout completes.
+        /// Uses LayoutUpdated event (unsubscribes after first run) as fallback.
+        /// </summary>
+        private void ScheduleFitToScreen()
+        {
+            if (ImageScrollViewer == null || _viewModel == null)
+                return;
+
+            bool fitCalculated = false;
+
+            _layoutHandler = (_, _) =>
+            {
+                if (!fitCalculated && ImageScrollViewer.ViewportWidth > 0 && ImageScrollViewer.ViewportHeight > 0)
+                {
+                    CalculateFitToScreen();
+                    fitCalculated = true;
+                    // Unsubscribe after first successful calculation
+                    if (_layoutHandler != null)
+                    {
+                        ImageScrollViewer.LayoutUpdated -= _layoutHandler;
+                        _layoutHandler = null;
+                    }
+                }
+            };
+
+            ImageScrollViewer.LayoutUpdated += _layoutHandler;
+
+            // Also handle window resize
+            SizeChanged += (_, _) =>
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (_viewModel != null)
+                        _viewModel.FitToScreen(ImageScrollViewer);
+                }), System.Windows.Threading.DispatcherPriority.Loaded);
+            };
+
+            // Multiple fallbacks to ensure fit calculation runs
+            // Try after Loaded priority
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                if (ImageScrollViewer != null && _viewModel != null)
+                {
+                    ImageScrollViewer.UpdateLayout();
+                    if (ImageScrollViewer.ViewportWidth > 0 && ImageScrollViewer.ViewportHeight > 0)
+                    {
+                        CalculateFitToScreen();
+                        if (_layoutHandler != null)
+                        {
+                            ImageScrollViewer.LayoutUpdated -= _layoutHandler;
+                            _layoutHandler = null;
+                        }
+                    }
+                }
+            }), System.Windows.Threading.DispatcherPriority.Loaded);
+
+            // Additional fallback: Try after ContentRendered
+            ContentRendered += (_, _) =>
+            {
+                Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (ImageScrollViewer != null && _viewModel != null)
+                    {
+                        ImageScrollViewer.UpdateLayout();
+                        if (ImageScrollViewer.ViewportWidth > 0 && ImageScrollViewer.ViewportHeight > 0)
+                        {
+                            CalculateFitToScreen();
+                        }
+                    }
+                }), System.Windows.Threading.DispatcherPriority.Background);
+            };
+        }
+
+        /// <summary>
+        /// Calculates and applies fit-to-screen zoom using ScrollViewer viewport dimensions.
+        /// </summary>
+        private void CalculateFitToScreen()
+        {
+            if (_viewModel?.PreviewImage == null || ImageScrollViewer == null)
+                return;
+
+            // Force layout update to ensure viewport dimensions are accurate
+            ImageScrollViewer.UpdateLayout();
+            
+            // Double-check viewport has valid dimensions
+            if (ImageScrollViewer.ViewportWidth <= 0 || ImageScrollViewer.ViewportHeight <= 0)
+            {
+                // If viewport is still 0, use actual dimensions
+                if (ImageScrollViewer.ActualWidth <= 0 || ImageScrollViewer.ActualHeight <= 0)
+                    return; // Can't calculate yet
+            }
+
+            _viewModel.FitToScreen(ImageScrollViewer);
         }
 
         private void OnExportClick(object sender, RoutedEventArgs e)
@@ -112,14 +316,6 @@ namespace Urkey.WPF.Views.Windows
 
         private void OnCloseClick(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                // نحذف الصورة المؤقتة إذا موجودة
-                if (_tempExtractedPath != null && File.Exists(_tempExtractedPath))
-                    File.Delete(_tempExtractedPath);
-            }
-            catch { /* تجاهل الخطأ */ }
-
             Close();
         }
 
@@ -129,14 +325,10 @@ namespace Urkey.WPF.Views.Windows
 
             try
             {
-                var editWindow = new AddDocument(_document)
-                {
-                    Owner = this
-                };
+                var editWindow = new AddDocument(_document) { Owner = this };
 
                 if (editWindow.ShowDialog() == true && editWindow.Document != null)
                 {
-                    // Update document properties directly
                     _document.Name = editWindow.Document.Name;
                     _document.Type = editWindow.Document.Type;
                     _document.Number = editWindow.Document.Number;
@@ -145,9 +337,8 @@ namespace Urkey.WPF.Views.Windows
                     _document.ExpiryDate = editWindow.Document.ExpiryDate;
 
                     var repo = new VaultRepository();
-                    
-                    // If new image selected, save it
-                    if (!string.IsNullOrWhiteSpace(editWindow.Document.ExternalImagePath) && 
+
+                    if (!string.IsNullOrWhiteSpace(editWindow.Document.ExternalImagePath) &&
                         File.Exists(editWindow.Document.ExternalImagePath) &&
                         editWindow.Document.ExternalImagePath != _document.ExternalImagePath)
                     {
@@ -155,30 +346,21 @@ namespace Urkey.WPF.Views.Windows
                         string vaultDirectory = repo.GetVaultDirectory();
                         string encryptedImagePath = FileHelper.SaveDocumentImage(originalImagePath, vaultDirectory);
                         _document.ExternalImagePath = encryptedImagePath;
-                        
-                        // Reload the image
                         LoadImage();
                     }
-                    else
+                    else if (_viewModel != null)
                     {
-                        // Update the view model with new name/type
-                        if (_viewModel != null)
-                        {
-                            _viewModel.DocumentName = _document.Name;
-                            _viewModel.DocumentType = _document.Type;
-                        }
+                        _viewModel.DocumentName = _document.Name;
+                        _viewModel.DocumentType = _document.Type;
                     }
 
-                    // Save the vault
                     var vault = repo.LoadVault();
                     repo.SaveVault(vault);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, $"Error editing document: {ex.Message}", "Error", 
-                    MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, 
-                    MessageBoxOptions.None);
+                MessageBox.Show(this, $"Error editing document: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -192,25 +374,34 @@ namespace Urkey.WPF.Views.Windows
                 "Confirm Delete",
                 MessageBoxButton.YesNo,
                 MessageBoxImage.Warning,
-                MessageBoxResult.No,
-                MessageBoxOptions.None);
+                MessageBoxResult.No);
 
             if (result == MessageBoxResult.Yes)
             {
                 try
                 {
-                    // Delete using DocumentsViewModel
-                    var vm = new DocumentsViewModel();
-                    vm.DeleteCommand.Execute(_document);
-                    
-                    // Close the preview window after deletion
-                    OnCloseClick(sender, e);
+                    var repo = new VaultRepository();
+                    var vault = repo.LoadVault();
+
+                    var docToDelete = vault.Entries.OfType<DocumentEntry>()
+                        .FirstOrDefault(d => d.Id == _document.Id);
+
+                    if (docToDelete != null)
+                    {
+                        if (!string.IsNullOrEmpty(docToDelete.ExternalImagePath) && File.Exists(docToDelete.ExternalImagePath))
+                        {
+                            try { File.Delete(docToDelete.ExternalImagePath); } catch { }
+                        }
+
+                        vault.Entries.Remove(docToDelete);
+                        repo.SaveVault(vault);
+                    }
+
+                    Close();
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(this, $"Error deleting document: {ex.Message}", "Error", 
-                        MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, 
-                        MessageBoxOptions.None);
+                    MessageBox.Show(this, $"Error deleting document: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
         }
@@ -223,9 +414,7 @@ namespace Urkey.WPF.Views.Windows
             {
                 if (_tempExtractedPath == null || !File.Exists(_tempExtractedPath))
                 {
-                    MessageBox.Show(this, "Image not loaded yet.", "Warning", 
-                        MessageBoxButton.OK, MessageBoxImage.Warning, MessageBoxResult.OK, 
-                        MessageBoxOptions.None);
+                    MessageBox.Show(this, "Image not loaded yet.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
@@ -238,16 +427,12 @@ namespace Urkey.WPF.Views.Windows
                 if (saveDialog.ShowDialog() == true)
                 {
                     File.Copy(_tempExtractedPath, saveDialog.FileName, overwrite: true);
-                    MessageBox.Show(this, "Document downloaded successfully!", "Success",
-                        MessageBoxButton.OK, MessageBoxImage.Information, MessageBoxResult.OK, 
-                        MessageBoxOptions.None);
+                    MessageBox.Show(this, "Document downloaded successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, $"Error downloading document: {ex.Message}", "Error", 
-                    MessageBoxButton.OK, MessageBoxImage.Error, MessageBoxResult.OK, 
-                    MessageBoxOptions.None);
+                MessageBox.Show(this, $"Error downloading document: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }

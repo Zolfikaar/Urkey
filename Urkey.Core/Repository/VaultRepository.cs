@@ -10,7 +10,7 @@ namespace Urkey.Core.Repository
     {
         private readonly string _vaultDirectory;
         private readonly string _vaultFilePath;
-        private readonly Vault _vault;
+        private Vault _vault;
 
         public VaultRepository(string? customPath = null)
         {
@@ -45,6 +45,28 @@ namespace Urkey.Core.Repository
         }
 
         public Vault LoadVault() => _vault;
+
+        public Vault ReloadFromDisk()
+        {
+            if (!File.Exists(_vaultFilePath))
+            {
+                _vault = new Vault();
+                return _vault;
+            }
+
+            try
+            {
+                string encryptedJson = File.ReadAllText(_vaultFilePath);
+                string decryptedJson = EncryptionService.Decrypt(encryptedJson);
+                _vault = JsonSerializer.Deserialize<Vault>(decryptedJson) ?? new Vault();
+            }
+            catch
+            {
+                _vault = new Vault();
+            }
+
+            return _vault;
+        }
 
         public void AddEntry(VaultEntry entry)
         {

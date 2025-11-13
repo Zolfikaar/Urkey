@@ -1,4 +1,4 @@
-﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
     <sys:String x:Key="AppTitle">Urkey</sys:String>
@@ -79,6 +79,9 @@
     <sys:String x:Key="EmailFieldTitle">Email</sys:String>
     <sys:String x:Key="WebsiteFieldTitle">Website</sys:String>
     <sys:String x:Key="NotesFieldTitle">Notes</sys:String>
+    <sys:String x:Key="AccountTypeTitle">Application Type</sys:String>
+    <sys:String x:Key="LicenseKeyFieldTitle">License Key (optional)</sys:String>
+    
     
     <!-- Add Bank Card Form Fields Translations -->
     <sys:String x:Key="CardNameFieldTitle">Card Name</sys:String>
@@ -126,5 +129,32 @@
     <sys:String x:Key="SecurityWarningTitle">Security Warning</sys:String>
     <sys:String x:Key="SecurityWarningMessage">⚠️ For better security, consider deleting the original file after adding the document. The encrypted copy is safely stored in your vault.</sys:String>
     <sys:String x:Key="OtherType">Other</sys:String>
+
+
+    <!-- Accounts Page Translations -->
+    <sys:String x:Key="AddAccountTitle">Add Account</sys:String>
+
+    <!-- App Flow Direction -->
+    <FlowDirection x:Key="AppFlowDirection">LeftToRight</FlowDirection>
+
+    <!-- Add Account Window Translations -->
+    <sys:String x:Key="WebsiteType">Website</sys:String>
+    <sys:String x:Key="AccountsType">Application</sys:String>
+    <sys:String x:Key="NewItemTitle">New item</sys:String>
+    <sys:String x:Key="DetailsTitle">Details</sys:String>
+    <sys:String x:Key="CredentialsTitle">Credentials</sys:String>
+    <sys:String x:Key="AutologinTitle">Autologin</sys:String>
+    <sys:String x:Key="DisabledText">Disabled</sys:String>
+    <sys:String x:Key="ShowBtnTitle">Show</sys:String>
+    <sys:String x:Key="CopyBtnTitle">Copy</sys:String>
+    <sys:String x:Key="PasswordChangeHistoryTitle">Password change history</sys:String>
+    <sys:String x:Key="AddCommentTitle">Add comment</sys:String>
+    <sys:String x:Key="NoHistoryMessage">No History</sys:String>
+    <sys:String x:Key="ChooseAppButtonTitle">Select app…</sys:String>
+    <sys:String x:Key="AccountsActionOpenWebsite">Open in browser</sys:String>
+    <sys:String x:Key="AccountsActionLaunchApp">Launch app</sys:String>
+    <sys:String x:Key="WebsiteCredentialsTitle">Website credentials</sys:String>
+    <sys:String x:Key="ApplicationCredentialsTitle">Application credentials</sys:String>
+    <sys:String x:Key="OtherCredentialsTitle">Secure details</sys:String>
 
 </ResourceDictionary>

@@ -154,5 +154,18 @@
         <sys:String x:Key="ApplicationCredentialsTitle">بيانات التطبيق</sys:String>
         <sys:String x:Key="OtherCredentialsTitle">تفاصيل أخرى</sys:String>
     
+        <!-- UnlockWindow Translations -->
+        <sys:String x:Key="UnlockWindow_Title">أُوركي</sys:String>
+        <sys:String x:Key="UnlockWindow_VaultLocked">الحافظة مقفلة</sys:String>
+        <sys:String x:Key="UnlockWindow_EnterMasterPassword">يرجى إدخال كلمة المرور الرئيسية لإلغاء القفل</sys:String>
+        <sys:String x:Key="UnlockWindow_UnlockButton">إلغاء القفل</sys:String>
+        <sys:String x:Key="UnlockWindow_ForgotPassword">نسيت كلمة المرور؟</sys:String>
+        <sys:String x:Key="UnlockWindow_MasterPasswordPlaceholder">كلمة المرور الرئيسية</sys:String>
+        <sys:String x:Key="UnlockWindow_ShowPassword">إظهار كلمة المرور</sys:String>
+        <sys:String x:Key="UnlockWindow_HidePassword">إخفاء كلمة المرور</sys:String>
+
+        <!-- SplashScreen Translations -->
+        <sys:String x:Key="SplashScreen_AppName">أُوركي</sys:String>
+        <sys:String x:Key="SplashScreen_Tagline">مفتاحك الرقمي لحماية كلمات المرور</sys:String>
 
 </ResourceDictionary>

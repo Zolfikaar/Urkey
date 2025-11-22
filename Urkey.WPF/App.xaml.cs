@@ -20,7 +20,8 @@ namespace Urkey.WPF
             LanguageManager.ApplyLanguage(Settings.Language);
             ThemeManager.ApplyTheme(Settings.Theme);
 
-            var mainWindow = new Views.MainWindow();
+            //var mainWindow = new Views.MainWindow();
+            var mainWindow = new Views.Windows.SplashScreen();
             mainWindow.Show();
         }
 

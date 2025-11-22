@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:uc="clr-namespace:Urkey.WPF.UserControls"
         Title="{DynamicResource MainWindowTitle}"
-        FontFamily="pack://application:,,,/Fonts/#Cairo"
+        FontFamily="pack://application:,,,/Assets/Fonts/#Cairo"
         WindowStyle="SingleBorderWindow"
         ResizeMode="CanResize"
         Height="720"

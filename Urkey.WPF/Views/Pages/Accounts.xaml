@@ -4,7 +4,8 @@
       xmlns:local="clr-namespace:Urkey.WPF.Views.Pages"
       xmlns:vm="clr-namespace:Urkey.WPF.ViewModels"
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
-      Background="Transparent"
+      Background="{DynamicResource BgColor}"
+      Height="600"
       FlowDirection="{DynamicResource AppFlowDirection}">
 
     <Page.DataContext>
@@ -55,7 +56,10 @@
         </Style>
         <Style x:Key="AccountActionButtonStyle"
                TargetType="Button"
-               BasedOn="{StaticResource SecondaryBtnStyle}">
+               BasedOn="{StaticResource SecondaryBtnStyle}"
+               
+               >
+                
             <Setter Property="Visibility" Value="Collapsed"/>
             <Setter Property="Margin" Value="0,10,0,0"/>
             <Setter Property="HorizontalAlignment" Value="Left"/>

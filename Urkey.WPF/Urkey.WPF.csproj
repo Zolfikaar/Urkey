@@ -10,6 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Backgrounds\splash-bg.jpg" />
+    <None Remove="Assets\Logos\Logo_with_bg.png" />
+    <None Remove="Assets\Logos\SplashScreenLogo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Urkey.Core\Urkey.Core.csproj" />
   </ItemGroup>
 
@@ -26,6 +32,26 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Assets\Images\" />
+    <Folder Include="Assets\Icons\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Backgrounds\splash-bg.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Logos\Logo_with_bg.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Logos\SplashScreenLogo.png" />
+    <Resource Include="Assets\Fonts\Cairo.ttf" />
+    <Resource Include="Assets\Fonts\LeagueSpartan.ttf" />
+    <Resource Include="Assets\Icons\favicon.ico" />
+    <Resource Include="Assets\Icons\favicon-16x16.png" />
+    <Resource Include="Assets\Icons\favicon-32x32.png" />
   </ItemGroup>
 
 

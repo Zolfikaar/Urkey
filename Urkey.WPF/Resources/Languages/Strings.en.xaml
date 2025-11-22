@@ -157,4 +157,18 @@
     <sys:String x:Key="ApplicationCredentialsTitle">Application credentials</sys:String>
     <sys:String x:Key="OtherCredentialsTitle">Secure details</sys:String>
 
+    <!-- UnlockWindow Translations -->
+    <sys:String x:Key="UnlockWindow_Title">Urkey</sys:String>
+    <sys:String x:Key="UnlockWindow_VaultLocked">Vault is Locked</sys:String>
+    <sys:String x:Key="UnlockWindow_EnterMasterPassword">Please enter your master password to unlock</sys:String>
+    <sys:String x:Key="UnlockWindow_UnlockButton">Unlock</sys:String>
+    <sys:String x:Key="UnlockWindow_ForgotPassword">Forgot Password?</sys:String>
+    <sys:String x:Key="UnlockWindow_MasterPasswordPlaceholder">Master Password</sys:String>
+    <sys:String x:Key="UnlockWindow_ShowPassword">Show Password</sys:String>
+    <sys:String x:Key="UnlockWindow_HidePassword">Hide Password</sys:String>
+
+    <!-- SplashScreen Translations -->
+    <sys:String x:Key="SplashScreen_AppName">Urkey</sys:String>
+    <sys:String x:Key="SplashScreen_Tagline">Your Digital Key to Secure Passwords</sys:String>
+
 </ResourceDictionary>

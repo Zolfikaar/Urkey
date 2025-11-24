@@ -17,14 +17,14 @@ namespace Urkey.WPF.Views.Windows
         {
             InitializeComponent();
             Loaded += UnlockWindow_Loaded;
-            
+
             // Bind password visibility
             MasterPasswordBox.PasswordChanged += (s, e) =>
             {
                 if (!_isPasswordVisible)
                     MasterPasswordTextBox.Text = MasterPasswordBox.Password;
             };
-            
+
             MasterPasswordTextBox.TextChanged += (s, e) =>
             {
                 if (_isPasswordVisible)
@@ -37,13 +37,13 @@ namespace Urkey.WPF.Views.Windows
             // Apply language and set FlowDirection
             var langCode = App.Settings?.Language ?? "en";
             LanguageManager.ApplyLanguage(langCode);
-            
+
             FlowDirection = langCode == "ar" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-            
+
             // Position settings button based on language
             // In RTL, button should be on left; in LTR, on right
-            SettingsButton.HorizontalAlignment = langCode == "ar" 
-                ? HorizontalAlignment.Left 
+            SettingsButton.HorizontalAlignment = langCode == "ar"
+                ? HorizontalAlignment.Left
                 : HorizontalAlignment.Right;
 
             // Set focus on password field
@@ -54,7 +54,7 @@ namespace Urkey.WPF.Views.Windows
         private void TogglePasswordButton_Click(object sender, RoutedEventArgs e)
         {
             _isPasswordVisible = !_isPasswordVisible;
-            
+
             if (_isPasswordVisible)
             {
                 MasterPasswordTextBox.Text = MasterPasswordBox.Password;
@@ -71,6 +71,11 @@ namespace Urkey.WPF.Views.Windows
             }
         }
 
+        private void TogglePasswordArea_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            TogglePasswordButton_Click(TogglePasswordButton, new RoutedEventArgs());
+        }
+
         private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
@@ -83,7 +88,7 @@ namespace Urkey.WPF.Views.Windows
         {
             // TODO: Implement unlock logic
             string password = _isPasswordVisible ? MasterPasswordTextBox.Text : MasterPasswordBox.Password;
-            
+
             if (string.IsNullOrWhiteSpace(password))
             {
                 MessageBox.Show("Please enter your master password.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);

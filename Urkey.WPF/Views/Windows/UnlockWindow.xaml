@@ -44,7 +44,7 @@
         <Grid x:Name="LogoContainer"
               HorizontalAlignment="Center"
               VerticalAlignment="Center"
-              Margin="0,0,0,70"
+              Margin="0,0,0,100"
               Opacity="1">
             <Image Source="/Assets/Logos/Logo_with_bg.png"
                    Width="640"
@@ -66,13 +66,13 @@
                        FontSize="24"
                        FontWeight="Bold"
                        HorizontalAlignment="Center"
-                       Margin="0,0,0,10"/>
+                       Margin="0,0,0,0"/>
 
             <TextBlock Text="{DynamicResource UnlockWindow_EnterMasterPassword}"
                        Foreground="#E2BD56"
                        FontSize="16"
                        HorizontalAlignment="Center"
-                       Margin="0,0,0,30"
+                       Margin="0,0,0,20"
                        TextWrapping="Wrap"
                        TextAlignment="Center"
                        MaxWidth="400"/>
@@ -113,51 +113,65 @@
                          KeyDown="PasswordBox_KeyDown"/>
 
                 <!-- زر إظهار/إخفاء كلمة المرور -->
-                <Button x:Name="TogglePasswordButton"
-                        Grid.Column="1"
-                        Width="40"
+                <Border Width="40"
                         Height="56"
-                        Background="Transparent"
-                        BorderThickness="0"
                         Cursor="Hand"
-                        Click="TogglePasswordButton_Click"
-                        VerticalAlignment="Center"
-                        Margin="0,0,5,0">
-                    <Path Data="{StaticResource bx_eye}"
-                          Fill="White"
-                          Width="20"
-                          Height="20"
-                          Stretch="Uniform"/>
-                </Button>
+                        Background="Transparent"
+                        HorizontalAlignment="Right"
+                        Grid.Column="0"
+                        MouseLeftButtonUp="TogglePasswordArea_MouseLeftButtonUp"
+                        Panel.ZIndex="1">
+
+                    <Button x:Name="TogglePasswordButton"
+                            Width="40"
+                            Height="56"
+                            Cursor="Hand"
+                            Background="Transparent"
+                            BorderThickness="0"
+                            Click="TogglePasswordButton_Click"
+                            VerticalAlignment="Center"
+                            Margin="0,0,0,0">
+                        <Path Data="{StaticResource bx_eye}"
+                              Fill="White"
+                              Width="20"
+                              Height="20"
+                              Stretch="Uniform"/>
+                    </Button>
+                </Border>
+
+
             </Grid>
 
             <!-- زر إلغاء القفل -->
-            <Button x:Name="UnlockButton"
-                    Width="200"
+            <Border Width="200"
                     Height="50"
-                    Margin="0,0,0,15"
-                    HorizontalAlignment="Center"
                     Background="#E2BD56"
-                    Foreground="#001E57"
-                    FontSize="18"
-                    FontWeight="SemiBold"
                     Cursor="Hand"
-                    BorderThickness="0"
-                    Click="UnlockButton_Click">
-                <Button.Content>
-                    <StackPanel Orientation="Horizontal"
-                                HorizontalAlignment="Center">
-                        <Path Data="{StaticResource bx_lock}"
-                              Fill="#001E57"
-                              Width="20"
-                              Height="20"
-                              Margin="0,0,10,0"
-                              Stretch="Uniform"/>
-                        <TextBlock Text="{DynamicResource UnlockWindow_UnlockButton}"
-                                   VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button.Content>
-            </Button>
+                    Margin="0,0,0,15">
+                <Button x:Name="UnlockButton"
+                        Width="200"
+                        Height="50"
+                        HorizontalAlignment="Center"
+                        Foreground="#001E57"
+                        FontSize="18"
+                        FontWeight="SemiBold"
+                        BorderThickness="0"
+                        Click="UnlockButton_Click">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal"
+                                    HorizontalAlignment="Center">
+                            <Path Data="{StaticResource bx_lock}"
+                                  Fill="#001E57"
+                                  Width="20"
+                                  Height="20"
+                                  Margin="0,0,10,0"
+                                  Stretch="Uniform"/>
+                            <TextBlock Text="{DynamicResource UnlockWindow_UnlockButton}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </Border>
 
             <!-- رابط نسيان كلمة المرور -->
             <TextBlock x:Name="ForgotPasswordLink"

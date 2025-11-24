@@ -82,7 +82,7 @@
                    FontWeight="Bold"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
-                   Margin="0,0,0,140"/>
+                   Margin="0,0,0,150"/>
 
         <!-- الوصف -->
         <TextBlock Text="{DynamicResource SplashScreen_Tagline}"
@@ -90,7 +90,7 @@
                    FontSize="28"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
-                   Margin="0,0,0,120"
+                   Margin="0,0,0,100"
                    TextWrapping="Wrap"
                    TextAlignment="Center"
                    MaxWidth="600"/>

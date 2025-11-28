@@ -1,0 +1,336 @@
+﻿<Window x:Class="Urkey.WPF.Views.Windows.FirstTimeSetupWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="SingleBorderWindow"
+        WindowState="Maximized"
+        ResizeMode="CanResize"
+        Background="#001E57"
+        WindowStartupLocation="CenterScreen"
+        Icon="/Assets/Icons/favicon.ico"
+        Title="{DynamicResource FirstTimeSetupWindow_Title}">
+
+    <Grid>
+
+        <!-- Background -->
+        <Image Source="/Assets/Backgrounds/splash-bg.jpg"
+               Stretch="Fill"
+               Opacity="0.95"/>
+
+        <!-- Main Panel -->
+        <StackPanel VerticalAlignment="Center"
+                    HorizontalAlignment="Center"
+                    MinWidth="400">
+
+            <!-- Title -->
+            <TextBlock Text="{DynamicResource Setup_WelcomeTitle}"
+                       Foreground="White"
+                       FontSize="26"
+                       FontWeight="Bold"
+                       HorizontalAlignment="Center"
+                       Margin="0 0 0 5"/>
+
+            <!-- Subtitle -->
+            <TextBlock Text="{DynamicResource Setup_WelcomeSubtitle}"
+                       Foreground="#E2BD56"
+                       FontSize="16"
+                       HorizontalAlignment="Center"
+                       Margin="0 0 0 35"
+                       TextAlignment="Center"/>
+
+
+            <!-- MASTER PASSWORD -->
+          <TextBlock Text="{DynamicResource Setup_MasterPasswordTitle}"
+                       Foreground="White"
+                       FontSize="15"
+                       FontWeight="SemiBold"
+                       Margin="0 0 0 6"/>
+
+            <Grid>
+                <TextBox x:Name="MasterPasswordTextBox"
+                         Grid.Column="0"
+                         Height="56"
+                         FontSize="18"
+                         Padding="15,12,45,12"
+                         Background="#0C1C3A"
+                         Foreground="White"
+                         BorderBrush="#E2BD56"
+                         BorderThickness="2"
+                         VerticalContentAlignment="Center"
+                         Visibility="Collapsed"
+                         KeyDown="PasswordBox_KeyDown"/>
+                
+                <PasswordBox x:Name="MasterPasswordBox"
+                             Height="54"
+                             Background="#0C1C3A"
+                             Foreground="White"
+                             FontSize="17"
+                             BorderBrush="#E2BD56"
+                             BorderThickness="2"
+                             Padding="15,10,45,10"/>
+
+                <Button x:Name="MasterShowBtn"
+                        Width="40" Height="40"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Click="ToggleMasterPasswordButton_Click">
+
+                    <Path Data="{StaticResource bx_eye}"
+                          Width="20" Height="20"
+                          Fill="White"/>
+                </Button>
+            </Grid>
+
+            <TextBlock x:Name="MasterWarning"
+                       Text=""
+                       Foreground="#FF6B6B"
+                       FontSize="12"
+                       Margin="0 4 0 10"/>
+
+
+            <!-- CONFIRM PASSWORD -->
+          <TextBlock Text="{DynamicResource Setup_MasterPasswordConfirmTitle}"
+                       Foreground="White"
+                       FontSize="15"
+                       FontWeight="SemiBold"
+                       Margin="0 0 0 6"/>
+
+            <Grid>
+                <TextBox x:Name="ConfirmPasswordTextBox"
+                         Grid.Column="0"
+                         Height="56"
+                         FontSize="18"
+                         Padding="15,12,45,12"
+                         Background="#0C1C3A"
+                         Foreground="White"
+                         BorderBrush="#E2BD56"
+                         BorderThickness="2"
+                         VerticalContentAlignment="Center"
+                         Visibility="Collapsed"
+                         KeyDown="PasswordBox_KeyDown"/>
+                
+                <PasswordBox x:Name="ConfirmPasswordBox"
+                             Height="54"
+                             Background="#0C1C3A"
+                             Foreground="White"
+                             FontSize="17"
+                             BorderBrush="#E2BD56"
+                             BorderThickness="2"
+                             Padding="15,10,45,10"/>
+
+                <Button x:Name="ConfirmShowBtn"
+                        Width="40" Height="40"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        Cursor="Hand"
+                        Click="ToggleConfirmPasswordButton_Click">
+
+                    <Path Data="{StaticResource bx_eye}"
+                          Width="20" Height="20"
+                          Fill="White"/>
+                </Button>
+            </Grid>
+
+            <TextBlock x:Name="ConfirmWarning"
+                       Text=""
+                       Foreground="#FF6B6B"
+                       FontSize="12"
+                       Margin="0 4 0 10"/>
+
+
+
+            <!-- EMAIL -->
+            <TextBlock Text="{DynamicResource Setup_EmailTitle}"
+                       Foreground="White"
+                       FontSize="15"
+                       FontWeight="SemiBold"
+                       Margin="0 0 0 6"/>
+
+            <TextBox x:Name="EmailBox"
+                     Height="54"
+                     FontSize="17"
+                     Background="#0C1C3A"
+                     Foreground="White"
+                     BorderBrush="#E2BD56"
+                     BorderThickness="2"
+                     Padding="15"/>
+
+            <TextBlock x:Name="EmailWarning"
+                       Text=""
+                       Foreground="#FF6B6B"
+                       FontSize="12"
+                       Margin="0 4 0 10"/>
+
+
+            <!-- PHONE -->
+            <TextBlock Text="{DynamicResource Setup_PhoneTitle}"
+                       Foreground="White"
+                       FontSize="15"
+                       FontWeight="SemiBold"
+                       Margin="0 0 0 6"/>
+
+            <TextBox x:Name="PhoneBox"
+                     Height="54"
+                     FontSize="17"
+                     Background="#0C1C3A"
+                     Foreground="White"
+                     BorderBrush="#E2BD56"
+                     BorderThickness="2"
+                     Padding="15"/>
+
+            <TextBlock x:Name="PhoneWarning"
+                       Text=""
+                       Foreground="#FF6B6B"
+                       FontSize="12"
+                       Margin="0 4 0 20"/>
+
+
+            <!-- CONTINUE BUTTON (same as Unlock button) -->
+            <Button x:Name="ContinueBtn"
+                    Content="{DynamicResource Setup_ContinueButton}"
+                    Height="50"
+                    FontSize="18"
+                    FontWeight="Bold"
+                    Cursor="Hand"
+                    BorderThickness="0"
+                    Background="#E2BD56"
+                    Foreground="#001E57"
+                    Click="ContinueBtn_Click">
+
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background" Value="#E2BD56"/>
+                        <Setter Property="Foreground" Value="#001E57"/>
+                        <Style.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" Value="#FFD978"/>
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+        </StackPanel>
+
+
+        <!-- زر الإعدادات في الزاوية -->
+        <Button x:Name="SettingsButton"
+        Width="50"
+        Height="50"
+        HorizontalAlignment="Right"
+        VerticalAlignment="Bottom"
+        Margin="20"
+        Background="Transparent"
+        BorderThickness="0"
+        Cursor="Hand"
+        Click="SettingsButton_Click">
+            <Button.Style>
+                <Style TargetType="Button">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Button">
+                                <Border Background="{TemplateBinding Background}"
+                                CornerRadius="25"
+                                Width="50"
+                                Height="50">
+                                    <Path Data="{StaticResource bx_settings}"
+                                  Fill="White"
+                                  Width="24"
+                                  Height="24"
+                                  Stretch="Uniform"
+                                  HorizontalAlignment="Center"
+                                  VerticalAlignment="Center"/>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver"
+                         Value="True">
+                            <Setter Property="Background"
+                            Value="#33E2BD56"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="Button">
+                                        <Border Background="#33E2BD56"
+                                        CornerRadius="25"
+                                        Width="50"
+                                        Height="50">
+                                            <Path Data="{StaticResource bx_settings}"
+                                          Fill="#E2BD56"
+                                          Width="24"
+                                          Height="24"
+                                          Stretch="Uniform"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"/>
+                                        </Border>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Button.Style>
+        </Button>
+
+        <!-- قائمة الإعدادات (Popup) -->
+        <Popup x:Name="SettingsPopup"
+       Placement="Top"
+       PlacementTarget="{Binding ElementName=SettingsButton}"
+       StaysOpen="False"
+       PopupAnimation="Fade">
+
+            <Border Background="#0C1C3A"
+            BorderBrush="#E2BD56"
+            BorderThickness="1.5"
+            CornerRadius="10"
+            Padding="12"
+            Effect="{DynamicResource DropShadowSmall}"
+            MinWidth="180">
+
+                <StackPanel>
+
+                    <!-- عنوان القائمة -->
+                    <TextBlock Text="{DynamicResource Settings_Title}"
+                       Foreground="White"
+                       FontSize="16"
+                       FontWeight="SemiBold"
+                       Margin="0 0 0 8"
+                       HorizontalAlignment="Center"/>
+
+                    <!-- تغيير اللغة -->
+                    <Button Content="{DynamicResource Settings_ChangeLanguage}"
+                    Background="Transparent"
+                    Foreground="White"
+                    BorderThickness="0"
+                    FontSize="14"
+                    Padding="6"
+                    Cursor="Hand"
+                    HorizontalAlignment="Center"
+                    Click="ChangeLanguage_Click">
+
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Setter Property="Cursor" Value="Hand"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="#E2BD56"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+
+                    </Button>
+
+                </StackPanel>
+            </Border>
+        </Popup>
+
+    </Grid>
+</Window>

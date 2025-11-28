@@ -5,30 +5,27 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Urkey.Core.Models;
 using Urkey.Core.Repository;
-using Urkey.Core.Services;
 using Urkey.WPF.Helpers;
 
 namespace Urkey.WPF.Views.Windows
 {
     /// <summary>
-    /// Interaction logic for UnlockWindow.xaml
+    /// Interaction logic for FirstTimeSetupWindow.xaml
     /// </summary>
-    /// 
-
-    public partial class UnlockWindow : Window
+    public partial class FirstTimeSetupWindow : Window
     {
         private bool _isPasswordVisible = false;
-        private string _vaultPassword = string.Empty;  // Maybe Encrypted
-
+        private bool _isConfirmPasswordVisible = false;
         public Vault vault;
 
-        public UnlockWindow()
+        public FirstTimeSetupWindow()
         {
             InitializeComponent();
-            Loaded += UnlockWindow_Loaded;
+
+            Loaded += FirstTimeSetupWindow_Loaded;
 
             var repo = new VaultRepository();
-            vault = repo.LoadVault();
+            //vault = repo.LoadVault();
 
             // Bind password visibility
             MasterPasswordBox.PasswordChanged += (s, e) =>
@@ -43,11 +40,24 @@ namespace Urkey.WPF.Views.Windows
                     MasterPasswordBox.Password = MasterPasswordTextBox.Text;
             };
 
+            // Bind confirm password visibility
+            ConfirmPasswordBox.PasswordChanged += (s, e) =>
+            {
+                if (!_isConfirmPasswordVisible)
+                    ConfirmPasswordTextBox.Text = ConfirmPasswordBox.Password;
+            };
+
+            MasterPasswordTextBox.TextChanged += (s, e) =>
+            {
+                if (_isPasswordVisible)
+                    ConfirmPasswordBox.Password = ConfirmPasswordTextBox.Text;
+            };
+
             //// Load Vault
             //_vaultPassword = VaultRepository.
         }
 
-        private void UnlockWindow_Loaded(object sender, RoutedEventArgs e)
+        private void FirstTimeSetupWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Apply language and set FlowDirection
             var langCode = App.Settings?.Language ?? "en";
@@ -68,6 +78,43 @@ namespace Urkey.WPF.Views.Windows
             // Set focus on password field
             MasterPasswordBox.Focus();
         }
+        public void ChangeLanguage_Click(object sender, RoutedEventArgs e)
+        {
+            // 1) تحديد اللغة الجديدة
+            string newLang = App.Settings.Language == "en" ? "ar" : "en";
+
+            // 2) تحديث الإعدادات
+            App.Settings.Language = newLang;
+            SettingsHelper.SaveSettings(App.Settings);
+
+            // 3) تطبيق اللغة الجديدة على الواجهة
+            LanguageManager.ApplyLanguage(newLang);
+
+            // 4) تحديث اتجاه النص (يمين ← يسار للغة العربية)
+            FlowDirection = newLang == "ar"
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
+
+            // 5) تبديل مكان زر الإعدادات حسب اللغة
+            SettingsButton.HorizontalAlignment = newLang == "ar"
+                ? HorizontalAlignment.Left
+                : HorizontalAlignment.Right;
+
+            // 6) تحديث الخط بناءً على اللغة
+            var fontFamily = newLang == "ar"
+                ? new FontFamily("Cairo")
+                : new FontFamily("LeagueSpartan");
+
+            ApplyFontToWindow(this, fontFamily);
+
+            // 7) إعادة تحميل النصوص مباشرة (DynamicResource يدعم التحديث الفوري)
+            // لكن لو تحب تحديث كامل الواجهة:
+            // this.InvalidateVisual();
+
+            // 8) إغلاق القائمة
+            SettingsPopup.IsOpen = false;
+        }
+
 
         private void ApplyFontToWindow(DependencyObject parent, FontFamily fontFamily)
         {
@@ -113,7 +160,7 @@ namespace Urkey.WPF.Views.Windows
         }
 
 
-        private void TogglePasswordButton_Click(object sender, RoutedEventArgs e)
+        public void ToggleMasterPasswordButton_Click(object sender, RoutedEventArgs e)
         {
             _isPasswordVisible = !_isPasswordVisible;
 
@@ -132,67 +179,40 @@ namespace Urkey.WPF.Views.Windows
                 MasterPasswordBox.Focus();
             }
         }
-
-        private void TogglePasswordArea_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        public void ToggleConfirmPasswordButton_Click(object sender, RoutedEventArgs e)
         {
-            TogglePasswordButton_Click(TogglePasswordButton, new RoutedEventArgs());
+            _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+
+            if (_isConfirmPasswordVisible)
+            {
+                ConfirmPasswordTextBox.Text = ConfirmPasswordBox.Password;
+                ConfirmPasswordTextBox.Visibility = Visibility.Visible;
+                ConfirmPasswordBox.Visibility = Visibility.Collapsed;
+                ConfirmPasswordTextBox.Focus();
+            }
+            else
+            {
+                ConfirmPasswordBox.Password = ConfirmPasswordTextBox.Text;
+                ConfirmPasswordBox.Visibility = Visibility.Visible;
+                ConfirmPasswordTextBox.Visibility = Visibility.Collapsed;
+                ConfirmPasswordBox.Focus();
+            }
         }
 
         private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                UnlockButton_Click(sender, e);
+                ContinueBtn_Click(sender, e);
             }
         }
 
-        private void UnlockButton_Click(object sender, RoutedEventArgs e)
+        public void ContinueBtn_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Implement unlock logic
-            string password = _isPasswordVisible ? MasterPasswordTextBox.Text : MasterPasswordBox.Password;
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                MessageBox.Show("Please enter your master password.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            //var testWindow = new Views.Windows.TestVaultWindow(password);
-            //testWindow.Show();
-
-            if (string.IsNullOrEmpty(vault.Password))
-            {
-                MessageBox.Show("There is no master password stored in the vault.", "Info",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            } else
-            {
-
-                if (password == EncryptionService.Decrypt(vault.Password))
-                {
-                    MessageBox.Show(" your master password Matchs.", "Success", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                }
-                else
-                {
-                    MessageBox.Show(" your master password Not Match.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                }
-
-            }
-
-            
-
 
         }
-
-        private void ForgotPasswordLink_MouseDown(object sender, MouseButtonEventArgs e)
-        {
-            // TODO: Implement forgot password logic
-            MessageBox.Show("Forgot password functionality will be implemented here.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        
+        public void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
             SettingsPopup.IsOpen = !SettingsPopup.IsOpen;
         }

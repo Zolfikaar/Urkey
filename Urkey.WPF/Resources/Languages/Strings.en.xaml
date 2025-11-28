@@ -171,4 +171,16 @@
     <sys:String x:Key="SplashScreen_AppName">Urkey</sys:String>
     <sys:String x:Key="SplashScreen_Tagline">Your Digital Key to Secure Passwords</sys:String>
 
+    <!-- FirstTimeSetupWindow Translations -->
+    <sys:String x:Key="Setup_WelcomeTitle">Welcome to Urkey</sys:String>
+    <sys:String x:Key="Setup_WelcomeSubtitle">Let's set up your master password to protect all your stored accounts.</sys:String>
+    <sys:String x:Key="Setup_MasterPasswordTitle">Master Password</sys:String>
+    <sys:String x:Key="Setup_MasterPasswordConfirmTitle">Confirm Password</sys:String>
+    <sys:String x:Key="Setup_ContinueButton">Continue</sys:String>
+    <sys:String x:Key="Setup_EmailTitle">Email</sys:String>
+    <sys:String x:Key="Setup_PhoneTitle">Phone Number</sys:String>
+    <sys:String x:Key="Settings_ChangeLanguage">Change Language</sys:String>
+    <sys:String x:Key="FirstTimeSetupWindow_Title">Urkey – First Time Setup</sys:String>
+
+
 </ResourceDictionary>

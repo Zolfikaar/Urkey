@@ -3,10 +3,12 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         WindowStartupLocation="CenterScreen"
         WindowStyle="None"
+        WindowState="Maximized"
         AllowsTransparency="False"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
-        Loaded="Window_Loaded">
+        Loaded="SplashScreen_Loaded"
+        >
 
     <Grid>
         <!-- Background -->

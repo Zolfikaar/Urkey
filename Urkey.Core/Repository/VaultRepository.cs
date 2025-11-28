@@ -87,5 +87,7 @@ namespace Urkey.Core.Repository
         /// Gets the vault directory path (where vault.json and DocumentsFiles folder are located)
         /// </summary>
         public string GetVaultDirectory() => _vaultDirectory;
+
+
     }
 }

@@ -1,6 +1,9 @@
 ﻿using System.Windows;
 using Urkey.Core.Services;
 using Urkey.WPF.Helpers;
+using Urkey.WPF.Views.Windows;
+using Urkey.Core.Managers;
+using System.Threading.Tasks;
 
 namespace Urkey.WPF
 {
@@ -8,11 +11,11 @@ namespace Urkey.WPF
     {
         public static AppSettings Settings { get; private set; } = new();
 
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            // تهيئة مؤقتة لخدمة التشفير أثناء التطوير
+
             EncryptionService.Initialize();
 
             Settings = SettingsHelper.LoadSettings();
@@ -20,11 +23,26 @@ namespace Urkey.WPF
             LanguageManager.ApplyLanguage(Settings.Language);
             ThemeManager.ApplyTheme(Settings.Theme);
 
-            //var mainWindow = new Views.MainWindow();
-            var mainWindow = new Views.Windows.SplashScreen();
-            mainWindow.Show();
-        }
+            // منع التطبيق من الإغلاق التلقائي أثناء الفترة الانتقالية
+            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
+            var splashWindow = new Views.Windows.SplashScreen();
+
+            await splashWindow.RunAsync();
+
+            Window next;
+
+            if (VaultManager.VaultExists())
+                next = new UnlockWindow();
+            else
+                next = new FirstTimeSetupWindow();
+
+            next.Show();
+
+            // الآن نرجع البرنامج لسلوك الإغلاق الطبيعي
+            Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
+            
+        }
 
         protected override void OnExit(ExitEventArgs e)
         {
@@ -32,10 +50,7 @@ namespace Urkey.WPF
             base.OnExit(e);
         }
 
-        
-
     }
-
 
 
 }

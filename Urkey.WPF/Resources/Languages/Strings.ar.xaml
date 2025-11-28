@@ -168,4 +168,16 @@
         <sys:String x:Key="SplashScreen_AppName">أُوركي</sys:String>
         <sys:String x:Key="SplashScreen_Tagline">مفتاحك الرقمي لحماية كلمات المرور</sys:String>
 
+        <!-- FirstTimeSetupWindow Translations -->
+        <sys:String x:Key="Setup_WelcomeTitle">إعداد التطبيق لأول مرة</sys:String>
+        <sys:String x:Key="Setup_WelcomeSubtitle">قم بإنشاء كلمة مرور رئيسية لحماية جميع حساباتك المخزنة في Urkey.</sys:String>
+        <sys:String x:Key="Setup_MasterPasswordTitle">كلمة المرور الرئيسية</sys:String>
+        <sys:String x:Key="Setup_MasterPasswordConfirmTitle">تأكيد كلمة المرور</sys:String>
+        <sys:String x:Key="Setup_ContinueButton">متابعة</sys:String>
+        <sys:String x:Key="Setup_EmailTitle">البريد الألكتروني</sys:String>
+        <sys:String x:Key="Setup_PhoneTitle">رقم الهاتف</sys:String>
+        <sys:String x:Key="Settings_ChangeLanguage">تغيير اللغة</sys:String>
+        <sys:String x:Key="FirstTimeSetupWindow_Title">أُوركي - إعداد لأول مرة </sys:String>
+
+    
 </ResourceDictionary>

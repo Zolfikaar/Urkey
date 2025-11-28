@@ -380,4 +380,24 @@
         </Setter>
     </Style>
 
+    <!-- First time Window Style -->
+    <SolidColorBrush x:Key="AppBackground" Color="#F5F5F7"/>
+    <SolidColorBrush x:Key="AppCardBackground" Color="White"/>
+    <SolidColorBrush x:Key="InputBackground" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="InputBorder" Color="#D4D4D8"/>
+
+    <DropShadowEffect x:Key="DropShadow" BlurRadius="18" ShadowDepth="0" Opacity="0.18"/>
+
+ 
+    <SolidColorBrush x:Key="TextColor" Color="White"/>
+
+    <SolidColorBrush x:Key="PrimaryButtonBackground" Color="#818CF8"/>
+    <SolidColorBrush x:Key="PrimaryButtonForeground" Color="Black"/>
+
+    <DropShadowEffect x:Key="DropShadowSmall"
+                  Color="Black"
+                  BlurRadius="12"
+                  ShadowDepth="0"
+                  Opacity="0.35"/>
+
 </ResourceDictionary>

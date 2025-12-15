@@ -24,7 +24,8 @@ namespace Urkey.WPF.Views.Windows
 
             Loaded += FirstTimeSetupWindow_Loaded;
 
-            var repo = new VaultRepository();
+            var repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
+            _vaultDirectory);
             //vault = repo.LoadVault();
 
             // Bind password visibility

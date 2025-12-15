@@ -1,31 +1,22 @@
 ﻿using System;
 using System.IO;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Urkey.Core.Models;
+using Urkey.Core.Repository;
 
 namespace Urkey.Core.Managers
 {
 
     public static class VaultManager
     {
-        public static string GetVaultPath()
-        {
-            return Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Urkey",
-                "vault.json"
-            );
-        }
+        public static string GetVaultPath() => VaultRepository.GetVaultPath();
 
-        public static bool VaultExists()
-        {
-            return File.Exists(GetVaultPath());
-        }
-
+        public static bool VaultExists() => VaultRepository.VaultExists();
         
+
+        public static string GetVaultDirectory() => VaultRepository.GetVaultDirectory();
+
+
+
+
     }
 
 }

@@ -32,7 +32,8 @@ namespace Urkey.WPF.ViewModels
             Directory.CreateDirectory(userVaultDir);
 
             var vaultPath = Path.Combine(userVaultDir, "vault.json");
-            _repository = new VaultRepository(vaultPath);
+            _repository = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
+            _vaultDirectory, vaultPath);
 
             // أوامر
             SaveCommand = new RelayCommand(SaveCredential, CanSave);

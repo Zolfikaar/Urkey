@@ -1,12 +1,10 @@
-﻿using System;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Urkey.Core.Models;
-using Urkey.Core.Repository;
-using Urkey.Core.Services;
+// using Urkey.WPF.ViewModels;
 using Urkey.WPF.Helpers;
+using Urkey.WPF.ViewModels;
 
 namespace Urkey.WPF.Views.Windows
 {
@@ -15,42 +13,46 @@ namespace Urkey.WPF.Views.Windows
     /// </summary>
     /// 
 
-    public partial class UnlockWindow : Window
+    public partial class UnlockWindow
     {
-        private bool _isPasswordVisible = false;
-        private string _vaultPassword = string.Empty;  // Maybe Encrypted
-
-        public Vault vault;
+        private bool _isPasswordVisible ;
+        private string _enteredMasterPassword = string.Empty;
+        // private readonly Vault _vault;
+        private UserViewModel _userVM;
 
         public UnlockWindow()
         {
             InitializeComponent();
             Loaded += UnlockWindow_Loaded;
 
-            var repo = new VaultRepository();
-            vault = repo.LoadVault();
 
             // Bind password visibility
-            MasterPasswordBox.PasswordChanged += (s, e) =>
+            // // The '_' parameters are required for the lambda to match the event signature,
+            // // but they are intentionally ignored because they are not needed.
+            MasterPasswordBox.PasswordChanged += (_, _) =>
             {
                 if (!_isPasswordVisible)
                     MasterPasswordTextBox.Text = MasterPasswordBox.Password;
             };
 
-            MasterPasswordTextBox.TextChanged += (s, e) =>
+            MasterPasswordTextBox.TextChanged += (_, _) =>
             {
                 if (_isPasswordVisible)
                     MasterPasswordBox.Password = MasterPasswordTextBox.Text;
             };
 
+            _enteredMasterPassword = MasterPasswordTextBox.Text;
+            
+            _userVM = new UserViewModel(_enteredMasterPassword);
+            
             //// Load Vault
-            //_vaultPassword = VaultRepository.
+            
         }
 
         private void UnlockWindow_Loaded(object sender, RoutedEventArgs e)
         {
             // Apply language and set FlowDirection
-            var langCode = App.Settings?.Language ?? "en";
+            var langCode = App.Settings.Language;
             LanguageManager.ApplyLanguage(langCode);
 
             FlowDirection = langCode == "ar" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
@@ -71,7 +73,7 @@ namespace Urkey.WPF.Views.Windows
 
         private void ApplyFontToWindow(DependencyObject parent, FontFamily fontFamily)
         {
-            if (parent == null) return;
+            // if (parent == null) return; // "Expression is always false according to nullable reference types' annotations" // so we don't need it at all
 
             // Apply font to current element based on type
             if (parent is TextBlock textBlock)
@@ -104,15 +106,14 @@ namespace Urkey.WPF.Views.Windows
             }
 
             // Recursively apply to children
-            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
-            for (int i = 0; i < childrenCount; i++)
+            var childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (var i = 0; i < childrenCount; i++)
             {
                 var child = VisualTreeHelper.GetChild(parent, i);
                 ApplyFontToWindow(child, fontFamily);
             }
         }
-
-
+        
         private void TogglePasswordButton_Click(object sender, RoutedEventArgs e)
         {
             _isPasswordVisible = !_isPasswordVisible;
@@ -149,37 +150,8 @@ namespace Urkey.WPF.Views.Windows
         private void UnlockButton_Click(object sender, RoutedEventArgs e)
         {
             // TODO: Implement unlock logic
-            string password = _isPasswordVisible ? MasterPasswordTextBox.Text : MasterPasswordBox.Password;
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                MessageBox.Show("Please enter your master password.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
-            //var testWindow = new Views.Windows.TestVaultWindow(password);
-            //testWindow.Show();
-
-            if (string.IsNullOrEmpty(vault.Password))
-            {
-                MessageBox.Show("There is no master password stored in the vault.", "Info",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
-                return;
-            } else
-            {
-
-                if (password == EncryptionService.Decrypt(vault.Password))
-                {
-                    MessageBox.Show(" your master password Matchs.", "Success", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                }
-                else
-                {
-                    MessageBox.Show(" your master password Not Match.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-
-                }
-
-            }
+            
+            
 
             
 

@@ -89,7 +89,8 @@ namespace Urkey.WPF.ViewModels
 
         public DocumentsViewModel()
         {
-            _repo = new VaultRepository(); // المسار يحدد تلقائيًا إلى AppData\Urkey
+            _repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
+            _vaultDirectory); // المسار يحدد تلقائيًا إلى AppData\Urkey
             _vault = _repo.LoadVault();
 
             // تحميل الوثائق من القبو

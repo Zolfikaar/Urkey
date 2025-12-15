@@ -28,12 +28,14 @@ namespace Urkey.WPF
 
             var splashWindow = new Views.Windows.SplashScreen();
 
+
             await splashWindow.RunAsync();
 
             Window next;
 
             if (VaultManager.VaultExists())
                 next = new UnlockWindow();
+            
             else
                 next = new FirstTimeSetupWindow();
 

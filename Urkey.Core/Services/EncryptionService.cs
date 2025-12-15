@@ -15,8 +15,10 @@ namespace Urkey.Core.Services
         /// </summary>
         public static void Initialize(string masterPassword = "123456")
         {
+            
             // Use a fixed application salt (later you can persist a unique salt per user/vault)
-            byte[] salt = Encoding.UTF8.GetBytes("YourAppFixedSalt123!");
+            // byte[] salt = Encoding.UTF8.GetBytes("YourAppFixedSalt123!");
+            byte[] salt = 
 
             using var keyDerivation = new Rfc2898DeriveBytes(
                 masterPassword,
@@ -69,6 +71,18 @@ namespace Urkey.Core.Services
             using var sr = new StreamReader(cs, Encoding.UTF8);
 
             return sr.ReadToEnd();
+        }
+        
+        public static string HashPassword(string password, string salt)
+        {
+            using var deriveBytes = new Rfc2898DeriveBytes(
+                password,
+                Convert.FromBase64String(salt),
+                100_000,
+                HashAlgorithmName.SHA256
+            );
+
+            return Convert.ToBase64String(deriveBytes.GetBytes(32));
         }
     }
 }

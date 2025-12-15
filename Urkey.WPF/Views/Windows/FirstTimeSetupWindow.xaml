@@ -45,6 +45,7 @@
                        FontWeight="SemiBold"
                        Margin="0 0 0 6"/>
 
+            <!-- Input Fields -->
             <Grid>
                 <TextBox x:Name="MasterPasswordTextBox"
                          Grid.Column="0"

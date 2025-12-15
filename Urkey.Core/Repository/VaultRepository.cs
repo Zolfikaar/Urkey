@@ -1,29 +1,35 @@
 ﻿using Urkey.Core.Models;
 using Urkey.Core.Services;
-using System;
 using System.IO;
 using System.Text.Json;
+using System.Windows;
 
 namespace Urkey.Core.Repository
 {
     public class VaultRepository
     {
-        private readonly string _vaultDirectory;
-        private readonly string _vaultFilePath;
-        private Vault _vault;
+        private static string _vaultDirectory = string.Empty;
+        private static string _vaultFilePath = string.Empty;
+        private static Vault? _vault;
 
-        public VaultRepository(string? customPath = null)
+        public VaultRepository(string? customVaultDirectory = null)
         {
-            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
-            _vaultDirectory = customPath ?? Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Urkey"
-            );
+            _vaultDirectory = string.IsNullOrWhiteSpace(customVaultDirectory)
+                ? Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    "Urkey"
+                )
+                : customVaultDirectory;
 
             Directory.CreateDirectory(_vaultDirectory);
+
             _vaultFilePath = Path.Combine(_vaultDirectory, "vault.json");
 
-            // تحميل أو إنشاء Vault جديد
+            LoadOrCreateVault();
+        }
+
+        private static void LoadOrCreateVault()
+        {
             if (File.Exists(_vaultFilePath))
             {
                 try
@@ -34,7 +40,6 @@ namespace Urkey.Core.Repository
                 }
                 catch
                 {
-                    // لو حدث خطأ (ملف تالف أو كلمة مرور خاطئة مثلاً)
                     _vault = new Vault();
                 }
             }
@@ -43,10 +48,10 @@ namespace Urkey.Core.Repository
                 _vault = new Vault();
             }
         }
+        
+        public static Vault LoadVault() => _vault ??= new Vault();
 
-        public Vault LoadVault() => _vault;
-
-        public Vault ReloadFromDisk()
+        public static Vault ReloadFromDisk()
         {
             if (!File.Exists(_vaultFilePath))
             {
@@ -68,26 +73,88 @@ namespace Urkey.Core.Repository
             return _vault;
         }
 
-        public void AddEntry(VaultEntry entry)
+        public static void AddEntry(VaultEntry entry)
         {
-            _vault.Entries.Add(entry);
-            SaveVault(_vault);
+            if (_vault != null)
+            {
+                _vault.Entries.Add(entry);
+                SaveVault(_vault);
+            }
+            else
+            {
+                MessageBox.Show("(msg from AddEntry Method)Vault is not initialized yet", "Error", MessageBoxButton.OK);
+                // المفروض نخلي زر لإنشاء الحافظة يدوياً بهذه الحالة
+            }
         }
 
-        public void SaveVault(Vault vault)
+        public static void SaveVault(Vault vault)
         {
             string json = JsonSerializer.Serialize(vault, new JsonSerializerOptions { WriteIndented = true });
             string encrypted = EncryptionService.Encrypt(json);
             File.WriteAllText(_vaultFilePath, encrypted);
         }
 
-        public string GetVaultPath() => _vaultFilePath;
+        public static string GetVaultPath()
+        {
+            return Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                "Urkey",
+                "vault.json"
+            );
+        }
+
+        public static bool VaultExists()
+        {
+            return File.Exists(GetVaultPath());
+        }
+        //public string GetVaultPath() => _vaultFilePath;
         
         /// <summary>
         /// Gets the vault directory path (where vault.json and DocumentsFiles folder are located)
         /// </summary>
-        public string GetVaultDirectory() => _vaultDirectory;
+        public static string GetVaultDirectory() => _vaultDirectory;
 
+        public static bool UnlockVault(string enteredMasterPassword) 
+        {
+            if (VaultExists())
+            {
+                
+                string decryptedPassword = EncryptionService.Decrypt(_vault.MasterPassword);
 
+                if (enteredMasterPassword == decryptedPassword)
+                {
+                     _vault.IsLocked = false;
+                    return true; 
+                }
+                else
+                {
+                    MessageBox.Show("Master password is incorrect","Error", MessageBoxButton.OK);
+                    return false;
+                    
+                }
+            
+            }
+            else
+            {
+                    MessageBox.Show("Vault is not exists","Error", MessageBoxButton.OK);
+                    return false;
+                
+            }
+            
+        }
+
+        public static bool IsVaultLooked()
+        {
+            if (_vault != null)
+            {
+                return  _vault.IsLocked;
+            }
+            else
+            {
+                MessageBox.Show("(msg from IsVaultLooked Method)Vault is not initialized yet", "Error", MessageBoxButton.OK);
+                return false;
+                
+            }
+        }
     }
 }

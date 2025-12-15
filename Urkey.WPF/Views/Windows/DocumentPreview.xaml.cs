@@ -336,7 +336,8 @@ namespace Urkey.WPF.Views.Windows
                     _document.Notes = editWindow.Document.Notes;
                     _document.ExpiryDate = editWindow.Document.ExpiryDate;
 
-                    var repo = new VaultRepository();
+                    var repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
+            _vaultDirectory);
 
                     if (!string.IsNullOrWhiteSpace(editWindow.Document.ExternalImagePath) &&
                         File.Exists(editWindow.Document.ExternalImagePath) &&
@@ -380,7 +381,8 @@ namespace Urkey.WPF.Views.Windows
             {
                 try
                 {
-                    var repo = new VaultRepository();
+                    var repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
+            _vaultDirectory);
                     var vault = repo.LoadVault();
 
                     var docToDelete = vault.Entries.OfType<DocumentEntry>()

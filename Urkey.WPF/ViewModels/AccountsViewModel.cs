@@ -98,7 +98,8 @@ namespace Urkey.WPF.ViewModels
 
         public AccountsViewModel()
         {
-            _repo = new VaultRepository();
+            _repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
+            _vaultDirectory);
             _vault = _repo.ReloadFromDisk();
 
             Accounts = new ObservableCollection<AccountEntry>(_vault.Entries.OfType<AccountEntry>());
@@ -157,7 +158,8 @@ namespace Urkey.WPF.ViewModels
 
         public void Reload()
         {
-            _repo = new VaultRepository();
+            _repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
+            _vaultDirectory);
             _vault = _repo.ReloadFromDisk();
             Accounts.CollectionChanged -= OnAccountsCollectionChanged;
             Accounts.Clear();
@@ -171,7 +173,8 @@ namespace Urkey.WPF.ViewModels
 
         public void AddOrRefreshAccount(AccountEntry? entry)
         {
-            _repo = new VaultRepository();
+            _repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
+            _vaultDirectory);
             _vault = _repo.ReloadFromDisk();
 
             if (entry == null)

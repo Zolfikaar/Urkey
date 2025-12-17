@@ -82,15 +82,25 @@ namespace Urkey.Core.Services
 
         public bool NormalSetup(string enteredMasterPassword)
         {
+            // check the user model salt & hash, if not exists in user model(user.json file), return false
             if (string.IsNullOrEmpty(_userModel.Salt) ||
                 string.IsNullOrEmpty(_userModel.HashPassword))
                 return false;
 
+            // else(they are exists), then
+            // Generate hash for the enteredMasterPassword
             var enteredHash = EncryptionService.HashPassword(
                 enteredMasterPassword,
                 _userModel.Salt);
+            
+            // if the two hashes didn't match, return false
+            if (!SlowEquals(enteredHash, _userModel.HashPassword))
+                return false;
 
-            return SlowEquals(enteredHash, _userModel.HashPassword);
+            // else(the hashes (passwords), match), then
+            // initialize encryption service to generate key, and return true
+            EncryptionService.Initialize(enteredMasterPassword, _userModel.Salt);
+            return true;
         }
 
         //===== Methods - private =====//

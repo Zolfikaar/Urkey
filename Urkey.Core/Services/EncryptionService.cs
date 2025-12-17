@@ -13,16 +13,13 @@ namespace Urkey.Core.Services
         /// Initialize the service with a master password.
         /// Derives a key from the password using PBKDF2.
         /// </summary>
-        public static void Initialize(string masterPassword = "123456")
+        public static void Initialize(string salt, string masterPassword = "123456")
         {
-            
-            // Use a fixed application salt (later you can persist a unique salt per user/vault)
-            // byte[] salt = Encoding.UTF8.GetBytes("YourAppFixedSalt123!");
-            byte[] salt = 
+            byte[] saltBytes = Convert.FromBase64String(salt);
 
             using var keyDerivation = new Rfc2898DeriveBytes(
                 masterPassword,
-                salt,
+                saltBytes,
                 100_000,
                 HashAlgorithmName.SHA256);
 

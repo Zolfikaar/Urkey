@@ -5,10 +5,14 @@ namespace Urkey.WPF.ViewModels;
 public class UserViewModel
 {
     private UserService _userService;
-    public UserViewModel(string enteredMasterPassword)
+    public UserViewModel()
     {
-        _userService = new UserService(enteredMasterPassword);
+        _userService = new UserService();
     }
-    
+
+    public bool Unlock(string enteredMasterPassword)
+    {
+        return _userService.NormalSetup(enteredMasterPassword);
+    }
     
 }

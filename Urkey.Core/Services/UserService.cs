@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using Urkey.Core.Managers;
 using Urkey.Core.Models;
 
 namespace Urkey.Core.Services
@@ -12,6 +13,7 @@ namespace Urkey.Core.Services
     {
         //===== Properties =====//
         private User _userModel;
+        private VaultManager _vaultManager;
         public enum FirstSetupError
         {
             None,
@@ -30,6 +32,7 @@ namespace Urkey.Core.Services
         public UserService()
         {
             _userModel = new User();
+            _vaultManager = new VaultManager();
         }
 
         //===== Methods - public =====//
@@ -100,7 +103,9 @@ namespace Urkey.Core.Services
             // else(the hashes (passwords), match), then
             // initialize encryption service to generate key, and return true
             EncryptionService.Initialize(enteredMasterPassword, _userModel.Salt);
-            return true;
+            // Unlock the vault
+            
+            return _vaultManager.Unlock();;
         }
 
         //===== Methods - private =====//

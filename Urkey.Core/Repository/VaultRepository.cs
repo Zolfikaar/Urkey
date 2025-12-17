@@ -1,8 +1,8 @@
-﻿using Urkey.Core.Models;
-using Urkey.Core.Services;
-using System.IO;
+﻿using System.IO;
 using System.Text.Json;
 using System.Windows;
+using Urkey.Core.Models;
+using Urkey.Core.Services;
 
 namespace Urkey.Core.Repository
 {
@@ -107,54 +107,13 @@ namespace Urkey.Core.Repository
         {
             return File.Exists(GetVaultPath());
         }
-        //public string GetVaultPath() => _vaultFilePath;
         
         /// <summary>
         /// Gets the vault directory path (where vault.json and DocumentsFiles folder are located)
         /// </summary>
         public static string GetVaultDirectory() => _vaultDirectory;
 
-        public static bool UnlockVault(string enteredMasterPassword) 
-        {
-            if (VaultExists())
-            {
-                
-                string decryptedPassword = EncryptionService.Decrypt(_vault.MasterPassword);
 
-                if (enteredMasterPassword == decryptedPassword)
-                {
-                     _vault.IsLocked = false;
-                    return true; 
-                }
-                else
-                {
-                    MessageBox.Show("Master password is incorrect","Error", MessageBoxButton.OK);
-                    return false;
-                    
-                }
-            
-            }
-            else
-            {
-                    MessageBox.Show("Vault is not exists","Error", MessageBoxButton.OK);
-                    return false;
-                
-            }
-            
-        }
-
-        public static bool IsVaultLooked()
-        {
-            if (_vault != null)
-            {
-                return  _vault.IsLocked;
-            }
-            else
-            {
-                MessageBox.Show("(msg from IsVaultLooked Method)Vault is not initialized yet", "Error", MessageBoxButton.OK);
-                return false;
-                
-            }
-        }
+        
     }
 }

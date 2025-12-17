@@ -2,7 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-// using Urkey.WPF.ViewModels;
+using Urkey.Core.Services;
 using Urkey.WPF.Helpers;
 using Urkey.WPF.ViewModels;
 
@@ -43,9 +43,9 @@ namespace Urkey.WPF.Views.Windows
 
             _enteredMasterPassword = MasterPasswordTextBox.Text;
             
-            _userVM = new UserViewModel(_enteredMasterPassword);
+            _userVM = new UserViewModel();
             
-            //// Load Vault
+            
             
         }
 
@@ -149,13 +149,28 @@ namespace Urkey.WPF.Views.Windows
 
         private void UnlockButton_Click(object sender, RoutedEventArgs e)
         {
-            // TODO: Implement unlock logic
-            
-            
+            var isPasswordCorrect = _userVM.Unlock(_enteredMasterPassword);
 
+            if (!isPasswordCorrect)
+            {
+                MessageBox.Show(
+                    "Master Password is incorrect.",
+                    "Info",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
+
+                return;
+            }
+
+            if (VaultService.VaultExists())
+                VaultService.LoadVault();
+            else
+                VaultService.CreateVault();
             
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
 
-
+            this.Close();
         }
 
         private void ForgotPasswordLink_MouseDown(object sender, MouseButtonEventArgs e)

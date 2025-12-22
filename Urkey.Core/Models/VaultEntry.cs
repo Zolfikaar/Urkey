@@ -12,6 +12,6 @@ namespace Urkey.Core.Models
     [JsonDerivedType(typeof(NoteEntry), typeDiscriminator: "note")]
     public abstract class VaultEntry
     {
-
+        public Guid Id { get; set; } = Guid.NewGuid();
     }
 }

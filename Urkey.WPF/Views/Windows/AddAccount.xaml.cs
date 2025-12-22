@@ -41,7 +41,7 @@ namespace Urkey.WPF.Views.Windows
 
             string type = string.IsNullOrWhiteSpace(defaultType) ? "Website" : defaultType;
             if (string.Equals(type, "Application", StringComparison.OrdinalIgnoreCase) ||
-                string.Equals(type, "App", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(type, "Other", StringComparison.OrdinalIgnoreCase) ||
                 string.Equals(type, "Accounts", StringComparison.OrdinalIgnoreCase))
             {
                 type = "Application";

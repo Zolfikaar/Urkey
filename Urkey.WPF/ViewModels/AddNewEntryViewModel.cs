@@ -1,19 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
-using System.IO;
-using System.Security.Cryptography;
 using System.Text;
 using System.Windows;
 using System.Windows.Input;
 using Urkey.Core.Models;
-using Urkey.Core.Repository;
+using Urkey.Core.Services;
 using Urkey.WPF.Commands;
 
 namespace Urkey.WPF.ViewModels
 {
     public class AddNewEntryViewModel : INotifyPropertyChanged
     {
-        private readonly VaultRepository _repository;
+        private readonly VaultService _vaultService;
 
         private string _serviceName = string.Empty;
         private string _username = string.Empty;
@@ -22,28 +20,18 @@ namespace Urkey.WPF.ViewModels
         private bool _isPasswordVisible;
         private bool _isConfirmPasswordVisible;
 
-        public AddNewEntryViewModel()
+        public AddNewEntryViewModel(VaultService vaultService)
         {
-            // حدد مسار vault داخل AppData
-            var userVaultDir = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "PasswordManager"
-            );
-            Directory.CreateDirectory(userVaultDir);
+            _vaultService = vaultService;
 
-            var vaultPath = Path.Combine(userVaultDir, "vault.json");
-            _repository = new VaultRepository(
-            _vaultDirectory, vaultPath);
-
-            // أوامر
-            SaveCommand = new RelayCommand(SaveCredential, CanSave);
-            CancelCommand = new RelayCommand(Cancel);
-            GeneratePasswordCommand = new RelayCommand(GeneratePassword);
-            TogglePasswordVisibilityCommand = new RelayCommand(TogglePasswordVisibility);
-            ToggleConfirmPasswordVisibilityCommand = new RelayCommand(ToggleConfirmPasswordVisibility);
+            SaveCommand = new RelayCommand<object>(SaveCredential, CanSave);
+            CancelCommand = new RelayCommand<object>(Cancel);
+            GeneratePasswordCommand = new RelayCommand<object>(GeneratePassword);
+            TogglePasswordVisibilityCommand = new RelayCommand<object>(TogglePasswordVisibility);
+            ToggleConfirmPasswordVisibilityCommand = new RelayCommand<object>(ToggleConfirmPasswordVisibility);
         }
 
-        // 🟦 الخصائص
+        // 🟦 Properties
         public string ServiceName
         {
             get => _serviceName;
@@ -108,14 +96,14 @@ namespace Urkey.WPF.ViewModels
             }
         }
 
-        // 🟩 الأوامر
+        // 🟩 Commands
         public RelayCommand<object> SaveCommand { get; }
         public RelayCommand<object> CancelCommand { get; }
         public RelayCommand<object> GeneratePasswordCommand { get; }
         public RelayCommand<object> TogglePasswordVisibilityCommand { get; }
         public RelayCommand<object> ToggleConfirmPasswordVisibilityCommand { get; }
 
-        // 🟦 منطق الأوامر
+        // 🟦 Command Logic
         private bool CanSave(object? parameter)
         {
             return !string.IsNullOrWhiteSpace(ServiceName) &&
@@ -135,10 +123,15 @@ namespace Urkey.WPF.ViewModels
                     Password = Password
                 };
 
-                _repository.AddEntry(newAccount);
+                // ✅ التعامل فقط ويا السيرفس
+                _vaultService.AddEntry(newAccount);
+                _vaultService.Save();
 
-                MessageBox.Show("Credential saved successfully!",
-                                "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                MessageBox.Show(
+                    "Credential saved successfully!",
+                    "Success",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Information);
 
                 if (parameter is Window window)
                 {
@@ -148,8 +141,11 @@ namespace Urkey.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error saving credential: {ex.Message}",
-                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    $"Error saving credential: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -164,7 +160,9 @@ namespace Urkey.WPF.ViewModels
 
         private void GeneratePassword(object? parameter)
         {
-            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+            const string chars =
+                "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?";
+
             var random = new Random();
             var password = new StringBuilder();
 
@@ -185,9 +183,10 @@ namespace Urkey.WPF.ViewModels
             IsConfirmPasswordVisible = !IsConfirmPasswordVisible;
         }
 
-        // 🟪 PropertyChanged
+        // 🟪 INotifyPropertyChanged
         public event PropertyChangedEventHandler? PropertyChanged;
         protected void OnPropertyChanged(string propertyName) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+
     }
 }

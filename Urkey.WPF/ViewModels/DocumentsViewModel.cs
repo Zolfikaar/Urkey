@@ -15,7 +15,7 @@ namespace Urkey.WPF.ViewModels
 {
     public class DocumentsViewModel : INotifyPropertyChanged
     {
-        private readonly VaultRepository _repo;
+        private readonly VaultService _vaultService;
         private Vault _vault;
 
         private ObservableCollection<DocumentEntry> _documents = new();
@@ -87,17 +87,13 @@ namespace Urkey.WPF.ViewModels
         public ICommand ZoomResetCommand { get; }
         public ICommand DismissWarningCommand { get; }
 
-        public DocumentsViewModel()
+        public DocumentsViewModel(VaultService vaultService)
         {
-            _repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
-            _vaultDirectory); // المسار يحدد تلقائيًا إلى AppData\Urkey
-            _vault = _repo.LoadVault();
-
-            // تحميل الوثائق من القبو
-            Reload();
+            _vaultService = vaultService;
+            //Reload();
 
             SaveDocCommand = new RelayCommand<DocumentEntry>(SaveNewDocument, CanSaveDocument);
-            ReloadCommand = new RelayCommand(_ => Reload());
+            ReloadCommand = new RelayCommand<DocumentEntry>(_ => Reload());
             PreviewCommand = new RelayCommand<DocumentEntry>(Preview, doc => doc != null);
             OpenFolderCommand = new RelayCommand<DocumentEntry>(OpenFolder, doc => doc != null);
             EditCommand = new RelayCommand<DocumentEntry>(Edit, doc => doc != null);
@@ -106,7 +102,7 @@ namespace Urkey.WPF.ViewModels
             ZoomInCommand = new RelayCommand<object?>(_ => ZoomLevel += 0.1, _ => PreviewImage != null);
             ZoomOutCommand = new RelayCommand<object?>(_ => ZoomLevel -= 0.1, _ => PreviewImage != null);
             ZoomResetCommand = new RelayCommand<object?>(_ => ZoomLevel = 1.0, _ => PreviewImage != null);
-            DismissWarningCommand = new RelayCommand(_ => ShowSecurityWarning = false);
+            DismissWarningCommand = new RelayCommand<DocumentEntry>(_ => ShowSecurityWarning = false);
         }
 
         public void SaveNewDocument(DocumentEntry? newDoc)
@@ -130,14 +126,14 @@ namespace Urkey.WPF.ViewModels
                     newDoc.FileContentBase64 = Convert.ToBase64String(File.ReadAllBytes(originalImagePath));
 
                     // ثم نحفظ نسخة منها في مجلد الوثائق داخل Vault
-                    string vaultDirectory = _repo.GetVaultDirectory();
+                    string vaultDirectory = _vaultService.GetVaultDirectory();
                     string encryptedImagePath = FileHelper.SaveDocumentImage(originalImagePath, vaultDirectory);
                     newDoc.ExternalImagePath = encryptedImagePath;
 
                 }
 
                 _vault.Entries.Add(newDoc);
-                _repo.SaveVault(_vault);
+                _vaultService.Save();
                 Documents.Add(newDoc);
 
                 // Show security warning about deleting original file
@@ -158,7 +154,7 @@ namespace Urkey.WPF.ViewModels
 
         public void Reload()
         {
-            _vault = _repo.LoadVault();
+            _vault = _vaultService.LoadVault();
             Documents.Clear();
 
             foreach (var doc in _vault.Entries.OfType<DocumentEntry>())
@@ -300,12 +296,12 @@ namespace Urkey.WPF.ViewModels
                         editWindow.Document.ExternalImagePath != doc.ExternalImagePath)
                     {
                         string originalImagePath = editWindow.Document.ExternalImagePath;
-                        string vaultDirectory = _repo.GetVaultDirectory();
+                        string vaultDirectory = _vaultService.GetVaultDirectory();
                         string encryptedImagePath = FileHelper.SaveDocumentImage(originalImagePath, vaultDirectory);
                         doc.ExternalImagePath = encryptedImagePath;
                     }
 
-                    _repo.SaveVault(_vault);
+                    _vaultService.Save();
                     LoadPreviewImage();
                     OnPropertyChanged(nameof(Documents));
                 }
@@ -339,7 +335,7 @@ namespace Urkey.WPF.ViewModels
 
                     _vault.Entries.Remove(doc);
                     Documents.Remove(doc);
-                    _repo.SaveVault(_vault);
+                    _vaultService.Save();
 
                     if (SelectedDocument == doc)
                     {

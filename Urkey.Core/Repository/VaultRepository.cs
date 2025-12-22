@@ -8,112 +8,50 @@ namespace Urkey.Core.Repository
 {
     public class VaultRepository
     {
-        private static string _vaultDirectory = string.Empty;
-        private static string _vaultFilePath = string.Empty;
-        private static Vault? _vault;
+        private readonly string _vaultDirectory;
+        private readonly string _vaultFilePath;
 
         public VaultRepository(string? customVaultDirectory = null)
         {
             _vaultDirectory = string.IsNullOrWhiteSpace(customVaultDirectory)
                 ? Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "Urkey"
-                )
+                    "Urkey")
                 : customVaultDirectory;
 
             Directory.CreateDirectory(_vaultDirectory);
-
             _vaultFilePath = Path.Combine(_vaultDirectory, "vault.json");
-
-            LoadOrCreateVault();
         }
 
-        private static void LoadOrCreateVault()
-        {
-            if (File.Exists(_vaultFilePath))
-            {
-                try
-                {
-                    string encryptedJson = File.ReadAllText(_vaultFilePath);
-                    string decryptedJson = EncryptionService.Decrypt(encryptedJson);
-                    _vault = JsonSerializer.Deserialize<Vault>(decryptedJson) ?? new Vault();
-                }
-                catch
-                {
-                    _vault = new Vault();
-                }
-            }
-            else
-            {
-                _vault = new Vault();
-            }
-        }
-        
-        public static Vault LoadVault() => _vault ??= new Vault();
+        public bool VaultExists()
+       => File.Exists(_vaultFilePath);
 
-        public static Vault ReloadFromDisk()
+        public Vault Load()
         {
-            if (!File.Exists(_vaultFilePath))
-            {
-                _vault = new Vault();
-                return _vault;
-            }
+            if (!VaultExists())
+                return new Vault();
 
             try
             {
-                string encryptedJson = File.ReadAllText(_vaultFilePath);
-                string decryptedJson = EncryptionService.Decrypt(encryptedJson);
-                _vault = JsonSerializer.Deserialize<Vault>(decryptedJson) ?? new Vault();
+                var encryptedJson = File.ReadAllText(_vaultFilePath);
+                var decryptedJson = EncryptionService.Decrypt(encryptedJson);
+                return JsonSerializer.Deserialize<Vault>(decryptedJson) ?? new Vault();
             }
             catch
             {
-                _vault = new Vault();
-            }
-
-            return _vault;
-        }
-
-        public static void AddEntry(VaultEntry entry)
-        {
-            if (_vault != null)
-            {
-                _vault.Entries.Add(entry);
-                SaveVault(_vault);
-            }
-            else
-            {
-                MessageBox.Show("(msg from AddEntry Method)Vault is not initialized yet", "Error", MessageBoxButton.OK);
-                // المفروض نخلي زر لإنشاء الحافظة يدوياً بهذه الحالة
+                return new Vault();
             }
         }
 
-        public static void SaveVault(Vault vault)
+        public void Save(Vault vault)
         {
-            string json = JsonSerializer.Serialize(vault, new JsonSerializerOptions { WriteIndented = true });
-            string encrypted = EncryptionService.Encrypt(json);
+            var json = JsonSerializer.Serialize(vault, new JsonSerializerOptions { WriteIndented = true });
+            var encrypted = EncryptionService.Encrypt(json);
             File.WriteAllText(_vaultFilePath, encrypted);
         }
 
-        public static string GetVaultPath()
-        {
-            return Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "Urkey",
-                "vault.json"
-            );
-        }
+        public string GetVaultDirectory() => _vaultDirectory;
+        public string GetVaultPath() => _vaultFilePath;
 
-        public static bool VaultExists()
-        {
-            return File.Exists(GetVaultPath());
-        }
-        
-        /// <summary>
-        /// Gets the vault directory path (where vault.json and DocumentsFiles folder are located)
-        /// </summary>
-        public static string GetVaultDirectory() => _vaultDirectory;
-
-
-        
     }
 }

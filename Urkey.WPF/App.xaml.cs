@@ -15,9 +15,6 @@ namespace Urkey.WPF
         {
             base.OnStartup(e);
 
-
-            EncryptionService.Initialize();
-
             Settings = SettingsHelper.LoadSettings();
 
             LanguageManager.ApplyLanguage(Settings.Language);
@@ -33,7 +30,7 @@ namespace Urkey.WPF
 
             Window next;
 
-            if (VaultManager.VaultExists())
+            if (VaultService.VaultExists())
                 next = new UnlockWindow();
             
             else

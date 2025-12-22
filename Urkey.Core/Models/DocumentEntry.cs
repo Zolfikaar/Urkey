@@ -3,7 +3,7 @@
     public sealed class DocumentEntry : VaultEntry
     {
         public string Name { get; set; } = string.Empty;
-        public string Type { get; set; } = string.Empty; // e.g., ID, Passport, License
+        public string Type { get; set; } = string.Empty;
         public string Number { get; set; } = string.Empty;
         public string Issuer {  get; set; } = string.Empty;
         public DateOnly? ExpiryDate { get; set; }

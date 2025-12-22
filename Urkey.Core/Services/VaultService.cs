@@ -4,22 +4,43 @@ namespace Urkey.Core.Services;
 
 public class VaultService
 {
-    private static Vault _vault;
-    private static VaultEntry _vaultEntry;
-    
-    public static Vault LoadVault() => VaultRepository.LoadVault();
-    
-    public static Vault ReloadFromDisk() => VaultRepository.ReloadFromDisk();
-    
-    public static void AddEntry() => VaultRepository.AddEntry(_vaultEntry);
-    
-    public static void SaveVault() => VaultRepository.SaveVault(_vault);
-    
-    public static string GetVaultPath() => VaultRepository.GetVaultPath();
+    private readonly VaultRepository _repo;
+    private Vault? _vault;
 
-    public static bool VaultExists() => VaultRepository.VaultExists();
-    
-    public static string GetVaultDirectory() => VaultRepository.GetVaultDirectory();
+    public VaultService()
+    {
+        _repo = new VaultRepository();
+        _vault = new Vault();
+    }
 
-    public static void CreateVault() => new VaultRepository();
+    public bool VaultExists() => _repo.VaultExists();
+
+    public Vault Load()
+    {
+        _vault = _repo.Load();
+        return _vault;
+    }
+
+    public void AddEntry(VaultEntry entry)
+    {
+        if (_vault == null)
+            throw new InvalidOperationException("Vault not loaded");
+
+        _vault.Entries.Add(entry);
+        _repo.Save(_vault);
+    }
+
+    public void Save()
+    {
+        if (_vault == null)
+            throw new InvalidOperationException("Vault not loaded");
+
+        _repo.Save(_vault);
+    }
+
+    public string GetVaultPath() => _repo.GetVaultPath();
+
+    public string GetVaultDirectory() => _repo.GetVaultDirectory();
+
+    public Vault LoadVault() => _vault = _repo.Load(); 
 }

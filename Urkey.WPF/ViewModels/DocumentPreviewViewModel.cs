@@ -1,59 +1,41 @@
-using System;
-using System.ComponentModel;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Urkey.Core.Services;
 using Urkey.WPF.Commands;
 
 namespace Urkey.WPF.ViewModels
 {
-    public class DocumentPreviewViewModel : INotifyPropertyChanged
+    public class DocumentPreviewViewModel : ViewModelBase 
     {
+        // Properties
+        private readonly VaultService _vaultService;
         private BitmapImage? _previewImage;
         public BitmapImage? PreviewImage
         {
             get => _previewImage;
-            set
-            {
-                _previewImage = value;
-                OnPropertyChanged(nameof(PreviewImage));
-                System.Windows.Input.CommandManager.InvalidateRequerySuggested();
-            }
+            set => SetProperty(ref  _previewImage, value);
         }
 
         private double _zoomLevel = 1.0;
         public double ZoomLevel
         {
             get => _zoomLevel;
-            set
-            {
-                // Clamp zoom to reasonable bounds [0.05, 3.0]
-                _zoomLevel = Math.Max(0.05, Math.Min(3.0, value));
-                OnPropertyChanged(nameof(ZoomLevel));
-            }
+            set => SetProperty(ref _zoomLevel, value);
         }
-
+       
         private string _documentName = string.Empty;
         public string DocumentName
         {
             get => _documentName;
-            set
-            {
-                _documentName = value;
-                OnPropertyChanged(nameof(DocumentName));
-            }
+            set => SetProperty(ref _documentName, value);
         }
 
         private string _documentType = string.Empty;
         public string DocumentType
         {
             get => _documentType;
-            set
-            {
-                _documentType = value;
-                OnPropertyChanged(nameof(DocumentType));
-            }
+            set => SetProperty(ref _documentType, value);
         }
 
         public ICommand ZoomInCommand { get; }
@@ -67,28 +49,21 @@ namespace Urkey.WPF.ViewModels
         public double RotationAngle
         {
             get => _rotationAngle;
-            set
-            {
-                // Normalize rotation to 0-360 range
-                _rotationAngle = value % 360;
-                if (_rotationAngle < 0) _rotationAngle += 360;
-                OnPropertyChanged(nameof(RotationAngle));
-            }
+            set => SetProperty(ref _rotationAngle, value);
         }
 
         private bool _showDebug = false;
         public bool ShowDebug
         {
             get => _showDebug;
-            set
-            {
-                _showDebug = value;
-                OnPropertyChanged(nameof(ShowDebug));
-            }
+            set => SetProperty(ref _showDebug, value);
         }
 
-        public DocumentPreviewViewModel(BitmapImage? image, string documentName = "", string documentType = "")
+
+        // Constructor
+        public DocumentPreviewViewModel(VaultService vaultService, BitmapImage? image, string documentName = "", string documentType = "")
         {
+            _vaultService = vaultService;
             PreviewImage = image;
             DocumentName = documentName;
             DocumentType = documentType;
@@ -156,7 +131,7 @@ namespace Urkey.WPF.ViewModels
                 // Clamp to [0.05, 1.0] - never zoom beyond 100%, never zoom too small
                 // Ensure we never exceed 1.0 (actual size) to prevent over-zooming
                 fitZoom = Math.Max(0.05, Math.Min(1.0, fitZoom));
-                
+
                 // Additional safety: if calculated zoom is still too large (>0.8), cap it further
                 // This ensures very large images are always readable
                 if (fitZoom > 0.8 && PreviewImage.PixelWidth > 2000)
@@ -173,11 +148,6 @@ namespace Urkey.WPF.ViewModels
             }
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        protected virtual void OnPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
     }
+
 }

@@ -18,6 +18,7 @@ namespace Urkey.WPF.Views.Windows
         private readonly DocumentEntry? _document;
         private string? _tempExtractedPath;
         private DocumentPreviewViewModel? _viewModel;
+        private readonly VaultService _vaultService = new VaultService();
         private EventHandler? _layoutHandler;
 
         public DocumentPreview(string encryptedImagePath, DocumentEntry? document = null)
@@ -70,9 +71,10 @@ namespace Urkey.WPF.Views.Windows
 
                 // Create ViewModel with document info
                 _viewModel = new DocumentPreviewViewModel(
-                    bitmap,
-                    _document?.Name ?? "Document Preview",
-                    _document?.Type ?? string.Empty);
+                 _vaultService,
+                 bitmap,
+                 _document?.Name ?? "Document Preview",
+                 _document?.Type ?? string.Empty);
 
                 // Apply EXIF rotation if present
                 if (exifRotation != 0)
@@ -336,16 +338,16 @@ namespace Urkey.WPF.Views.Windows
                     _document.Notes = editWindow.Document.Notes;
                     _document.ExpiryDate = editWindow.Document.ExpiryDate;
 
-                    var repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
-            _vaultDirectory);
-
                     if (!string.IsNullOrWhiteSpace(editWindow.Document.ExternalImagePath) &&
                         File.Exists(editWindow.Document.ExternalImagePath) &&
                         editWindow.Document.ExternalImagePath != _document.ExternalImagePath)
                     {
                         string originalImagePath = editWindow.Document.ExternalImagePath;
-                        string vaultDirectory = repo.GetVaultDirectory();
-                        string encryptedImagePath = FileHelper.SaveDocumentImage(originalImagePath, vaultDirectory);
+                        string vaultDirectory = _vaultService.GetVaultDirectory();
+
+                        string encryptedImagePath =
+                            FileHelper.SaveDocumentImage(originalImagePath, vaultDirectory);
+
                         _document.ExternalImagePath = encryptedImagePath;
                         LoadImage();
                     }
@@ -355,13 +357,17 @@ namespace Urkey.WPF.Views.Windows
                         _viewModel.DocumentType = _document.Type;
                     }
 
-                    var vault = repo.LoadVault();
-                    repo.SaveVault(vault);
+                    _vaultService.Save();
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, $"Error editing document: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show(
+                    this,
+                    $"Error editing document: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 
@@ -377,34 +383,38 @@ namespace Urkey.WPF.Views.Windows
                 MessageBoxImage.Warning,
                 MessageBoxResult.No);
 
-            if (result == MessageBoxResult.Yes)
+            if (result != MessageBoxResult.Yes) return;
+
+            try
             {
-                try
+                var vault = _vaultService.LoadVault();
+
+                var docToDelete = vault.Entries
+                    .OfType<DocumentEntry>()
+                    .FirstOrDefault(d => d.Type == _document.Type);
+
+                if (docToDelete != null)
                 {
-                    var repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
-            _vaultDirectory);
-                    var vault = repo.LoadVault();
-
-                    var docToDelete = vault.Entries.OfType<DocumentEntry>()
-                        .FirstOrDefault(d => d.Id == _document.Id);
-
-                    if (docToDelete != null)
+                    if (!string.IsNullOrEmpty(docToDelete.ExternalImagePath) &&
+                        File.Exists(docToDelete.ExternalImagePath))
                     {
-                        if (!string.IsNullOrEmpty(docToDelete.ExternalImagePath) && File.Exists(docToDelete.ExternalImagePath))
-                        {
-                            try { File.Delete(docToDelete.ExternalImagePath); } catch { }
-                        }
-
-                        vault.Entries.Remove(docToDelete);
-                        repo.SaveVault(vault);
+                        try { File.Delete(docToDelete.ExternalImagePath); } catch { }
                     }
 
-                    Close();
+                    vault.Entries.Remove(docToDelete);
+                    _vaultService.Save();
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(this, $"Error deleting document: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+
+                Close();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    this,
+                    $"Error deleting document: {ex.Message}",
+                    "Error",
+                    MessageBoxButton.OK,
+                    MessageBoxImage.Error);
             }
         }
 

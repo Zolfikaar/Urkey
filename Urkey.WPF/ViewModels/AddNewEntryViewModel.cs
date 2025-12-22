@@ -32,7 +32,7 @@ namespace Urkey.WPF.ViewModels
             Directory.CreateDirectory(userVaultDir);
 
             var vaultPath = Path.Combine(userVaultDir, "vault.json");
-            _repository = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
+            _repository = new VaultRepository(
             _vaultDirectory, vaultPath);
 
             // أوامر
@@ -109,11 +109,11 @@ namespace Urkey.WPF.ViewModels
         }
 
         // 🟩 الأوامر
-        public RelayCommand SaveCommand { get; }
-        public RelayCommand CancelCommand { get; }
-        public RelayCommand GeneratePasswordCommand { get; }
-        public RelayCommand TogglePasswordVisibilityCommand { get; }
-        public RelayCommand ToggleConfirmPasswordVisibilityCommand { get; }
+        public RelayCommand<object> SaveCommand { get; }
+        public RelayCommand<object> CancelCommand { get; }
+        public RelayCommand<object> GeneratePasswordCommand { get; }
+        public RelayCommand<object> TogglePasswordVisibilityCommand { get; }
+        public RelayCommand<object> ToggleConfirmPasswordVisibilityCommand { get; }
 
         // 🟦 منطق الأوامر
         private bool CanSave(object? parameter)

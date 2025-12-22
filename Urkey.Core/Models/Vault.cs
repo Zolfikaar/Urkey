@@ -7,7 +7,7 @@ namespace Urkey.Core.Models
         public List<VaultEntry> Entries { get; set; } = new List<VaultEntry>();
         
         // public Guid Id { get; set; } = Guid.NewGuid();
-        // public string Title { get; set; } = string.Empty;
+         public string Title { get; set; } = string.Empty;
         
         
     }

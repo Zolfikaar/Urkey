@@ -1,11 +1,10 @@
 using System;
 using System.Windows;
-using System.Windows.Controls; // ← حتى ComboBoxItem
-using System.Collections.Generic;
+using System.Windows.Controls;
 using System.Diagnostics;
 using System.IO;
 using Urkey.Core.Models;
-using Urkey.Core.Repository;
+using Urkey.Core.Services;
 using System.Windows.Input;
 using Microsoft.Win32;
 
@@ -13,8 +12,8 @@ namespace Urkey.WPF.Views.Windows
 {
     public partial class AddAccount : Window
     {
-        private readonly VaultRepository _repo = new();
-        private readonly AccountEntry _entry = new();
+        private readonly VaultService _repo = new ();
+        private readonly AccountEntry _entry = new ();
         private bool _passwordShown = false;
         private readonly List<string> _passwordHistory = new();
         private string _lastPasswordSnapshot = string.Empty;
@@ -26,6 +25,7 @@ namespace Urkey.WPF.Views.Windows
         public AddAccount()
         {
             InitializeComponent();
+            
             DataContext = _entry;
 
             // Default selection
@@ -153,8 +153,8 @@ namespace Urkey.WPF.Views.Windows
             }
 
             // Title mirrors ServiceName for now to be shown in lists
-            if (string.IsNullOrWhiteSpace(_entry.Title))
-                _entry.Title = _entry.ServiceName;
+            if (string.IsNullOrWhiteSpace(_entry.ServiceName))
+                _entry.ServiceName = _entry.ServiceName;
 
             // Append password history if any
             if (_passwordHistory.Count > 0)

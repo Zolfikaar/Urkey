@@ -1,12 +1,8 @@
-﻿using System;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Windows;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
 using Urkey.Core.Models;
-using Urkey.Core.Repository;
 using Urkey.Core.Services;
 using Urkey.WPF.ViewModels;
 

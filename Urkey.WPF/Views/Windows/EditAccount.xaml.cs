@@ -1,16 +1,13 @@
-using System;
-using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Urkey.Core.Models;
-using Urkey.Core.Repository;
+using Urkey.Core.Services;
 
 namespace Urkey.WPF.Views.Windows
 {
     public partial class EditAccount : Window
     {
-        private readonly VaultRepository _repo = new();
+        private readonly VaultService _vaultService = new VaultService();
         private AccountEntry _entry = new();
 
         public EditAccount()
@@ -134,11 +131,11 @@ namespace Urkey.WPF.Views.Windows
                 }
             }
 
-            if (string.IsNullOrWhiteSpace(_entry.Title))
-                _entry.Title = _entry.ServiceName;
+            if (string.IsNullOrWhiteSpace(_entry.ServiceName))
+                _entry.ServiceName = _entry.ServiceName;
 
-            // Persist changes
-            _repo.SaveVault(_repo.LoadVault());
+            _vaultService.Save(); // persists current vault state after editing entry
+
             DialogResult = true;
             Close();
         }

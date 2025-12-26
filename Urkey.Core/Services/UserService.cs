@@ -35,6 +35,13 @@ namespace Urkey.Core.Services
             _vaultManager = new VaultManager();
         }
 
+        // Load user data from settings (salt and hash password)
+        public void LoadUser(string salt, string hashPassword)
+        {
+            _userModel.Salt = salt;
+            _userModel.HashPassword = hashPassword;
+        }
+
         //===== Methods - public =====//
         public FirstSetupResult FirstSetup(string? email, string? phone, string enteredMasterPassword)
         {
@@ -102,7 +109,7 @@ namespace Urkey.Core.Services
 
             // else(the hashes (passwords), match), then
             // initialize encryption service to generate key, and return true
-            EncryptionService.Initialize(enteredMasterPassword, _userModel.Salt);
+            EncryptionService.Initialize(_userModel.Salt, enteredMasterPassword);
             // Unlock the vault
             
             return _vaultManager.Unlock();;

@@ -257,5 +257,48 @@ namespace Urkey.WPF.ViewModels
             if (!visible.Contains(SelectedAccount))
                 SelectedAccount = visible.FirstOrDefault();
         }
+
+        public void AddOrRefreshAccount(AccountEntry entry)
+        {
+            if (entry == null) return;
+
+            // Check if account already exists in vault
+            var existingEntry = _vault.Entries.FirstOrDefault(e => e.Id == entry.Id);
+            
+            if (existingEntry is AccountEntry existingAccount)
+            {
+                // Update existing entry properties
+                existingAccount.ServiceName = entry.ServiceName;
+                existingAccount.Username = entry.Username;
+                existingAccount.Password = entry.Password;
+                existingAccount.Email = entry.Email;
+                existingAccount.Url = entry.Url;
+                existingAccount.ApplicationPath = entry.ApplicationPath;
+                existingAccount.Notes = entry.Notes;
+                existingAccount.AccountType = entry.AccountType;
+                existingAccount.LicenseKey = entry.LicenseKey;
+                existingAccount.Category = entry.Category;
+                // Preserve IsFavorite when updating
+
+                // Update in Accounts collection - find and replace
+                var existingInCollection = Accounts.FirstOrDefault(a => a.Id == entry.Id);
+                if (existingInCollection != null)
+                {
+                    var index = Accounts.IndexOf(existingInCollection);
+                    Accounts[index] = existingAccount;
+                }
+            }
+            else
+            {
+                // Add new entry
+                _vault.Entries.Add(entry);
+                Accounts.Add(entry);
+            }
+
+            _vaultService.Save();
+            RebuildCategories();
+            FilteredAccounts.Refresh();
+            SelectedAccount = entry;
+        }
     }
 }

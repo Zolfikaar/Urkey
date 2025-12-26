@@ -35,6 +35,8 @@
         <!-- Alias for small text used elsewhere -->
         <SolidColorBrush x:Key="SecondaryTextColor"
                          Color="#6B6B7A"/>
+        <SolidColorBrush x:Key="SubTextColor"
+                         Color="#6B6B7A"/>
         <SolidColorBrush x:Key="ErrorColor"
                          Color="#E63946"/>
         <!-- رسائل الخطأ -->

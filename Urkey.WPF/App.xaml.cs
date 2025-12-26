@@ -2,20 +2,23 @@
 using Urkey.Core.Services;
 using Urkey.WPF.Helpers;
 using Urkey.WPF.Views.Windows;
-using Urkey.Core.Managers;
-using System.Threading.Tasks;
 
 namespace Urkey.WPF
 {
     public partial class App : Application
     {
         public static AppSettings Settings { get; private set; } = new();
-
+        //private UserService _userService;
+        public static VaultService VaultService;
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
             Settings = SettingsHelper.LoadSettings();
+            // initialize services
+            //_userService = new UserService();
+            VaultService = new VaultService();
+
 
             LanguageManager.ApplyLanguage(Settings.Language);
             ThemeManager.ApplyTheme(Settings.Theme);
@@ -31,10 +34,10 @@ namespace Urkey.WPF
             Window next;
 
             if (VaultService.VaultExists())
-                next = new UnlockWindow();
+                next = new UnlockWindow(VaultService);
             
             else
-                next = new FirstTimeSetupWindow();
+                next = new FirstTimeSetupWindow(VaultService);
 
             next.Show();
 
@@ -42,6 +45,8 @@ namespace Urkey.WPF
             Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
             
         }
+
+        
 
         protected override void OnExit(ExitEventArgs e)
         {

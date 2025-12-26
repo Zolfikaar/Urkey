@@ -13,6 +13,7 @@ namespace Urkey.WPF.Views.Pages
         public Accounts()
         {
             InitializeComponent();
+            DataContext = new AccountsViewModel(App.VaultService);
         }
 
         private void ToggleMenu(object sender, RoutedEventArgs e)
@@ -34,7 +35,7 @@ namespace Urkey.WPF.Views.Pages
             var win = new AddDocument { Owner = Application.Current.MainWindow };
             if (win.ShowDialog() == true && win.Document != null)
             {
-                var vm = new DocumentsViewModel();
+                var vm = new DocumentsViewModel(App.VaultService);
                 vm.SaveNewDocument(win.Document);
             }
         }

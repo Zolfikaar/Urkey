@@ -13,7 +13,7 @@ namespace Urkey.WPF.Views.Pages
         {
             InitializeComponent();
 
-            _DocVM = new DocumentsViewModel();
+            _DocVM = new DocumentsViewModel(App.VaultService);
             DataContext = _DocVM;
 
             // Apply language direction

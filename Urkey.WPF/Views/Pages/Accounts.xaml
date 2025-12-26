@@ -8,9 +8,6 @@
       Height="600"
       FlowDirection="{DynamicResource AppFlowDirection}">
 
-    <Page.DataContext>
-        <vm:AccountsViewModel />
-    </Page.DataContext>
 
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>

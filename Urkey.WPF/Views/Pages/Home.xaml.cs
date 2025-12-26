@@ -47,7 +47,7 @@ namespace Urkey.WPF.Views.Pages
             if (win.ShowDialog() == true && win.Document != null)
             {
                 // Create a DocumentsViewModel instance to save the document
-                var vm = new DocumentsViewModel();
+                var vm = new DocumentsViewModel(App.VaultService);
                 vm.SaveNewDocument(win.Document);
             }
         }

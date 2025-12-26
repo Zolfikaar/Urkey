@@ -17,14 +17,14 @@ namespace Urkey.WPF.Views.Windows
     {
         private bool _isPasswordVisible ;
         private string _enteredMasterPassword = string.Empty;
-        // private readonly Vault _vault;
+         private readonly VaultService _vaultService;
         private UserViewModel _userVM;
 
-        public UnlockWindow()
+        public UnlockWindow(VaultService vaultService)
         {
             InitializeComponent();
             Loaded += UnlockWindow_Loaded;
-
+            _vaultService = vaultService;
 
             // Bind password visibility
             // // The '_' parameters are required for the lambda to match the event signature,
@@ -32,16 +32,20 @@ namespace Urkey.WPF.Views.Windows
             MasterPasswordBox.PasswordChanged += (_, _) =>
             {
                 if (!_isPasswordVisible)
+                {
                     MasterPasswordTextBox.Text = MasterPasswordBox.Password;
+                    _enteredMasterPassword = MasterPasswordBox.Password;
+                }
             };
 
             MasterPasswordTextBox.TextChanged += (_, _) =>
             {
                 if (_isPasswordVisible)
+                {
                     MasterPasswordBox.Password = MasterPasswordTextBox.Text;
+                    _enteredMasterPassword = MasterPasswordTextBox.Text;
+                }
             };
-
-            _enteredMasterPassword = MasterPasswordTextBox.Text;
             
             _userVM = new UserViewModel();
             
@@ -121,6 +125,7 @@ namespace Urkey.WPF.Views.Windows
             if (_isPasswordVisible)
             {
                 MasterPasswordTextBox.Text = MasterPasswordBox.Password;
+                _enteredMasterPassword = MasterPasswordBox.Password;
                 MasterPasswordTextBox.Visibility = Visibility.Visible;
                 MasterPasswordBox.Visibility = Visibility.Collapsed;
                 MasterPasswordTextBox.Focus();
@@ -128,6 +133,7 @@ namespace Urkey.WPF.Views.Windows
             else
             {
                 MasterPasswordBox.Password = MasterPasswordTextBox.Text;
+                _enteredMasterPassword = MasterPasswordTextBox.Text;
                 MasterPasswordBox.Visibility = Visibility.Visible;
                 MasterPasswordTextBox.Visibility = Visibility.Collapsed;
                 MasterPasswordBox.Focus();
@@ -155,17 +161,16 @@ namespace Urkey.WPF.Views.Windows
             {
                 MessageBox.Show(
                     "Master Password is incorrect.",
-                    "Info",
+                    "Error",
                     MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                    MessageBoxImage.Error);
 
                 return;
             }
 
-            if (VaultService.VaultExists())
-                VaultService.LoadVault();
-            else
-                VaultService.CreateVault();
+            
+            _vaultService.Load();
+            
             
             var mainWindow = new MainWindow();
             mainWindow.Show();

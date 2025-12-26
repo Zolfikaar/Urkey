@@ -5,6 +5,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using Urkey.Core.Models;
 using Urkey.Core.Repository;
+using Urkey.Core.Services;
 using Urkey.WPF.Helpers;
 
 namespace Urkey.WPF.Views.Windows
@@ -16,17 +17,22 @@ namespace Urkey.WPF.Views.Windows
     {
         private bool _isPasswordVisible = false;
         private bool _isConfirmPasswordVisible = false;
+        private string _password;
+        private string _confPassword;
+
+        private readonly VaultService _vaultService;
+        private readonly UserService _userService;
         public Vault vault;
 
-        public FirstTimeSetupWindow()
+        public FirstTimeSetupWindow(VaultService vaultService)
         {
             InitializeComponent();
 
             Loaded += FirstTimeSetupWindow_Loaded;
 
-            var repo = new VaultRepository(            // إذا تم تمرير مسار يدوي نستخدمه، وإلا نحفظ في AppData\Urkey
-            _vaultDirectory);
-            //vault = repo.LoadVault();
+            
+            _vaultService = vaultService;
+            _userService = new UserService();
 
             // Bind password visibility
             MasterPasswordBox.PasswordChanged += (s, e) =>
@@ -54,8 +60,7 @@ namespace Urkey.WPF.Views.Windows
                     ConfirmPasswordBox.Password = ConfirmPasswordTextBox.Text;
             };
 
-            //// Load Vault
-            //_vaultPassword = VaultRepository.
+
         }
 
         private void FirstTimeSetupWindow_Loaded(object sender, RoutedEventArgs e)
@@ -116,7 +121,6 @@ namespace Urkey.WPF.Views.Windows
             SettingsPopup.IsOpen = false;
         }
 
-
         private void ApplyFontToWindow(DependencyObject parent, FontFamily fontFamily)
         {
             if (parent == null) return;
@@ -160,7 +164,6 @@ namespace Urkey.WPF.Views.Windows
             }
         }
 
-
         public void ToggleMasterPasswordButton_Click(object sender, RoutedEventArgs e)
         {
             _isPasswordVisible = !_isPasswordVisible;
@@ -202,15 +205,93 @@ namespace Urkey.WPF.Views.Windows
 
         private void PasswordBox_KeyDown(object sender, KeyEventArgs e)
         {
+
             if (e.Key == Key.Enter)
             {
-                ContinueBtn_Click(sender, e);
+                if (IsPasswordsMatch())
+                    ContinueBtn_Click(sender, e);
+                else
+                    return;
             }
+        }
+
+        private bool IsPasswordsMatch()
+        {
+            if(_isPasswordVisible && _isConfirmPasswordVisible)
+            {
+                _password = MasterPasswordTextBox.Text.Trim();
+                _confPassword = ConfirmPasswordTextBox.Text.Trim();
+            }
+            else
+            {
+                _password = MasterPasswordBox.Password.Trim();
+                _confPassword = ConfirmPasswordBox.Password.Trim();
+            }
+
+            if (_password != null && _confPassword != null )
+            {
+                if(_password == _confPassword)
+                  return true;
+                else
+                {
+                    MessageBox.Show("Master password is not matching confirm password", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return false;
+
+                }
+
+            } else
+            {
+                MessageBox.Show("Master password and confirm password is required","Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                return false;
+            }
+
         }
 
         public void ContinueBtn_Click(object sender, RoutedEventArgs e)
         {
+            // Validate passwords match before proceeding
+            if (!IsPasswordsMatch())
+            {
+                return; // IsPasswordsMatch already shows error message
+            }
 
+            // Get the password value
+            string masterPassword;
+            if (_isPasswordVisible && _isConfirmPasswordVisible)
+            {
+                masterPassword = MasterPasswordTextBox.Text.Trim();
+            }
+            else
+            {
+                masterPassword = MasterPasswordBox.Password.Trim();
+            }
+
+            // Setup user with email, phone, and master password
+            // This generates salt and hash internally
+            var result = _userService.FirstSetup(null, null, masterPassword);
+            if (!result.Success)
+            {
+                MessageBox.Show($"Setup failed: {result.Error}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            // Save user data (salt and hash) to user.json
+            _userService.Save();
+
+            // Initialize EncryptionService with password and salt
+            var userSalt = _userService.GetSalt();
+            EncryptionService.Initialize(userSalt, masterPassword);
+
+            // Load or create the vault
+            _vaultService.Load();
+
+            // Save the vault to create vault.json file
+            _vaultService.Save();
+
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
+
+            this.Close();
         }
         
         public void SettingsButton_Click(object sender, RoutedEventArgs e)

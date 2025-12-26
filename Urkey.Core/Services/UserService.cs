@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Urkey.Core.Managers;
 using Urkey.Core.Models;
+using Urkey.Core.Repository;
 
 namespace Urkey.Core.Services
 {
@@ -14,6 +15,7 @@ namespace Urkey.Core.Services
         //===== Properties =====//
         private User _userModel;
         private VaultManager _vaultManager;
+        private UserRepository _userRepository;
         public enum FirstSetupError
         {
             None,
@@ -31,15 +33,27 @@ namespace Urkey.Core.Services
         //===== Constructor =====//
         public UserService()
         {
-            _userModel = new User();
+            _userRepository = new UserRepository();
+            _userModel = _userRepository.Load();
             _vaultManager = new VaultManager();
         }
 
-        // Load user data from settings (salt and hash password)
-        public void LoadUser(string salt, string hashPassword)
+        // Load user data from repository
+        public void Load()
         {
-            _userModel.Salt = salt;
-            _userModel.HashPassword = hashPassword;
+            _userModel = _userRepository.Load();
+        }
+
+        // Save user data to repository
+        public void Save()
+        {
+            _userRepository.Save(_userModel);
+        }
+
+        // Get salt from user model (needed for EncryptionService initialization)
+        public string GetSalt()
+        {
+            return _userModel.Salt;
         }
 
         //===== Methods - public =====//

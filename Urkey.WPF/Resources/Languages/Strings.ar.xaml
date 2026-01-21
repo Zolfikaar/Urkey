@@ -129,9 +129,16 @@
 
 
         <!-- Accounts Page Translations -->
-        <sys:String x:Key="AddAccountTitle">إضافة حساب</sys:String>
-
-        <!-- App Flow Direction -->
+        <sys:String x:Key="AddAccountTitle">إضافة</sys:String>
+        <sys:String x:Key="AccountType">حساب</sys:String>
+        <sys:String x:Key="AccountTypeWebsite">موقع ويب</sys:String>
+        <sys:String x:Key="AccountTypeEmail">بريد الكتروني</sys:String>
+        <sys:String x:Key="AccountTypeBankCard">بطاقة بنكية</sys:String>
+        <sys:String x:Key="AccountTypeDocument">مستند</sys:String>
+        <sys:String x:Key="AccountTypeAddress">عنوان</sys:String>
+        <sys:String x:Key="AccountTypeNote">ملاحظة</sys:String>
+    
+    <!-- App Flow Direction -->
         <FlowDirection x:Key="AppFlowDirection">RightToLeft</FlowDirection>
 
         <!-- Add Account Window Translations -->

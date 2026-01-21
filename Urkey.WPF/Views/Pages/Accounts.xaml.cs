@@ -16,10 +16,10 @@ namespace Urkey.WPF.Views.Pages
             DataContext = new AccountsViewModel(App.VaultService);
         }
 
-        private void ToggleMenu(object sender, RoutedEventArgs e)
-        {
-            AddMenuPopup.IsOpen = !AddMenuPopup.IsOpen;
-        }
+        //private void ToggleMenu(object sender, RoutedEventArgs e)
+        //{
+        //    AddMenuPopup.IsOpen = !AddMenuPopup.IsOpen;
+        //}
 
         
 
@@ -54,45 +54,66 @@ namespace Urkey.WPF.Views.Pages
             win.ShowDialog();
         }
 
-        private void OnAddWebsite_Click(object sender, RoutedEventArgs e)
-        {
-            AddMenuPopup.IsOpen = false;
-            var win = new AddAccount("Website");
-            win.Owner = Application.Current.MainWindow;
-            var ok = win.ShowDialog();
-            if (ok == true && DataContext is AccountsViewModel vm) vm.AddOrRefreshAccount(win.ResultEntry);
-        }
+        //private void OnAddWebsite_Click(object sender, RoutedEventArgs e)
+        //{
+        //    AddMenuPopup.IsOpen = false;
+        //    var win = new AddAccount("Website");
+        //    win.Owner = Application.Current.MainWindow;
+        //    var ok = win.ShowDialog();
+        //    if (ok == true && DataContext is AccountsViewModel vm) vm.AddOrRefreshAccount(win.ResultEntry);
+        //}
 
-        private void OnAddApplication_Click(object sender, RoutedEventArgs e)
-        {
-            AddMenuPopup.IsOpen = false;
-            var win = new AddAccount("Application");
-            win.Owner = Application.Current.MainWindow;
-            var ok = win.ShowDialog();
-            if (ok == true && DataContext is AccountsViewModel vm) vm.AddOrRefreshAccount(win.ResultEntry);
-        }
+        //private void OnAddApplication_Click(object sender, RoutedEventArgs e)
+        //{
+        //    AddMenuPopup.IsOpen = false;
+        //    var win = new AddAccount("Application");
+        //    win.Owner = Application.Current.MainWindow;
+        //    var ok = win.ShowDialog();
+        //    if (ok == true && DataContext is AccountsViewModel vm) vm.AddOrRefreshAccount(win.ResultEntry);
+        //}
 
-        private void OnAddOther_Click(object sender, RoutedEventArgs e)
-        {
-            AddMenuPopup.IsOpen = false;
-            var win = new AddAccount("Other");
-            win.Owner = Application.Current.MainWindow;
-            var ok = win.ShowDialog();
-            if (ok == true && DataContext is AccountsViewModel vm) vm.AddOrRefreshAccount(win.ResultEntry);
-        }
+        //private void OnAddOther_Click(object sender, RoutedEventArgs e)
+        //{
+        //    AddMenuPopup.IsOpen = false;
+        //    var win = new AddAccount("Other");
+        //    win.Owner = Application.Current.MainWindow;
+        //    var ok = win.ShowDialog();
+        //    if (ok == true && DataContext is AccountsViewModel vm) vm.AddOrRefreshAccount(win.ResultEntry);
+        //}
 
         private string GetSelectedCategory()
         {
-            if (DataContext is AccountsViewModel vm)
-            {
-                var selected = vm.SelectedCategory ?? "Website";
-                if (string.Equals(selected, "All categories", StringComparison.OrdinalIgnoreCase))
-                    return "Website";
-                if (string.Equals(selected, "Accounts", StringComparison.OrdinalIgnoreCase))
-                    return "Application";
-                return selected;
-            }
-            return "Website";
+            if (DataContext is not AccountsViewModel vm)
+                return "Website";
+
+            var selected = vm.SelectedCategory ?? "Website";
+
+            if (MatchesCategory(selected, "All categories"))
+                return "Website";
+
+            if (MatchesCategory(selected, "Accounts"))
+                return "Application";
+
+            if (MatchesCategory(selected, "Website", "AccountTypeWebsite") ||
+                MatchesCategory(selected, "Email", "AccountTypeEmail"))
+                return "Website";
+
+            return selected;
+        }
+
+        private bool MatchesCategory(string selected, string literal, string? resourceKey = null)
+        {
+            if (string.Equals(selected, literal, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if (string.IsNullOrWhiteSpace(resourceKey))
+                return false;
+
+            var localized = TryFindResource(resourceKey) as string
+                            ?? Application.Current.TryFindResource(resourceKey) as string;
+
+            return !string.IsNullOrWhiteSpace(localized) &&
+                   string.Equals(selected, localized, StringComparison.OrdinalIgnoreCase);
         }
 
         private void OnAddAccount_Click(object sender, RoutedEventArgs e)

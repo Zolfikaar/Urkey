@@ -1,8 +1,10 @@
-﻿using System;
+using System;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using Urkey.WPF.Helpers;
 using Urkey.WPF.Views;
+using static Urkey.WPF.Views.MainWindow;
 
 namespace Urkey.WPF.Views.Pages
 {
@@ -11,7 +13,6 @@ namespace Urkey.WPF.Views.Pages
         public Settings()
         {
             InitializeComponent();
-            this.FlowDirection = Application.Current.MainWindow.FlowDirection;
             this.Unloaded += Settings_Unloaded;
         }
 
@@ -21,28 +22,93 @@ namespace Urkey.WPF.Views.Pages
             MainWindow.SidebarStateChanged -= MainWindow_SidebarStateChanged;
         }
 
+
         private void OnLanguageChanged(object sender, RoutedEventArgs e)
         {
-            // تبديل اللغة الحالية
+
+            // حدّد اللغة الجديدة
             string newLang = App.Settings.Language == "en" ? "ar" : "en";
 
-            // تطبيق اللغة فوراً
-            LanguageManager.ApplyLanguage(newLang);
-            this.FlowDirection = Application.Current.MainWindow.FlowDirection;
+            // حدّد الاتجاه
+            var newDirection = newLang == "ar"
+                ? FlowDirection.RightToLeft
+                : FlowDirection.LeftToRight;
 
-            // تحديث الإعدادات
+            // حدّث الإعدادات أولاً
             App.Settings.Language = newLang;
-
-            // حفظ التغييرات
             SettingsHelper.SaveSettings(App.Settings);
 
-            // تحديث نص زر الشريط الجانبي بعد تغيير اللغة
+            // طبّق اللغة قبل إنشاء النافذة
+            LanguageManager.ApplyLanguage(newLang);
+
+            // أعد إنشاء النافذة
+            RecreateMainWindow(newDirection, StartupPage.Settings);
+
+            // UI helpers
             UpdateSidebarToggleText();
 
-            // تحديث النصوص حسب اللغة الجديدة
-            MessageBox.Show(newLang == "ar" ? "تم تغيير اللغة إلى العربية" : "Language changed to English");
-
         }
+
+        public static void RecreateMainWindow(FlowDirection direction, StartupPage startupPage)
+        {
+            var oldWindow = Application.Current.MainWindow;
+            if (oldWindow == null)
+                return;
+
+            // أخفِ القديمة فوراً 
+            oldWindow.Hide();
+
+            // استخدم Dispatcher لتأجيل إنشاء النافذة الجديدة بعد انتهاء الحدث الحالي
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                // إنشاء النافذة الجديدة مع نفس حجم وموقع القديمة
+                var newWindow = new MainWindow(startupPage)
+                {
+                    Left = oldWindow.Left,
+                    Top = oldWindow.Top,
+                    Width = oldWindow.Width,
+                    Height = oldWindow.Height,
+                    WindowState = oldWindow.WindowState,
+                    FlowDirection = direction
+                };
+
+                // عيّن MainWindow الجديدة قبل العرض
+                Application.Current.MainWindow = newWindow;
+
+                // عرض النافذة الجديدة
+                newWindow.Show();
+
+                // أغلق القديمة بعد العرض
+                oldWindow.Close();
+            }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
+        }
+
+
+
+
+
+        //public static void ApplyFlowDirectionImmediately(FlowDirection direction)
+        //{
+        //    if (Application.Current?.MainWindow == null)
+        //        return;
+
+        //    var window = Application.Current.MainWindow;
+
+        //    // افصل المحتوى مؤقتاً
+        //    var content = window.Content;
+        //    window.Content = null;
+
+        //    // غيّر الاتجاه
+        //    window.FlowDirection = direction;
+
+        //    // رجّع المحتوى
+        //    window.Content = content;
+
+        //    // أجبر إعادة الحساب
+        //    window.InvalidateVisual();
+        //    window.UpdateLayout();
+        //}
+
 
         private void OnThemeChanged(object sender, RoutedEventArgs e)
         {
@@ -97,37 +163,28 @@ namespace Urkey.WPF.Views.Pages
             }
         }
 
+        // toggle sidebar state (open\closed)
         private void SidebarToggle_Checked(object sender, RoutedEventArgs e)
         {
             ToggleSidebar(true);
-            UpdateSidebarToggleText();
         }
 
         private void SidebarToggle_Unchecked(object sender, RoutedEventArgs e)
         {
             ToggleSidebar(false);
-            UpdateSidebarToggleText();
         }
 
-        private void ToggleSidebar(bool isExpanded)
+        private void  ToggleSidebar(bool isExpanded)
         {
             // Get MainWindow
             var mainWindow = Application.Current.MainWindow as MainWindow;
             if (mainWindow == null) return;
 
-            // Only toggle if the state is different
-            if (mainWindow.IsSidebarExpanded != isExpanded)
-            {
-                // Trigger the sidebar toggle animation and state change
-                var eventArgs = new RoutedEventArgs();
-                mainWindow.ToggleSidebar_Click(mainWindow, eventArgs);
-            }
-            else
-            {
-                // State matches, but ensure it's saved
-                App.Settings.SidebarExpanded = isExpanded;
-                SettingsHelper.SaveSettings(App.Settings);
-            }
+            // Use explicit setter to ensure animation and persistence
+            mainWindow.SetSidebarExpanded(isExpanded);
+
+            // Update text immediately to reflect the intended state
+            UpdateSidebarToggleText();
         }
 
         private void ClipboardTimeButton_Click(object sender, RoutedEventArgs e)

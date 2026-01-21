@@ -133,6 +133,14 @@
 
     <!-- Accounts Page Translations -->
     <sys:String x:Key="AddAccountTitle">Add Account</sys:String>
+    <!-- (Add Dropdown menu) -->
+    <sys:String x:Key="AccountType">Account</sys:String>
+    <sys:String x:Key="AccountTypeEmail">Email</sys:String>
+    <sys:String x:Key="AccountTypeWebsite">Website</sys:String>
+    <sys:String x:Key="AccountTypeBankCard">Bank Card</sys:String>
+    <sys:String x:Key="AccountTypeDocument">Document</sys:String>
+    <sys:String x:Key="AccountTypeAddress">Address</sys:String>
+    <sys:String x:Key="AccountTypeNote">Note</sys:String>
 
     <!-- App Flow Direction -->
     <FlowDirection x:Key="AppFlowDirection">LeftToRight</FlowDirection>

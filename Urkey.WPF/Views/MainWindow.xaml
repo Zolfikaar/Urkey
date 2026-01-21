@@ -29,12 +29,12 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <!-- Sidebar -->
-            <ColumnDefinition Width="Auto"
-                            MinWidth="60"
-                            MaxWidth="240"/>
-            <!-- Main Content Area -->
+            <!-- Edge column (Sidebar/Logo) -->
+            <ColumnDefinition Width="Auto" MinWidth="60" MaxWidth="240"/>
+            <!-- Center content (always middle) -->
             <ColumnDefinition Width="*"/>
+            <!-- Edge column (Sidebar/Logo) -->
+            <ColumnDefinition Width="Auto" MinWidth="60" MaxWidth="240"/>
         </Grid.ColumnDefinitions>
 
         <!-- Topbar -->
@@ -43,6 +43,7 @@
         x:Name="Topbar"
         Padding="20,0"
         Grid.Column="1"
+        Grid.ColumnSpan="2"
         Height="60"
         VerticalAlignment="Top"
         Background="{DynamicResource BgColor}"
@@ -60,14 +61,14 @@
             <!-- Grid for layout inside topbar -->
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <!-- Burger Icon -->
-                    <ColumnDefinition Width="*"/>
-                    <!-- Spacer -->
                     <ColumnDefinition Width="Auto"/>
+                    <!-- Spacer -->
+                    <ColumnDefinition Width="*"/>
                     <!-- View toggler -->
                     <ColumnDefinition Width="Auto"/>
                     <!-- Search -->
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <!-- Burger Button (on right due to RTL) -->
@@ -161,6 +162,16 @@
             Height="60"
             Background="{DynamicResource BgColor}"
             HorizontalAlignment="Left">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding FlowDirection, RelativeSource={RelativeSource AncestorType=Window}}" Value="RightToLeft">
+                            <Setter Property="Grid.Column" Value="2"/>
+                            <Setter Property="HorizontalAlignment" Value="Right"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
 
             <WrapPanel
             x:Name="LogoWrapper"
@@ -197,20 +208,32 @@
 
         <!-- Sidebar -->
         <Border x:Name="SidebarContainer"
-            Width="240"
-            Grid.Row="1"
-            Grid.Column="0"
-            Grid.RowSpan="2"
-            HorizontalAlignment="Left"
-            Panel.ZIndex="2"
-            Background="{DynamicResource BgColor}">
-            <uc:Sidebar x:Name="Sidebar"
-                    IsSidebarExpanded="{Binding IsSidebarExpanded, Mode=OneWay, RelativeSource={RelativeSource AncestorType=Window}}"/>
+        Width="240"
+        Grid.Row="1"
+        Grid.Column="0"
+        Panel.ZIndex="2"
+        Background="{DynamicResource BgColor}">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding FlowDirection, RelativeSource={RelativeSource AncestorType=Window}}"
+                             Value="RightToLeft">
+                            <Setter Property="Grid.Column" Value="2"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <uc:Sidebar
+        x:Name="Sidebar"
+        IsSidebarExpanded="{Binding IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}}"/>
         </Border>
+
 
         <!-- Main Content -->
         <Border Grid.Row="1"
             Grid.Column="1"
+            Grid.ColumnSpan="2"
             Padding="20">
 
             <Border

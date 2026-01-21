@@ -12,6 +12,7 @@ namespace Urkey.WPF.UserControls
 {
     public partial class Sidebar : UserControl
     {
+
         //public string WordDirection = "";
         private static string _bgColor = "#F6F6F9";
         private static string _bgWhite = "#FFF";
@@ -41,7 +42,6 @@ namespace Urkey.WPF.UserControls
         }
 
         public static bool _isSidebarOpen = true; // sidebar open by default
-        private bool _isAllEntriesMenuOpen = true; // nested menu open by default
 
 
         public static readonly DependencyProperty IsActiveProperty =
@@ -86,8 +86,7 @@ namespace Urkey.WPF.UserControls
             InitializeComponent();
             SetButtonActive(Home);
 
-            // No nested menu behavior anymore
-            _isAllEntriesMenuOpen = false;
+            
 
             // Initialize sidebar state based on the dependency property
             _isSidebarOpen = IsSidebarExpanded;
@@ -203,31 +202,6 @@ namespace Urkey.WPF.UserControls
             }
         }
 
-        //private void AllEntriesMenuClicked(object sender, RoutedEventArgs e)
-        //{
-        //    // Cancel dropdown behavior: always navigate to All Entries and update icon
-        //    ResetAllButtons();
-        //    SetButtonActive(AllEntriesMenu);
-
-        //    // Navigate to All Entries page
-        //    OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new AllEntries()));
-
-        //    // Ensure nested items remain hidden
-        //    _isAllEntriesMenuOpen = false;
-        //    if (NestedMenuItems != null)
-        //    {
-        //        NestedMenuItems.Visibility = Visibility.Collapsed;
-        //    }
-
-        //    // Change icon to indicate active state
-        //    AllEntriesMenu.ApplyTemplate();
-        //    var icon = AllEntriesMenu.Template.FindName("PART_LeftIcon", AllEntriesMenu) as Path;
-        //    if (icon != null)
-        //    {
-        //        icon.Data = (Geometry)FindResource("bx_arrow_up");
-        //    }
-        //}
-
         private void ResetAllButtons()
         {
             // Reset Other Buttons
@@ -338,26 +312,6 @@ namespace Urkey.WPF.UserControls
                 }
             }
         }
-
-        //private void UpdateNestedMenuVisualState()
-        //{
-        //    if (NestedMenuItems != null)
-        //    {
-        //        NestedMenuItems.Visibility = _isAllEntriesMenuOpen ? Visibility.Visible : Visibility.Collapsed;
-        //    }
-
-        //    if (AllEntriesMenu != null)
-        //    {
-        //        // Update arrow icon direction if present
-        //        AllEntriesMenu.ApplyTemplate();
-        //        var icon = AllEntriesMenu.Template.FindName("PART_LeftIcon", AllEntriesMenu) as Path;
-        //        if (icon != null)
-        //        {
-        //            // Use up arrow when expanded, down arrow when collapsed
-        //            icon.Data = (Geometry)FindResource(_isAllEntriesMenuOpen ? "bx_arrow_up" : "bx_arrow_down");
-        //        }
-        //    }
-        //}
 
         // Event for navigation
         public event EventHandler<SidebarNavigationEventArgs> OnNavigationRequested;

@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="clr-namespace:Urkey.WPF.Views.Pages"
       xmlns:vm="clr-namespace:Urkey.WPF.ViewModels"
+      xmlns:uc="clr-namespace:Urkey.WPF.UserControls"
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       Background="{DynamicResource BgColor}"
       Height="600"
@@ -108,6 +109,11 @@
         <DockPanel Grid.Row="0" Margin="10">
             <StackPanel Orientation="Horizontal" DockPanel.Dock="Left" VerticalAlignment="Center">
                 <Grid>
+                    <uc:EntryTypesDropdown />
+                    
+                    <!--
+                    
+                    
                     <Button x:Name="AddButton"
                         Content="{DynamicResource AddAccountTitle}"
                             Background="{DynamicResource PrimaryColor}"
@@ -240,6 +246,7 @@
                             </Border>
                         </Grid>
                     </Popup>
+                    -->
                 </Grid>
 
             <ComboBox x:Name="CategoryCombo"

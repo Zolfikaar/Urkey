@@ -16,8 +16,19 @@
   </ItemGroup>
 
   <ItemGroup>
+	  
     <ProjectReference Include="..\Urkey.Core\Urkey.Core.csproj" />
+	 
   </ItemGroup>
+
+
+
+	<!-- 
+	<ItemGroup>
+		<Compile Include="..\Urkey.WPF\Converters\BoolToVisibilityConverter.cs" />
+		<Compile Include="..\Urkey.WPF\UserControls\EntryTypesDropdown.cs" />
+	</ItemGroup>
+	-->
 
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">

@@ -1,15 +1,17 @@
 ﻿using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Urkey.Core.Models;
 using Urkey.WPF.Views;
-using System.ComponentModel;
-using System.IO;
 
 namespace Urkey.WPF.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        
         private bool _initialLaunch = true;
         private bool _isAuthenticated = false;
         private bool _isVaultLocked = true;
@@ -34,7 +36,37 @@ namespace Urkey.WPF.ViewModels
 
         private Dictionary<string, string> _data = new Dictionary<string, string>();
 
+        private FlowDirection _wordDirection = FlowDirection.LeftToRight;
+        public FlowDirection WordDirection
+        {
+            get => _wordDirection;
+            set
+            {
+                _wordDirection = value;
+                OnPropertyChanged("WordDirection");
+            }
+        }
 
+        public enum NavigationTarget
+        {
+            Home,
+            Settings
+           
+        }
+
+        private NavigationTarget _currentPage;
+        public NavigationTarget CurrentPage
+        {
+            get => _currentPage;
+            set
+            {
+                if (_currentPage == value)
+                    return;
+
+                _currentPage = value;
+                OnPropertyChanged();
+            }
+        }
 
         //MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
 
@@ -43,11 +75,14 @@ namespace Urkey.WPF.ViewModels
             // Check if this is the first launch by looking for a settings file or registry entry
             // For now, we'll use a simple approach with a file
             CheckInitialLaunchStatus();
+
         }
+
+
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        protected virtual void OnPropertyChanged(string propertyName)
+        protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }

@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -10,11 +11,20 @@ using Urkey.WPF.Helpers;
 using Urkey.WPF.UserControls;
 using Urkey.WPF.ViewModels;
 using Urkey.WPF.Views.Pages;
+using static Urkey.WPF.ViewModels.MainViewModel;
 
 namespace Urkey.WPF.Views
 {
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+        public enum StartupPage
+        {
+            Home,
+            Settings
+        }
+
+
+
         private bool _isSidebarExpanded;
         private readonly MainViewModel _mainViewModel;
         private readonly string _burgerIcon = "\uE700";
@@ -39,39 +49,107 @@ namespace Urkey.WPF.Views
             }
         }
 
+        /// <summary>
+        /// Explicitly set the sidebar expanded state. Performs animation then sets state/persistence and event.
+        /// </summary>
+        public void SetSidebarExpanded(bool expand)
+        {
+            if (IsSidebarExpanded == expand)
+            {
+                // Ensure persistence even if state matches
+                App.Settings.SidebarExpanded = IsSidebarExpanded;
+                SettingsHelper.SaveSettings(App.Settings);
+                SidebarStateChanged?.Invoke(this, IsSidebarExpanded);
+                return;
+            }
+
+            PerformAnimation();
+
+            var delay = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
+            delay.Tick += (s, args) =>
+            {
+                delay.Stop();
+                IsSidebarExpanded = expand;
+                BurgerIcon.Text = IsSidebarExpanded ? _closeIcon : _burgerIcon;
+                UpdateLogoTextVisibility(IsSidebarExpanded);
+                App.Settings.SidebarExpanded = IsSidebarExpanded;
+                SettingsHelper.SaveSettings(App.Settings);
+                SidebarStateChanged?.Invoke(this, IsSidebarExpanded);
+            };
+            delay.Start();
+        }
+
         protected void OnPropertyChanged(string name)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
-        public MainWindow()
+        public MainWindow(StartupPage startupPage = StartupPage.Home)
         {
             InitializeComponent();
-            MainContentArea.Navigated += MainContentArea_Navigated;
 
-            // 🟢 تطبيق اللغة والثيم المحفوظين
-            LanguageManager.ApplyLanguage(App.Settings.Language);
+            // 📌 أحداث التنقل
+            MainContentArea.Navigated += MainContentArea_Navigated;
+            Sidebar.OnNavigationRequested += Sidebar_OnNavigationRequested;
+
+            // 🎨 طبّق الثيم فقط (اللغة طُبقت قبل الإنشاء)
             ThemeManager.ApplyTheme(App.Settings.Theme);
 
-            // 🔄 ضبط اتجاه الواجهة حسب اللغة
-            this.FlowDirection = App.Settings.Language == "ar"
-                ? FlowDirection.RightToLeft
-                : FlowDirection.LeftToRight;
-
-            // 🧠 تهيئة الـ ViewModel
+            // 🧠 تهيئة ViewModel
             _mainViewModel = new MainViewModel();
-            this.DataContext = _mainViewModel;
+            DataContext = _mainViewModel;
 
-            // 🟢 تحميل تفضيل الشريط الجانبي من الإعدادات
+            // 📐 تهيئة الشريط الجانبي
             _isSidebarExpanded = App.Settings.SidebarExpanded;
             InitializeSidebarVisualState();
 
-            // اشتراك في أحداث التنقل من الشريط
-            Sidebar.OnNavigationRequested += Sidebar_OnNavigationRequested;
+            // 🧭 التنقل الأولي حسب السيناريو
+            NavigateInitialPage(startupPage);
+        }
 
-            // 🏠 تحميل الصفحة الرئيسية
-            var homePage = new Home { DataContext = _mainViewModel };
-            MainContentArea.Content = homePage;
+        private void NavigateInitialPage(StartupPage startupPage)
+        {
+            switch (startupPage)
+            {
+                case StartupPage.Settings:
+                    NavigateToSettings();
+                    break;
+
+                default:
+                    NavigateToHome();
+                    break;
+            }
+
             UpdateViewTogglerForContent();
         }
+
+        private void NavigateToSettings()
+        {
+            MainContentArea.Content = new Settings
+            {
+                DataContext = _mainViewModel
+            };
+
+            _mainViewModel.CurrentPage = NavigationTarget.Settings; // MainViewModel.PageType.Settings;
+            UpdateSidebarActiveButton(NavigationTarget.Settings);
+        }
+
+        private void NavigateToHome()
+        {
+            MainContentArea.Content = new Home
+            {
+                DataContext = _mainViewModel
+            };
+
+            _mainViewModel.CurrentPage = NavigationTarget.Home; // MainViewModel.PageType.Home;
+            UpdateSidebarActiveButton(NavigationTarget.Home);
+        }
+
+        private void UpdateSidebarActiveButton(NavigationTarget page)
+        {
+            Sidebar.SetIsActive(Sidebar.Home, page == NavigationTarget.Home);
+            Sidebar.SetIsActive(Sidebar.Settings, page == NavigationTarget.Settings);
+        }
+
+
 
         private void Sidebar_OnNavigationRequested(object sender, SidebarNavigationEventArgs e)
         {
@@ -160,7 +238,8 @@ namespace Urkey.WPF.Views
                 content is Home ||
                 content is AllEntries ||
                 content is PasswordCheck ||
-                content is PasswordGenerator;
+                content is PasswordGenerator ||
+                content is Settings;
 
             GlobalViewToggler.Visibility = shouldHide ? Visibility.Collapsed : Visibility.Visible;
 

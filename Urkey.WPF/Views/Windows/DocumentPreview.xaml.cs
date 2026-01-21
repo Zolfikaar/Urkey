@@ -1,4 +1,7 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using Microsoft.Win32;
@@ -54,11 +57,20 @@ namespace Urkey.WPF.Views.Windows
         {
             try
             {
+                // Validate encrypted image path before attempting extraction
+                if (string.IsNullOrWhiteSpace(_encryptedImagePath))
+                {
+                    MessageBox.Show("Document image path is not set. The document may not have been saved properly.", 
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
                 _tempExtractedPath = FileHelper.ExtractDocumentImage(_encryptedImagePath);
 
-                if (!File.Exists(_tempExtractedPath))
+                if (string.IsNullOrWhiteSpace(_tempExtractedPath) || !File.Exists(_tempExtractedPath))
                 {
-                    MessageBox.Show("Failed to extract document image.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show($"Failed to extract document image. The encrypted file may not exist or may be corrupted.\n\nPath: {_encryptedImagePath}", 
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
 
@@ -83,9 +95,32 @@ namespace Urkey.WPF.Views.Windows
                 // Schedule fit-to-screen calculation after layout completes
                 ScheduleFitToScreen();
             }
+            catch (FileNotFoundException ex)
+            {
+                MessageBox.Show($"Document image file not found. The file may not have been saved yet or may have been moved.\n\nDetails: {ex.Message}\n\nPath: {_encryptedImagePath}", 
+                    "File Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                MessageBox.Show($"Document images directory not found. The application will attempt to create it.\n\nDetails: {ex.Message}", 
+                    "Directory Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
+                // Try to reload after a brief delay to allow directory creation
+                Thread.Sleep(100);
+                try
+                {
+                    LoadImage();
+                }
+                catch
+                {
+                    // If retry fails, show error
+                    MessageBox.Show("Failed to load document image after retry. Please try again.", 
+                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading image: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show($"Error loading image: {ex.Message}\n\nPath: {_encryptedImagePath}", 
+                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

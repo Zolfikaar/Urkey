@@ -1,12 +1,15 @@
 ﻿using System.Windows;
 using Urkey.Core.Services;
 using Urkey.WPF.Helpers;
+using Urkey.WPF.Views;
 using Urkey.WPF.Views.Windows;
+//using static System.Net.Mime.MediaTypeNames;
 
 namespace Urkey.WPF
 {
     public partial class App : Application
     {
+        private bool _devMode = true;
         public static AppSettings Settings { get; private set; } = new();
         //private UserService _userService;
         public static VaultService VaultService;
@@ -14,12 +17,16 @@ namespace Urkey.WPF
         {
             base.OnStartup(e);
 
+            if(!_devMode)
+            {
+
+
             Settings = SettingsHelper.LoadSettings();
             // initialize services
             //_userService = new UserService();
             VaultService = new VaultService();
 
-
+            
             LanguageManager.ApplyLanguage(Settings.Language);
             ThemeManager.ApplyTheme(Settings.Theme);
 
@@ -43,10 +50,25 @@ namespace Urkey.WPF
 
             // الآن نرجع البرنامج لسلوك الإغلاق الطبيعي
             Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
-            
+
+            }
+            else
+            {
+                Settings = SettingsHelper.LoadSettings();
+                // initialize services
+                //_userService = new UserService();
+                VaultService = new VaultService();
+
+                LanguageManager.ApplyLanguage(Settings.Language);
+                ThemeManager.ApplyTheme(Settings.Theme);
+
+                Window next = new MainWindow();
+                next.Show();
+            }
+
         }
 
-        
+
 
         protected override void OnExit(ExitEventArgs e)
         {

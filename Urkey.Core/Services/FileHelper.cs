@@ -32,9 +32,19 @@ namespace Urkey.Core.Services
             if (!File.Exists(sourceImagePath))
                 throw new FileNotFoundException("Image file not found.", sourceImagePath);
 
+            if (string.IsNullOrWhiteSpace(vaultRootPath))
+                throw new ArgumentException("Vault root path cannot be null or empty.", nameof(vaultRootPath));
+
             // إنشاء مجلد فرعي داخل AppData\Urkey\DocumentsFiles
             string docImagesDir = Path.Combine(vaultRootPath, "DocumentsFiles");
-            Directory.CreateDirectory(docImagesDir);
+            try
+            {
+                Directory.CreateDirectory(docImagesDir);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to create DocumentsFiles directory at: {docImagesDir}. {ex.Message}", ex);
+            }
 
             // قراءة الصورة وتحويلها إلى Base64
             byte[] bytes = File.ReadAllBytes(sourceImagePath);
@@ -62,7 +72,18 @@ namespace Urkey.Core.Services
             // استخدام UTF8 encoding بدون BOM لضمان الحفظ الصحيح
             // نكتب الملف كـ Base64 فقط بدون أي أسطر جديدة أو مسافات
             var utf8NoBom = new System.Text.UTF8Encoding(false);
-            File.WriteAllText(fullPath, encryptedBase64, utf8NoBom);
+            try
+            {
+                File.WriteAllText(fullPath, encryptedBase64, utf8NoBom);
+                
+                // Ensure the file is flushed to disk before returning
+                // This helps prevent timing issues when immediately accessing the file
+                File.SetAttributes(fullPath, FileAttributes.Normal);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException($"Failed to save encrypted image to: {fullPath}. {ex.Message}", ex);
+            }
 
             return fullPath; // نعيد المسار حتى نخزّنه داخل DocumentEntry.ExternalImagePath
         }
@@ -72,8 +93,25 @@ namespace Urkey.Core.Services
         /// </summary>
         public static string ExtractDocumentImage(string encryptedImagePath)
         {
+            if (string.IsNullOrWhiteSpace(encryptedImagePath))
+                throw new ArgumentException("Encrypted image path cannot be null or empty.", nameof(encryptedImagePath));
+
+            // Ensure the directory exists (defensive check)
+            string? directory = Path.GetDirectoryName(encryptedImagePath);
+            if (!string.IsNullOrEmpty(directory) && !Directory.Exists(directory))
+            {
+                try
+                {
+                    Directory.CreateDirectory(directory);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Failed to create directory for encrypted image: {directory}. {ex.Message}", ex);
+                }
+            }
+
             if (!File.Exists(encryptedImagePath))
-                throw new FileNotFoundException("Encrypted image not found.", encryptedImagePath);
+                throw new FileNotFoundException($"Encrypted image not found at path: {encryptedImagePath}. The file may not have been saved yet or the path is incorrect.", encryptedImagePath);
 
             try
             {

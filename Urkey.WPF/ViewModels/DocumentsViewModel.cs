@@ -2,11 +2,9 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
 using Urkey.Core.Models;
-using Urkey.Core.Repository;
 using Urkey.Core.Services;
 using Urkey.WPF.Commands;
 using Urkey.WPF.Views.Windows;

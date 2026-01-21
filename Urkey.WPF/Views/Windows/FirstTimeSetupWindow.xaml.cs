@@ -54,9 +54,9 @@ namespace Urkey.WPF.Views.Windows
                     ConfirmPasswordTextBox.Text = ConfirmPasswordBox.Password;
             };
 
-            MasterPasswordTextBox.TextChanged += (s, e) =>
+            ConfirmPasswordTextBox.TextChanged += (s, e) =>
             {
-                if (_isPasswordVisible)
+                if (_isConfirmPasswordVisible)
                     ConfirmPasswordBox.Password = ConfirmPasswordTextBox.Text;
             };
 
@@ -217,16 +217,8 @@ namespace Urkey.WPF.Views.Windows
 
         private bool IsPasswordsMatch()
         {
-            if(_isPasswordVisible && _isConfirmPasswordVisible)
-            {
-                _password = MasterPasswordTextBox.Text.Trim();
-                _confPassword = ConfirmPasswordTextBox.Text.Trim();
-            }
-            else
-            {
-                _password = MasterPasswordBox.Password.Trim();
-                _confPassword = ConfirmPasswordBox.Password.Trim();
-            }
+            _password = _isPasswordVisible ? MasterPasswordTextBox.Text.Trim() : MasterPasswordBox.Password.Trim();
+            _confPassword = _isConfirmPasswordVisible ? ConfirmPasswordTextBox.Text.Trim() : ConfirmPasswordBox.Password.Trim();
 
             if (_password != null && _confPassword != null )
             {
@@ -257,14 +249,9 @@ namespace Urkey.WPF.Views.Windows
 
             // Get the password value
             string masterPassword;
-            if (_isPasswordVisible && _isConfirmPasswordVisible)
-            {
-                masterPassword = MasterPasswordTextBox.Text.Trim();
-            }
-            else
-            {
-                masterPassword = MasterPasswordBox.Password.Trim();
-            }
+            masterPassword = _isPasswordVisible
+                ? MasterPasswordTextBox.Text.Trim()
+                : MasterPasswordBox.Password.Trim();
 
             // Setup user with email, phone, and master password
             // This generates salt and hash internally
@@ -289,9 +276,10 @@ namespace Urkey.WPF.Views.Windows
             _vaultService.Save();
 
             var mainWindow = new MainWindow();
+            Application.Current.MainWindow = mainWindow;
             mainWindow.Show();
 
-            this.Close();
+            Close();
         }
         
         public void SettingsButton_Click(object sender, RoutedEventArgs e)

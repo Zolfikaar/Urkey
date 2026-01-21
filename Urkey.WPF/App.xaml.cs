@@ -9,7 +9,7 @@ namespace Urkey.WPF
 {
     public partial class App : Application
     {
-        private bool _devMode = true;
+        private bool _devMode = false;
         public static AppSettings Settings { get; private set; } = new();
         //private UserService _userService;
         public static VaultService VaultService;
@@ -46,6 +46,7 @@ namespace Urkey.WPF
             else
                 next = new FirstTimeSetupWindow(VaultService);
 
+            Application.Current.MainWindow = next;
             next.Show();
 
             // الآن نرجع البرنامج لسلوك الإغلاق الطبيعي
@@ -63,6 +64,7 @@ namespace Urkey.WPF
                 ThemeManager.ApplyTheme(Settings.Theme);
 
                 Window next = new MainWindow();
+                Application.Current.MainWindow = next;
                 next.Show();
             }
 

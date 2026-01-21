@@ -3,6 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Diagnostics;
 using System.IO;
+using Urkey.WPF.Helpers;
 using Urkey.Core.Models;
 using Urkey.Core.Services;
 using System.Windows.Input;
@@ -114,7 +115,7 @@ namespace Urkey.WPF.Views.Windows
             var pwd = _passwordShown ? PasswordRevealBox.Text : PasswordBox.Password;
             if (!string.IsNullOrEmpty(pwd))
             {
-                Clipboard.SetText(pwd);
+                ClipboardHelper.CopyText(pwd, App.Settings.ClipboardClearSeconds);
             }
         }
 

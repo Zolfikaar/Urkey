@@ -86,6 +86,9 @@ namespace Urkey.WPF.Views
         {
             InitializeComponent();
 
+            var langCode = App.Settings?.Language ?? "en";
+            FlowDirection = langCode == "ar" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+
             // 📌 أحداث التنقل
             MainContentArea.Navigated += MainContentArea_Navigated;
             Sidebar.OnNavigationRequested += Sidebar_OnNavigationRequested;

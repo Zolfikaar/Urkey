@@ -170,12 +170,12 @@ namespace Urkey.WPF.Views.Windows
 
             
             _vaultService.Load();
-            
-            
+
             var mainWindow = new MainWindow();
+            Application.Current.MainWindow = mainWindow;
             mainWindow.Show();
 
-            this.Close();
+            Close();
         }
 
         private void ForgotPasswordLink_MouseDown(object sender, MouseButtonEventArgs e)

@@ -14,6 +14,7 @@ namespace Urkey.WPF.Views.Pages
         {
             InitializeComponent();
             this.Unloaded += Settings_Unloaded;
+            Loaded += Settings_Loaded;
         }
 
         private void Settings_Unloaded(object sender, RoutedEventArgs e)
@@ -51,35 +52,16 @@ namespace Urkey.WPF.Views.Pages
 
         public static void RecreateMainWindow(FlowDirection direction, StartupPage startupPage)
         {
-            var oldWindow = Application.Current.MainWindow;
-            if (oldWindow == null)
+            _ = startupPage;
+            var mainWindow = Application.Current.MainWindow as MainWindow;
+            if (mainWindow == null)
                 return;
 
-            // أخفِ القديمة فوراً 
-            oldWindow.Hide();
-
-            // استخدم Dispatcher لتأجيل إنشاء النافذة الجديدة بعد انتهاء الحدث الحالي
             Application.Current.Dispatcher.BeginInvoke(new Action(() =>
             {
-                // إنشاء النافذة الجديدة مع نفس حجم وموقع القديمة
-                var newWindow = new MainWindow(startupPage)
-                {
-                    Left = oldWindow.Left,
-                    Top = oldWindow.Top,
-                    Width = oldWindow.Width,
-                    Height = oldWindow.Height,
-                    WindowState = oldWindow.WindowState,
-                    FlowDirection = direction
-                };
-
-                // عيّن MainWindow الجديدة قبل العرض
-                Application.Current.MainWindow = newWindow;
-
-                // عرض النافذة الجديدة
-                newWindow.Show();
-
-                // أغلق القديمة بعد العرض
-                oldWindow.Close();
+                mainWindow.FlowDirection = direction;
+                mainWindow.InvalidateVisual();
+                mainWindow.UpdateLayout();
             }), System.Windows.Threading.DispatcherPriority.ApplicationIdle);
         }
 
@@ -192,6 +174,11 @@ namespace Urkey.WPF.Views.Pages
             ClipboardTimePopup.IsOpen = !ClipboardTimePopup.IsOpen;
         }
 
+        private void Settings_Loaded(object sender, RoutedEventArgs e)
+        {
+            ApplyClipboardSettingToUi();
+        }
+
         private void ClipboardTime_Selected(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && ClipboardTimeButton != null)
@@ -200,9 +187,36 @@ namespace Urkey.WPF.Views.Pages
                 ClipboardTimeButton.Content = button.Content;
                 ClipboardTimePopup.IsOpen = false;
 
-                // Save the selection (skeleton - no logic yet)
-                // TODO: Implement clipboard clear time logic
+                App.Settings.ClipboardClearSeconds = button.Name switch
+                {
+                    "ClipboardTime10" => 10,
+                    "ClipboardTime30" => 30,
+                    "ClipboardTime60" => 60,
+                    "ClipboardTimeNever" => 0,
+                    _ => App.Settings.ClipboardClearSeconds
+                };
+
+                SettingsHelper.SaveSettings(App.Settings);
             }
+        }
+
+        private void ApplyClipboardSettingToUi()
+        {
+            if (ClipboardTimeButton == null)
+                return;
+
+            var key = App.Settings.ClipboardClearSeconds switch
+            {
+                10 => "ClipboardTime_10Seconds",
+                30 => "ClipboardTime_30Seconds",
+                60 => "ClipboardTime_1Minute",
+                0 => "ClipboardTime_Never",
+                _ => "ClipboardTime_10Seconds"
+            };
+
+            ClipboardTimeButton.Content = TryFindResource(key)
+                                          ?? Application.Current.TryFindResource(key)
+                                          ?? key;
         }
     }
 }

@@ -1,57 +1,58 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Core Palette (نفس الأساس لكن بدرجات مهيأة للداكن) -->
-    <SolidColorBrush x:Key="PrimaryColor"
-                     Color="#818CF8"/>
-    <SolidColorBrush x:Key="PrimaryLight"
-                     Color="#9EA6FF"/>
-    <SolidColorBrush x:Key="PrimaryLightest"
-                     Color="#C4CBFF"/>
-    <SolidColorBrush x:Key="PrimaryDark"
-                     Color="#5B66D6"/>
-    <SolidColorBrush x:Key="PrimaryDarker"
-                     Color="#3A42A6"/>
+    <!-- Primary -->
+    <SolidColorBrush x:Key="PrimaryColor" Color="#8B93F7"/>
+    <SolidColorBrush x:Key="PrimaryLight" Color="#A8AEFF"/>
+    <SolidColorBrush x:Key="PrimaryLightest" Color="#C4CBFF"/>
+    <SolidColorBrush x:Key="PrimaryDark" Color="#6B73E0"/>
+    <SolidColorBrush x:Key="PrimaryDarker" Color="#4A52B8"/>
 
-    <!-- Base Colors -->
-    <SolidColorBrush x:Key="BgColor"
-                     Color="#1E1F2B"/>
-    <!-- الخلفية العامة -->
-    <SolidColorBrush x:Key="CardBgColor"
-                     Color="#2A2B3D"/>
-    <!-- النوافذ الثانوية -->
-    <SolidColorBrush x:Key="InputBgColor"
-                     Color="#3A3B52"/>
-    <!-- خلفيات الحقول -->
-    <SolidColorBrush x:Key="BorderColor"
-                     Color="#4A4B68"/>
-    <!-- الحدود -->
-    <SolidColorBrush x:Key="TextColor"
-                     Color="#E4E6FF"/>
-    <!-- النصوص الرئيسية -->
-    <SolidColorBrush x:Key="TextMutedColor"
-                     Color="#A8A9C8"/>
-    <!-- النصوص الثانوية -->
-    <!-- Alias for small text used elsewhere -->
-    <SolidColorBrush x:Key="SecondaryTextColor"
-                     Color="#A8A9C8"/>
-    <SolidColorBrush x:Key="SubTextColor"
-                     Color="#A8A9C8"/>
-    <SolidColorBrush x:Key="ErrorColor"
-                     Color="#EF5350"/>
-    <SolidColorBrush x:Key="SuccessColor"
-                     Color="#81C784"/>
+    <!-- Surfaces -->
+    <SolidColorBrush x:Key="BgColor" Color="#16171F"/>
+    <SolidColorBrush x:Key="CardBgColor" Color="#1E2030"/>
+    <SolidColorBrush x:Key="ElevatedBgColor" Color="#262838"/>
+    <SolidColorBrush x:Key="InputBgColor" Color="#2A2C3E"/>
+    <SolidColorBrush x:Key="BorderColor" Color="#34364A"/>
+    <SolidColorBrush x:Key="HoverColor" Color="#2E3044"/>
 
-    <!-- Component Examples -->
-    <SolidColorBrush x:Key="ButtonPrimaryBg"
-                     Color="{StaticResource PrimaryDark}"/>
-    <SolidColorBrush x:Key="ButtonPrimaryHoverBg"
-                     Color="{StaticResource PrimaryColor}"/>
-    <SolidColorBrush x:Key="ButtonPrimaryText"
-                     Color="#FFFFFF"/>
+    <!-- Text -->
+    <SolidColorBrush x:Key="TextColor" Color="#E8E9F5"/>
+    <SolidColorBrush x:Key="TextMutedColor" Color="#9A9BB8"/>
+    <SolidColorBrush x:Key="SecondaryTextColor" Color="#9A9BB8"/>
+    <SolidColorBrush x:Key="SubTextColor" Color="#9A9BB8"/>
 
-    <!-- Sidebar selected background (distinct in dark theme) -->
-    <SolidColorBrush x:Key="SidebarSelectedColor"
-                     Color="#3A3B52"/>
+    <!-- Status -->
+    <SolidColorBrush x:Key="ErrorColor" Color="#EF5350"/>
+    <SolidColorBrush x:Key="SuccessColor" Color="#81C784"/>
+    <SolidColorBrush x:Key="WarningBgColor" Color="#3D3420"/>
+    <SolidColorBrush x:Key="WarningBorderColor" Color="#D4AF56"/>
+    <SolidColorBrush x:Key="WarningTextColor" Color="#F0E6C8"/>
+    <SolidColorBrush x:Key="OverlayScrimColor" Color="#CC0E0F16"/>
+
+
+    <!-- Brand gold (auth + security accents) -->
+    <SolidColorBrush x:Key="AccentGold" Color="#D4AF56"/>
+    <SolidColorBrush x:Key="AccentGoldHover" Color="#E4C56A"/>
+    <SolidColorBrush x:Key="AccentGoldMuted" Color="#33D4AF56"/>
+
+    <!-- Auth surfaces (readable on splash background) -->
+    <SolidColorBrush x:Key="AuthBgColor" Color="#16171F"/>
+    <SolidColorBrush x:Key="AuthInputBg" Color="#12141F"/>
+    <SolidColorBrush x:Key="AuthPanelBg" Color="#1A1C2A"/>
+    <SolidColorBrush x:Key="AuthTextColor" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="AuthButtonForeground" Color="#16171F"/>
+
+    <!-- Buttons -->
+    <SolidColorBrush x:Key="ButtonPrimaryBg" Color="#6B73E0"/>
+    <SolidColorBrush x:Key="ButtonPrimaryHoverBg" Color="#8B93F7"/>
+    <SolidColorBrush x:Key="ButtonPrimaryPressedBg" Color="#4A52B8"/>
+    <SolidColorBrush x:Key="ButtonPrimaryText" Color="#FFFFFF"/>
+
+    <!-- Navigation / lists -->
+    <SolidColorBrush x:Key="SidebarSelectedColor" Color="#2E3044"/>
+    <SolidColorBrush x:Key="RowHoverColor" Color="#262838"/>
+    <SolidColorBrush x:Key="RowSelectedColor" Color="#333555"/>
+    <SolidColorBrush x:Key="RowAltColor" Color="#1A1B28"/>
 
 </ResourceDictionary>

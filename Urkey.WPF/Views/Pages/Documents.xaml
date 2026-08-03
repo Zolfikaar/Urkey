@@ -4,9 +4,11 @@
       xmlns:vm="clr-namespace:Urkey.WPF.ViewModels"
       xmlns:converters="clr-namespace:Urkey.WPF.Converters"
       Height="670"
-      Title="Documents"
+      Title="{DynamicResource DocumentsTitle}"
       Loaded="OnPageLoaded"
-      Background="Transparent">
+      Background="{DynamicResource BgColor}"
+      Foreground="{DynamicResource TextColor}"
+      FlowDirection="{DynamicResource AppFlowDirection}">
 
     <Page.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
@@ -41,7 +43,7 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <!-- Document List Column -->
-            <ColumnDefinition Width="240" MinWidth="240"/>
+            <ColumnDefinition Width="320" MinWidth="280" MaxWidth="420"/>
             <!-- Splitter -->
             <ColumnDefinition Width="Auto"/>
             <!-- Preview Column -->
@@ -57,48 +59,43 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 
 
-                <!-- Header -->
-                <TextBlock Grid.Row="0" 
-                          Text="{DynamicResource DocumentsTitle}" 
-                          FontSize="24" 
-                          FontWeight="Bold"
-                          Margin="20,20,20,10"
-                          Foreground="{DynamicResource TextColor}"/>
-
-                <!-- Action Bar -->
-                <StackPanel Grid.Row="1" 
-                           Orientation="Horizontal" 
-                           Margin="20,0,20,10">
-                    <Button Content="{DynamicResource AddDocumentButton}" 
-                           Click="OnAddDocument_Click"
-                           Style="{DynamicResource PrimaryBtnStyle}"
-                           Margin="0,0,8,0"/>
-                    <Button Command="{Binding ReloadCommand}"
-                           Padding="12,8"
-                           Style="{DynamicResource SecondaryBtnStyle}"
-                           ToolTip="{DynamicResource ReloadButton}">
-                        <StackPanel Orientation="Horizontal">
-                            <Path Data="{StaticResource bx_app}" 
-                                  Fill="{DynamicResource TextColor}"
-                                  Width="16" Height="16"
-                                  Margin="0,0,6,0"/>
+                <!-- Header + actions -->
+                <DockPanel Grid.Row="0"
+                           Margin="16,16,16,8"
+                           LastChildFill="True">
+                    <StackPanel DockPanel.Dock="Bottom"
+                                Orientation="Horizontal"
+                                Margin="0,10,0,0">
+                        <Button Content="{DynamicResource AddDocumentButton}"
+                                Click="OnAddDocument_Click"
+                                Style="{DynamicResource PrimaryBtnStyle}"
+                                Margin="0,0,8,0"
+                                Padding="12,8"/>
+                        <Button Command="{Binding ReloadCommand}"
+                                Padding="12,8"
+                                Style="{DynamicResource SecondaryBtnStyle}"
+                                ToolTip="{DynamicResource ReloadButton}">
                             <TextBlock Text="{DynamicResource ReloadButton}" VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
+                        </Button>
+                    </StackPanel>
+                    <TextBlock Text="{DynamicResource DocumentsTitle}"
+                               Style="{StaticResource Text.PageTitle}"
+                               VerticalAlignment="Center"
+                               TextWrapping="Wrap"
+                               Foreground="{DynamicResource TextColor}"/>
+                </DockPanel>
 
                 <!-- Security Warning -->
-                <Border Grid.Row="2"
-                       Margin="20,0,20,10"
+                <Border Grid.Row="1"
+                       Margin="16,0,16,10"
                        Padding="12"
-                       Background="#FFF3CD"
-                       BorderBrush="#FFC107"
+                       Background="{DynamicResource WarningBgColor}"
+                       BorderBrush="{DynamicResource WarningBorderColor}"
                        BorderThickness="1"
                        CornerRadius="4"
                        Visibility="{Binding ShowSecurityWarning, Converter={StaticResource BoolToVis}}">
@@ -109,15 +106,15 @@
                         </Grid.ColumnDefinitions>
                         <TextBlock Grid.Column="0"
                                   TextWrapping="Wrap"
-                                  Foreground="#856404"
-                                  FontSize="12"
+                                  Foreground="{DynamicResource WarningTextColor}"
+                                  Style="{StaticResource Text.BodyMuted}"
                                   Text="{DynamicResource SecurityWarningMessage}"/>
                         <Button Grid.Column="1"
                                Content="✕"
                                Command="{Binding DismissWarningCommand}"
                                Background="Transparent"
                                BorderThickness="0"
-                               Foreground="#856404"
+                               Foreground="{DynamicResource WarningTextColor}"
                                Padding="4"
                                FontSize="14"
                                Cursor="Hand"
@@ -126,11 +123,12 @@
                 </Border>
 
                 <!-- Documents List -->
-                <ListBox Grid.Row="3" 
-                        ItemsSource="{Binding Documents}"
+                <Grid Grid.Row="2">
+                <ListBox ItemsSource="{Binding Documents}"
                         SelectedItem="{Binding SelectedDocument, Mode=TwoWay}"
                         Style="{StaticResource SidebarListBoxStyle}"
-                        Margin="0">
+                        Margin="0"
+                        Visibility="{Binding IsEmpty, Converter={StaticResource InverseBoolToVisibility}}">
                     <ListBox.ItemContainerStyle>
                         <StaticResource ResourceKey="SidebarListBoxItemStyle"/>
                     </ListBox.ItemContainerStyle>
@@ -184,7 +182,7 @@
                                                  Cursor="Hand">
                                             <Run Text="{DynamicResource DocumentType}"/>
                                             <Run Text=" ("/>
-                                            <Run Text="{Binding ExpiryDate, StringFormat='{}{0:dd/MM/yyyy}', FallbackValue=''}"/>
+                                            <Run Text="{Binding ExpiryDate, Converter={StaticResource LocaleDate}, ConverterParameter=d, FallbackValue=''}"/>
                                             <Run Text=")"/>
                                         </TextBlock>
                                     </StackPanel>
@@ -218,6 +216,24 @@
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+
+                    <StackPanel Style="{StaticResource EmptyStatePanelStyle}"
+                                Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
+                        <Path Data="{StaticResource bx_doc}"
+                              Fill="{DynamicResource TextMutedColor}"
+                              Width="48" Height="48" Stretch="Uniform"
+                              Opacity="0.55" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+                        <TextBlock Text="{DynamicResource Documents_Empty}"
+                                   Style="{StaticResource Text.SectionTitle}"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Documents_EmptyHint}"
+                                   Style="{StaticResource Text.BodyMuted}"
+                                   HorizontalAlignment="Center"
+                                   TextAlignment="Center"
+                                   Margin="0,8,0,0"/>
+                    </StackPanel>
+                </Grid>
             </Grid>
         </Border>
 
@@ -239,7 +255,7 @@
                        Padding="20,0"
                        BorderBrush="{DynamicResource BorderColor}" 
                        BorderThickness="0,0,0,1"
-                       Height="60"
+                       MinHeight="64"
                        VerticalAlignment="Center">
                     <Border.Resources>
                         <Style x:Key="CircularButtonStyle" TargetType="Button">
@@ -268,16 +284,17 @@
                             </Style.Triggers>
                         </Style>
                     </Border.Resources>
-                    <Grid>
+                    <Grid VerticalAlignment="Center">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="auto"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
                         <!-- Selected Document Name  -->
-                        <StackPanel Grid.Column="0">
-                            <TextBlock FontSize="20" 
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,12,0">
+                            <TextBlock FontSize="18" 
                                      FontWeight="Bold"
+                                     TextTrimming="CharacterEllipsis"
+                                     VerticalAlignment="Center"
                                      Foreground="{DynamicResource TextColor}">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
@@ -285,6 +302,9 @@
                                         <Style.Triggers>
                                             <DataTrigger Binding="{Binding SelectedDocument}" Value="{x:Null}">
                                                 <Setter Property="Text" Value="{DynamicResource SelectDocumentToPreview}"/>
+                                                <Setter Property="Foreground" Value="{DynamicResource TextMutedColor}"/>
+                                                <Setter Property="FontWeight" Value="SemiBold"/>
+                                                <Setter Property="FontSize" Value="16"/>
                                             </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
@@ -292,8 +312,10 @@
                             </TextBlock>
                             
                             <TextBlock FontSize="12"
-                                     Foreground="{DynamicResource SecondaryTextColor}"
-                                     Margin="0,4,0,0">
+                                     Foreground="{DynamicResource TextMutedColor}"
+                                     Margin="0,4,0,0"
+                                     VerticalAlignment="Center"
+                                     TextTrimming="CharacterEllipsis">
                                 <TextBlock.Style>
                                     <Style TargetType="TextBlock">
                                         <Setter Property="Text" Value="{Binding SelectedDocument.Type}"/>
@@ -308,13 +330,8 @@
                             </TextBlock>
                         </StackPanel>
 
-                        <!-- Diplay order -->
-                        <StackPanel Grid.Column="1" Orientation="Horizontal">
-                            
-                        </StackPanel>
-
                         <!-- Action Buttons -->
-                        <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                             <Button Style="{StaticResource CircularButtonStyle}"
                                    Margin="0,0,8,0"
                                    ToolTip="{DynamicResource FavoriteButton}">
@@ -404,7 +421,7 @@
                                 <Button Command="{Binding DeleteCommand}"
                                         CommandParameter="{Binding SelectedDocument}"
                                         Style="{StaticResource MenuButtonStyle}"
-                                        Foreground="#F44336"
+                                        Foreground="{DynamicResource ErrorColor}"
                                         HorizontalContentAlignment="Left"
                                         Padding="12,8">
                                     <StackPanel Orientation="Horizontal">
@@ -438,7 +455,7 @@
                 <!-- Preview Image -->
                 <Border x:Name="PreviewImageContainer"
                        Grid.Row="1" 
-                       Background="Transparent"
+                       Background="{DynamicResource ElevatedBgColor}"
                        Cursor="Hand">
                     <Border.Style>
                         <Style TargetType="Border">
@@ -453,7 +470,7 @@
                     <Grid>
                         <ScrollViewer HorizontalScrollBarVisibility="Auto" 
                                      VerticalScrollBarVisibility="Auto"
-                                     Background="Transparent">
+                                     Background="{DynamicResource ElevatedBgColor}">
                             <Grid HorizontalAlignment="Center" 
                                  VerticalAlignment="Center">
                                 <Image Source="{Binding PreviewImage}"
@@ -464,8 +481,8 @@
                                       Cursor="Hand"
                                       MouseLeftButtonDown="PreviewImage_MouseLeftButtonDown">
                                     <Image.LayoutTransform>
-                                        <ScaleTransform ScaleX="{Binding ZoomLevel}" 
-                                                      ScaleY="{Binding ZoomLevel}"/>
+                                        <ScaleTransform ScaleX="{Binding ZoomLevel}"
+                                                        ScaleY="{Binding ZoomLevel}"/>
                                     </Image.LayoutTransform>
                                 </Image>
                             </Grid>
@@ -475,7 +492,7 @@
                         <Border x:Name="ZoomIconOverlay"
                                HorizontalAlignment="Center"
                                VerticalAlignment="Center"
-                               Background="#80000000"
+                               Background="{DynamicResource OverlayScrimColor}"
                                CornerRadius="50"
                                Width="60"
                                Height="60"
@@ -491,7 +508,7 @@
                                 </Style>
                             </Border.Style>
                             <Path Data="{StaticResource bx_search}" 
-                                 Fill="White"
+                                 Fill="{DynamicResource TextColor}"
                                  Width="30" 
                                  Height="30"
                                  HorizontalAlignment="Center"

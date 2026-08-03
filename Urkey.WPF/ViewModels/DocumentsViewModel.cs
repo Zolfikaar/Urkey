@@ -7,6 +7,7 @@ using System.Windows.Input;
 using Urkey.Core.Models;
 using Urkey.Core.Services;
 using Urkey.WPF.Commands;
+using Urkey.WPF.Helpers;
 using Urkey.WPF.Views.Windows;
 
 namespace Urkey.WPF.ViewModels
@@ -24,8 +25,11 @@ namespace Urkey.WPF.ViewModels
             {
                 _documents = value;
                 OnPropertyChanged(nameof(Documents));
+                OnPropertyChanged(nameof(IsEmpty));
             }
         }
+
+        public bool IsEmpty => Documents.Count == 0;
 
         private DocumentEntry? _selectedDocument;
         public DocumentEntry? SelectedDocument
@@ -88,7 +92,7 @@ namespace Urkey.WPF.ViewModels
         public DocumentsViewModel(VaultService vaultService)
         {
             _vaultService = vaultService;
-            //Reload();
+            _vault = _vaultService.EnsureLoaded();
 
             SaveDocCommand = new RelayCommand<DocumentEntry>(SaveNewDocument, CanSaveDocument);
             ReloadCommand = new RelayCommand<DocumentEntry>(_ => Reload());
@@ -109,44 +113,58 @@ namespace Urkey.WPF.ViewModels
             {
                 if (newDoc is null)
                 {
-                    MessageBox.Show("Error saving document: Document is null", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    ToastService.Error(Loc.Get("Documents_Error_Null"));
                     return;
                 }
 
-                // 🔹 حفظ الصورة المشفرة إذا موجودة
-                if (!string.IsNullOrWhiteSpace(newDoc.ExternalImagePath) && File.Exists(newDoc.ExternalImagePath))
+                var validation = EntryValidator.ValidateDocument(newDoc);
+                if (!validation.IsValid)
                 {
-                    // حفظ المسار الأصلي قبل التغيير
-                    string originalImagePath = newDoc.ExternalImagePath;
-
-                    // الصورة تُخزّن فقط كـ Base64 بدون أي تشفير إضافي (من الأصلية)
-                    newDoc.FileContentBase64 = Convert.ToBase64String(File.ReadAllBytes(originalImagePath));
-
-                    // ثم نحفظ نسخة منها في مجلد الوثائق داخل Vault
-                    string vaultDirectory = _vaultService.GetVaultDirectory();
-                    string encryptedImagePath = FileHelper.SaveDocumentImage(originalImagePath, vaultDirectory);
-                    newDoc.ExternalImagePath = encryptedImagePath;
-
+                    ToastService.Warning(Loc.Get(validation.ErrorResourceKey!));
+                    return;
                 }
 
-                _vault.Entries.Add(newDoc);
-                _vaultService.Save();
+                _vault = _vaultService.EnsureLoaded();
+
+                if (!string.IsNullOrWhiteSpace(newDoc.ExternalImagePath) && File.Exists(newDoc.ExternalImagePath))
+                {
+                    string originalImagePath = newDoc.ExternalImagePath;
+                    if (!IsAllowedImage(originalImagePath))
+                    {
+                        ToastService.Warning(Loc.Get("Documents_Error_InvalidType"));
+                        return;
+                    }
+
+                    var info = new FileInfo(originalImagePath);
+                    if (info.Length > 500 * 1024)
+                    {
+                        ToastService.Warning(Loc.Get("Documents_Error_TooLarge"));
+                        return;
+                    }
+
+                    // Encrypt image file at rest; do not also embed raw Base64 in vault JSON.
+                    newDoc.FileContentBase64 = null;
+                    newDoc.FileName = info.Name;
+                    string vaultDirectory = _vaultService.GetVaultDirectory();
+                    newDoc.ExternalImagePath = FileHelper.SaveDocumentImage(originalImagePath, vaultDirectory);
+                }
+
+                _vaultService.AddEntry(newDoc, logActivity: false);
+                _vaultService.LogActivity(
+                    EntryMetadata.ActionUploaded,
+                    EntryMetadata.TypeDocument,
+                    EntryMetadata.GetDisplayName(newDoc),
+                    newDoc.Id);
+
                 Documents.Add(newDoc);
-
-                // Show security warning about deleting original file
                 ShowSecurityWarning = true;
-
-                // Select the newly added document
                 SelectedDocument = newDoc;
 
-                MessageBox.Show("Document saved successfully!", "Success",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                ToastService.Success(Loc.Get("Documents_Saved"));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Error saving document: {ex.Message}",
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ToastService.Error(Loc.Get("Documents_Error_Save"));
             }
         }
 
@@ -159,6 +177,13 @@ namespace Urkey.WPF.ViewModels
                 Documents.Add(doc);
 
             OnPropertyChanged(nameof(Documents));
+            OnPropertyChanged(nameof(IsEmpty));
+        }
+
+        private static bool IsAllowedImage(string path)
+        {
+            var ext = Path.GetExtension(path).ToLowerInvariant();
+            return ext is ".png" or ".jpg" or ".jpeg";
         }
 
         private void Preview(DocumentEntry? document)
@@ -168,18 +193,18 @@ namespace Urkey.WPF.ViewModels
             
             if (doc == null)
             {
-                MessageBox.Show("Select a document first.", "Info",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                ToastService.Success(Loc.Get("Documents_SelectFirst"));
                 return;
             }
 
             if (string.IsNullOrEmpty(doc.ExternalImagePath) ||
                 !File.Exists(doc.ExternalImagePath))
             {
-                MessageBox.Show("This document has no attached image.", "Info",
-                    MessageBoxButton.OK, MessageBoxImage.Information);
+                ToastService.Success(Loc.Get("Documents_NoImage"));
                 return;
             }
+
+            SelectedDocument = doc;
 
             var previewWindow = new DocumentPreview(doc.ExternalImagePath, doc)
             {
@@ -204,45 +229,41 @@ namespace Urkey.WPF.ViewModels
                 // Check if the file exists and is readable
                 if (!File.Exists(SelectedDocument.ExternalImagePath))
                 {
-                    MessageBox.Show("The encrypted image file was not found. The document may have been moved or deleted.", 
-                        "File Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ToastService.Warning(Loc.Get("Documents_FileMissing"));
                     return;
                 }
 
-                // Try to extract and load the image
                 string tempPath = FileHelper.ExtractDocumentImage(SelectedDocument.ExternalImagePath);
-                if (File.Exists(tempPath))
+                try
                 {
-                    var bitmap = new System.Windows.Media.Imaging.BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = new Uri(tempPath);
-                    bitmap.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
-                    bitmap.EndInit();
-                    bitmap.Freeze();
-                    PreviewImage = bitmap;
-                    ZoomLevel = 0.5; // Start with smaller zoom to fit the image in the preview area
+                    if (File.Exists(tempPath))
+                    {
+                        var bitmap = new System.Windows.Media.Imaging.BitmapImage();
+                        bitmap.BeginInit();
+                        bitmap.UriSource = new Uri(tempPath);
+                        bitmap.CacheOption = System.Windows.Media.Imaging.BitmapCacheOption.OnLoad;
+                        bitmap.EndInit();
+                        bitmap.Freeze();
+                        PreviewImage = bitmap;
+                        ZoomLevel = 0.5;
+                    }
+                    else
+                    {
+                        ToastService.Error(Loc.Get("Documents_ExtractFailed"));
+                    }
                 }
-                else
+                finally
                 {
-                    MessageBox.Show("Failed to extract the document image. The file may be corrupted.", 
-                        "Extraction Failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                    FileHelper.TryDeleteTempFile(tempPath);
                 }
             }
-            catch (FormatException ex) when (ex.Message.Contains("Base-64") || ex.Message.Contains("Base64"))
+            catch (FormatException)
             {
-                MessageBox.Show(
-                    "The document image file appears to be corrupted or was not encrypted properly. " +
-                    "This may happen if the file was created with an older version of the application. " +
-                    "Please try re-adding this document.\n\n" +
-                    $"Technical details: {ex.Message}", 
-                    "Corrupted File", 
-                    MessageBoxButton.OK, 
-                    MessageBoxImage.Error);
+                ToastService.Error(Loc.Get("Documents_Corrupted"));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Error loading preview: {ex.Message}", "Error", 
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                ToastService.Error(Loc.Get("Documents_PreviewFailed"));
             }
         }
 
@@ -254,8 +275,7 @@ namespace Urkey.WPF.ViewModels
             if (doc?.ExternalImagePath == null ||
                 !File.Exists(doc.ExternalImagePath))
             {
-                MessageBox.Show("Image file not found.", "Warning",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                ToastService.Warning(Loc.Get("Documents_FileMissing"));
                 return;
             }
 
@@ -299,7 +319,7 @@ namespace Urkey.WPF.ViewModels
                         doc.ExternalImagePath = encryptedImagePath;
                     }
 
-                    _vaultService.Save();
+                    _vaultService.UpdateEntry(doc);
                     LoadPreviewImage();
                     OnPropertyChanged(nameof(Documents));
                 }
@@ -311,44 +331,31 @@ namespace Urkey.WPF.ViewModels
             var doc = document ?? SelectedDocument;
             if (doc == null) return;
 
-            var result = MessageBox.Show(
-                $"Are you sure you want to delete '{doc.Name}'?",
-                "Confirm Delete",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
+            if (!EntryDialogHelper.ConfirmDelete(doc.Name))
+                return;
 
-            if (result == MessageBoxResult.Yes)
+            try
             {
-                try
+                if (!string.IsNullOrEmpty(doc.ExternalImagePath) && File.Exists(doc.ExternalImagePath))
                 {
-                    // Delete encrypted image file if exists
-                    if (!string.IsNullOrEmpty(doc.ExternalImagePath) && File.Exists(doc.ExternalImagePath))
-                    {
-                        try
-                        {
-                            File.Delete(doc.ExternalImagePath);
-                        }
-                        catch { /* Ignore if file deletion fails */ }
-                    }
-
-                    _vault.Entries.Remove(doc);
-                    Documents.Remove(doc);
-                    _vaultService.Save();
-
-                    if (SelectedDocument == doc)
-                    {
-                        SelectedDocument = null;
-                        PreviewImage = null;
-                    }
-
-                    MessageBox.Show("Document deleted successfully.", "Success",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    try { File.Delete(doc.ExternalImagePath); }
+                    catch { /* Ignore if file deletion fails */ }
                 }
-                catch (Exception ex)
+
+                _vaultService.RemoveEntry(doc.Id);
+                Documents.Remove(doc);
+
+                if (SelectedDocument == doc)
                 {
-                    MessageBox.Show($"Error deleting document: {ex.Message}", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
+                    SelectedDocument = null;
+                    PreviewImage = null;
                 }
+
+                ToastService.Success(Loc.Get("Documents_Deleted"));
+            }
+            catch (Exception)
+            {
+                ToastService.Error(Loc.Get("Documents_Error_Delete"));
             }
         }
 
@@ -360,30 +367,34 @@ namespace Urkey.WPF.ViewModels
             try
             {
                 string tempPath = FileHelper.ExtractDocumentImage(doc.ExternalImagePath);
-                if (!File.Exists(tempPath))
+                try
                 {
-                    MessageBox.Show("Failed to extract document image.", "Error",
-                        MessageBoxButton.OK, MessageBoxImage.Error);
-                    return;
+                    if (!File.Exists(tempPath))
+                    {
+                        ToastService.Error(Loc.Get("Documents_ExtractFailed"));
+                        return;
+                    }
+
+                    var saveDialog = new Microsoft.Win32.SaveFileDialog
+                    {
+                        Filter = "PNG Image|*.png|JPEG Image|*.jpg|All Files|*.*",
+                        FileName = $"{doc.Name ?? "Document"}.png"
+                    };
+
+                    if (saveDialog.ShowDialog() == true)
+                    {
+                        File.Copy(tempPath, saveDialog.FileName, overwrite: true);
+                        ToastService.Success(Loc.Get("Documents_Downloaded"));
+                    }
                 }
-
-                var saveDialog = new Microsoft.Win32.SaveFileDialog
+                finally
                 {
-                    Filter = "PNG Image|*.png|JPEG Image|*.jpg|All Files|*.*",
-                    FileName = $"{doc.Name ?? "Document"}.png"
-                };
-
-                if (saveDialog.ShowDialog() == true)
-                {
-                    File.Copy(tempPath, saveDialog.FileName, overwrite: true);
-                    MessageBox.Show("Document downloaded successfully!", "Success",
-                        MessageBoxButton.OK, MessageBoxImage.Information);
+                    FileHelper.TryDeleteTempFile(tempPath);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show($"Error downloading document: {ex.Message}", "Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+                ToastService.Error(Loc.Get("Documents_Error_Download"));
             }
         }
 

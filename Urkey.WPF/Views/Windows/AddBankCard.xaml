@@ -3,12 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Urkey.WPF.Views.Windows"
         mc:Ignorable="d"
-        Title="Add Bank Card"
+        Title="{DynamicResource AddBankCardTitle}"
         Height="520"
         Width="520"
         Background="{DynamicResource BgColor}"
+        Foreground="{DynamicResource TextColor}"
+        FlowDirection="{DynamicResource AppFlowDirection}"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         SizeToContent="Height">
@@ -30,84 +31,45 @@
             </Grid.ColumnDefinitions>
             <Grid.Resources>
                 <Style TargetType="TextBlock">
-                    <Setter Property="FontFamily"
-                            Value="Cairo"/>
-                    <Setter Property="Foreground"
-                            Value="{DynamicResource TextColor}"/>
-                    <Setter Property="VerticalAlignment"
-                            Value="Center"/>
-                    <Setter Property="Margin"
-                            Value="0,0,10,6"/>
+                    <Setter Property="FontFamily" Value="Cairo"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                    <Setter Property="VerticalAlignment" Value="Center"/>
+                    <Setter Property="Margin" Value="0,0,10,6"/>
                 </Style>
                 <Style TargetType="TextBox">
-                    <Setter Property="Foreground"
-                            Value="{DynamicResource TextColor}"/>
-                    <Setter Property="Background"
-                            Value="{DynamicResource InputBgColor}"/>
-                    <Setter Property="BorderBrush"
-                            Value="{DynamicResource BorderColor}"/>
-                    <Setter Property="BorderThickness"
-                            Value="1"/>
-                    <Setter Property="Padding"
-                            Value="10"/>
-                    <Setter Property="Margin"
-                            Value="0,0,0,12"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                    <Setter Property="Background" Value="{DynamicResource InputBgColor}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Padding" Value="10"/>
+                    <Setter Property="Margin" Value="0,0,0,12"/>
                 </Style>
                 <Style TargetType="PasswordBox">
-                    <Setter Property="Foreground"
-                            Value="{DynamicResource TextColor}"/>
-                    <Setter Property="Background"
-                            Value="{DynamicResource InputBgColor}"/>
-                    <Setter Property="BorderBrush"
-                            Value="{DynamicResource BorderColor}"/>
-                    <Setter Property="BorderThickness"
-                            Value="1"/>
-                    <Setter Property="Padding"
-                            Value="10"/>
-                    <Setter Property="Margin"
-                            Value="0,0,0,12"/>
+                    <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+                    <Setter Property="Background" Value="{DynamicResource InputBgColor}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="Padding" Value="10"/>
+                    <Setter Property="Margin" Value="0,0,0,12"/>
                 </Style>
             </Grid.Resources>
 
-            <TextBlock Grid.Row="0"
-                       Grid.Column="0"
-                       Text="{DynamicResource CardNameFieldTitle}"/>
-            <TextBox x:Name="CardNameTextBox"
-                     Grid.Row="0"
-                     Grid.Column="1"/>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource CardNameFieldTitle}"/>
+            <TextBox x:Name="CardNameTextBox" Grid.Row="0" Grid.Column="1"/>
 
-            <TextBlock Grid.Row="1"
-                       Grid.Column="0"
-                       Text="{DynamicResource CardNumberFieldTitle}"/>
-            <PasswordBox x:Name="CardNumberBox"
-                         Grid.Row="1"
-                         Grid.Column="1"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource CardNumberFieldTitle}"/>
+            <PasswordBox x:Name="CardNumberBox" Grid.Row="1" Grid.Column="1"/>
 
-            <TextBlock Grid.Row="2"
-                       Grid.Column="0"
-                       Text="{DynamicResource ExpiryDateFieldTitle}"/>
-            <TextBox x:Name="ExpiryTextBox"
-                     Grid.Row="2"
-                     Grid.Column="1"
-                     />
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource ExpiryDateFieldTitle}"/>
+            <TextBox x:Name="ExpiryTextBox" Grid.Row="2" Grid.Column="1"/>
 
-            <TextBlock Grid.Row="3"
-                       Grid.Column="0"
-                       Text="{DynamicResource CvvFieldTitle}"/>
-            <PasswordBox x:Name="CvvBox"
-                         Grid.Row="3"
-                         Grid.Column="1"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource CvvFieldTitle}"/>
+            <PasswordBox x:Name="CvvBox" Grid.Row="3" Grid.Column="1"/>
 
-            <TextBlock Grid.Row="4"
-                       Grid.Column="0"
-                       Text="{DynamicResource BankFieldTitle}"/>
-            <TextBox x:Name="BankTextBox"
-                     Grid.Row="4"
-                     Grid.Column="1"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource PinFieldTitle}"/>
+            <PasswordBox x:Name="PinBox" Grid.Row="4" Grid.Column="1"/>
 
-            <TextBlock Grid.Row="5"
-                       Grid.Column="0"
-                       Text="{DynamicResource NotesFieldTitle}"/>
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="{DynamicResource NotesFieldTitle}"/>
             <TextBox x:Name="NotesTextBox"
                      Grid.Row="5"
                      Grid.Column="1"
@@ -120,14 +82,14 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         Margin="0,10,0,0">
-                <Button Content="{DynamicResource CancelBtnTitle}"
+                <Button Content="{DynamicResource CancelButton}"
                         Style="{DynamicResource SecondaryBtnStyle}"
                         Margin="0,0,10,0"
-                        Click="OnCancelClick"/>
+                        Click="OnCancelClick" IsCancel="True"/>
                 <Button Content="{DynamicResource SaveBtnTitle}"
                         Style="{DynamicResource PrimaryBtnStyle}"
                         Padding="16,8"
-                        Click="OnSaveClick"/>
+                        Click="OnSaveClick" IsDefault="True"/>
             </StackPanel>
         </Grid>
     </Border>

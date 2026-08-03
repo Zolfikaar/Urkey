@@ -220,22 +220,21 @@ namespace Urkey.WPF.Views.Windows
             _password = _isPasswordVisible ? MasterPasswordTextBox.Text.Trim() : MasterPasswordBox.Password.Trim();
             _confPassword = _isConfirmPasswordVisible ? ConfirmPasswordTextBox.Text.Trim() : ConfirmPasswordBox.Password.Trim();
 
-            if (_password != null && _confPassword != null )
+            if (_password != null && _confPassword != null)
             {
-                if(_password == _confPassword)
-                  return true;
-                else
-                {
-                    MessageBox.Show("Master password is not matching confirm password", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                    return false;
+                if (_password == _confPassword)
+                    return true;
 
-                }
-
-            } else
-            {
-                MessageBox.Show("Master password and confirm password is required","Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                ToastService.Error(
+                    Application.Current.TryFindResource("Setup_Error_PasswordMismatch") as string
+                        ?? "Passwords do not match.");
                 return false;
             }
+
+            ToastService.Warning(
+                Application.Current.TryFindResource("Setup_Error_EmptyPassword") as string
+                    ?? "Password is required.");
+            return false;
 
         }
 
@@ -254,26 +253,44 @@ namespace Urkey.WPF.Views.Windows
                 : MasterPasswordBox.Password.Trim();
 
             // Setup user with email, phone, and master password
-            // This generates salt and hash internally
+            // This generates salt and verifier hash internally (never stores the AES key).
             var result = _userService.FirstSetup(null, null, masterPassword);
             if (!result.Success)
             {
-                MessageBox.Show($"Setup failed: {result.Error}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                var errorKey = result.Error switch
+                {
+                    UserService.FirstSetupError.EmptyMasterPassword => "Setup_Error_EmptyPassword",
+                    UserService.FirstSetupError.InvalidMasterPassword => "Setup_Error_InvalidPassword",
+                    UserService.FirstSetupError.InvalidEmail => "Setup_Error_InvalidEmail",
+                    UserService.FirstSetupError.InvalidPhone => "Setup_Error_InvalidPhone",
+                    _ => "Setup_Error_Generic"
+                };
+                ToastService.Error(
+                    Application.Current.TryFindResource(errorKey) as string ?? errorKey);
                 return;
             }
 
-            // Save user data (salt and hash) to user.json
             _userService.Save();
 
-            // Initialize EncryptionService with password and salt
             var userSalt = _userService.GetSalt();
-            EncryptionService.Initialize(userSalt, masterPassword);
+            EncryptionService.InitializeFromPassword(
+                masterPassword,
+                userSalt,
+                EncryptionService.CurrentKdfIterations);
 
-            // Load or create the vault
+            Urkey.Core.Managers.VaultManager.Unlock();
+
+            // Create empty encrypted vault (AES-GCM)
             _vaultService.Load();
-
-            // Save the vault to create vault.json file
             _vaultService.Save();
+
+            // Drop plaintext password copies from the setup UI
+            MasterPasswordBox.Password = string.Empty;
+            MasterPasswordTextBox.Text = string.Empty;
+            ConfirmPasswordBox.Password = string.Empty;
+            ConfirmPasswordTextBox.Text = string.Empty;
+            _password = string.Empty;
+            _confPassword = string.Empty;
 
             var mainWindow = new MainWindow();
             Application.Current.MainWindow = mainWindow;

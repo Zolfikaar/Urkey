@@ -6,6 +6,8 @@ namespace Urkey.Core.Services
 {
     public static class FileHelper
     {
+        private const string TempDocumentPrefix = "urkey-doc-";
+
         /// <summary>
         /// يحوّل ملف إلى نص Base64
         /// </summary>
@@ -201,9 +203,12 @@ namespace Urkey.Core.Services
                 if (bytes == null || bytes.Length == 0)
                     throw new InvalidDataException("Decoded image bytes are empty.");
 
-                // نحفظ الصورة مؤقتًا في مجلد Temp
-                string tempPath = Path.Combine(Path.GetTempPath(), $"{Path.GetFileNameWithoutExtension(encryptedImagePath)}.png");
+                // Temporary plaintext image — cleaned up via CleanupTempDocumentImages / TryDeleteTempFile
+                string tempPath = Path.Combine(
+                    Path.GetTempPath(),
+                    $"{TempDocumentPrefix}{Guid.NewGuid():N}.png");
                 File.WriteAllBytes(tempPath, bytes);
+                CryptographicOperations.ZeroMemory(bytes);
 
                 return tempPath;
             }
@@ -214,6 +219,88 @@ namespace Urkey.Core.Services
             catch (Exception ex)
             {
                 throw new InvalidOperationException($"Failed to extract document image from '{encryptedImagePath}'. {ex.Message}", ex);
+            }
+        }
+
+        /// <summary>
+        /// Best-effort delete of a single temp document image.
+        /// </summary>
+        public static void TryDeleteTempFile(string? path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return;
+
+            try
+            {
+                string fileName = Path.GetFileName(path);
+                if (!fileName.StartsWith(TempDocumentPrefix, StringComparison.OrdinalIgnoreCase))
+                    return;
+
+                if (File.Exists(path))
+                    File.Delete(path);
+            }
+            catch
+            {
+                // Ignore — temp cleanup must never crash the app.
+            }
+        }
+
+        /// <summary>
+        /// Delete leftover decrypted document images from the system temp folder.
+        /// </summary>
+        public static void CleanupTempDocumentImages()
+        {
+            try
+            {
+                string tempDir = Path.GetTempPath();
+                foreach (string file in Directory.GetFiles(tempDir, $"{TempDocumentPrefix}*.png"))
+                {
+                    try { File.Delete(file); }
+                    catch { /* ignore locked files */ }
+                }
+            }
+            catch
+            {
+                // ignore
+            }
+        }
+
+        /// <summary>
+        /// Overwrites a file with random data (single pass) then deletes it.
+        /// Used after password import so plaintext export remnants are harder to recover.
+        /// Returns false on any failure — never throws; never logs file contents.
+        /// </summary>
+        public static bool TrySecureDelete(string filePath)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(filePath) || !File.Exists(filePath))
+                    return false;
+
+                var info = new FileInfo(filePath);
+                long length = info.Length;
+
+                using (var rng = RandomNumberGenerator.Create())
+                using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Write, FileShare.None))
+                {
+                    byte[] buffer = new byte[8192];
+                    long remaining = length;
+                    while (remaining > 0)
+                    {
+                        int toWrite = (int)Math.Min(buffer.Length, remaining);
+                        rng.GetBytes(buffer.AsSpan(0, toWrite));
+                        fs.Write(buffer, 0, toWrite);
+                        remaining -= toWrite;
+                    }
+                    fs.Flush(true);
+                }
+
+                File.Delete(filePath);
+                return !File.Exists(filePath);
+            }
+            catch
+            {
+                return false;
             }
         }
 

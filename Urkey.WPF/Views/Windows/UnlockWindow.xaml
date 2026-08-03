@@ -3,49 +3,35 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Urkey.WPF.Views.Windows"
-        Title="{DynamicResource UnlockWindow_Title}"
+        xmlns:uc="clr-namespace:Urkey.WPF.UserControls"
+        mc:Ignorable="d"
+        Title="{DynamicResource AppTitle}"
         WindowStyle="SingleBorderWindow"
         WindowState="Maximized"
         ResizeMode="CanResize"
         Width="1200"
         Height="800"
         WindowStartupLocation="CenterScreen"
-        Background="#001E57"
+        Background="{DynamicResource AuthBgColor}"
         AllowsTransparency="False"
         ShowInTaskbar="True"
         Topmost="False"
-        Icon="/Assets/Icons/favicon.ico">
+        Icon="/Assets/Icons/favicon.ico"
+        FlowDirection="{DynamicResource AppFlowDirection}">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </Window.Resources>
 
     <Grid>
-        <!-- خلفية الصورة -->
         <Image Source="/Assets/Backgrounds/splash-bg.jpg"
-               Stretch="Fill"
-               Opacity="0.95"/>
+               Stretch="UniformToFill"
+               Opacity="0.92"/>
 
-        <!-- التوهج الخلفي - ثابت بدون حركة -->
-        <Ellipse Width="180"
-                 Height="180"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
-                 Margin="0,0,0,70"
-                 Fill="#FFD9BD56"
-                 Opacity="0.4">
-            <Ellipse.Effect>
-                <BlurEffect Radius="70"/>
-            </Ellipse.Effect>
-        </Ellipse>
-
-        <!-- شعار التطبيق - ثابت بدون حركة -->
         <Grid x:Name="LogoContainer"
               HorizontalAlignment="Center"
               VerticalAlignment="Center"
-              Margin="0,0,0,100"
-              Opacity="1">
+              Margin="0,0,0,100">
             <Image Source="/Assets/Logos/Logo_with_bg.png"
                    Width="640"
                    Height="900"
@@ -53,33 +39,24 @@
                    VerticalAlignment="Center"/>
         </Grid>
 
-        <!-- منطقة الإدخال -->
         <StackPanel x:Name="InputPanel"
                     VerticalAlignment="Bottom"
-                    Margin="0 0 0 100"
-                    Opacity="1"
-                    HorizontalAlignment="Center">
+                    Margin="0,0,0,96"
+                    HorizontalAlignment="Center"
+                    MaxWidth="400">
 
-            <!-- رسالة الحافظة مقفلة -->
             <TextBlock Text="{DynamicResource UnlockWindow_VaultLocked}"
-                       Foreground="White"
-                       FontSize="24"
-                       FontWeight="Bold"
-                       HorizontalAlignment="Center"
-                       Margin="0,0,0,0"/>
+                       Style="{StaticResource Text.AuthTitle}"
+                       Margin="0,0,0,8"/>
 
             <TextBlock Text="{DynamicResource UnlockWindow_EnterMasterPassword}"
-                       Foreground="#E2BD56"
-                       FontSize="16"
-                       HorizontalAlignment="Center"
+                       Style="{StaticResource Text.AuthSubtitle}"
                        Margin="0,0,0,20"
-                       TextWrapping="Wrap"
-                       TextAlignment="Center"
                        MaxWidth="400"/>
 
-            <!-- حقل كلمة المرور مع أيقونة العين -->
-            <Grid HorizontalAlignment="Center"
-                  Width="320"
+            <!-- Password field: trailing toggle column flips with FlowDirection -->
+            <Grid Width="320"
+                  HorizontalAlignment="Center"
                   Margin="0,0,0,20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
@@ -88,195 +65,78 @@
 
                 <PasswordBox x:Name="MasterPasswordBox"
                              Grid.Column="0"
-                             Height="56"
-                             FontSize="18"
-                             Padding="15,12,45,12"
-                             Background="#0C1C3A"
-                             Foreground="White"
-                             BorderBrush="#E2BD56"
-                             BorderThickness="2"
-                             PasswordChar="●"
-                             VerticalContentAlignment="Center"
+                             Style="{StaticResource AuthPasswordBoxStyle}"
                              KeyDown="PasswordBox_KeyDown"/>
 
                 <TextBox x:Name="MasterPasswordTextBox"
                          Grid.Column="0"
-                         Height="56"
-                         FontSize="18"
-                         Padding="15,12,45,12"
-                         Background="#0C1C3A"
-                         Foreground="White"
-                         BorderBrush="#E2BD56"
-                         BorderThickness="2"
-                         VerticalContentAlignment="Center"
+                         Style="{StaticResource AuthTextBoxStyle}"
                          Visibility="Collapsed"
                          KeyDown="PasswordBox_KeyDown"/>
 
-                <!-- زر إظهار/إخفاء كلمة المرور -->
-                <Border Width="40"
-                        Height="56"
-                        Cursor="Hand"
-                        Background="Transparent"
-                        HorizontalAlignment="Right"
-                        Grid.Column="0"
-                        MouseLeftButtonUp="TogglePasswordArea_MouseLeftButtonUp"
-                        Panel.ZIndex="1">
-
-                    <Button x:Name="TogglePasswordButton"
-                            Width="40"
-                            Height="56"
-                            Cursor="Hand"
-                            Background="Transparent"
-                            BorderThickness="0"
-                            Click="TogglePasswordButton_Click"
-                            VerticalAlignment="Center"
-                            Margin="0,0,0,0">
-                        <Path Data="{StaticResource bx_eye}"
-                              Fill="White"
-                              Width="20"
-                              Height="20"
-                              Stretch="Uniform"/>
-                    </Button>
-                </Border>
-
-
+                <Button x:Name="TogglePasswordButton"
+                        Grid.Column="1"
+                        Style="{StaticResource AuthIconBtnStyle}"
+                        Click="TogglePasswordButton_Click"
+                        ToolTip="{DynamicResource UnlockWindow_ShowPassword}">
+                    <Path Data="{StaticResource bx_eye}"
+                          Fill="{DynamicResource AuthTextColor}"
+                          Width="20"
+                          Height="20"
+                          Stretch="Uniform"/>
+                </Button>
             </Grid>
 
-            <!-- زر إلغاء القفل -->
-            <Border Width="200"
-                    Height="50"
-                    Background="#E2BD56"
-                    Cursor="Hand"
-                    Margin="0,0,0,15">
-                <Button x:Name="UnlockButton"
-                        Width="200"
-                        Height="50"
-                        HorizontalAlignment="Center"
-                        Foreground="#001E57"
-                        FontSize="18"
-                        FontWeight="SemiBold"
-                        BorderThickness="0"
-                        Click="UnlockButton_Click">
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal"
-                                    HorizontalAlignment="Center">
-                            <Path Data="{StaticResource bx_lock}"
-                                  Fill="#001E57"
-                                  Width="20"
-                                  Height="20"
-                                  Margin="0,0,10,0"
-                                  Stretch="Uniform"/>
-                            <TextBlock Text="{DynamicResource UnlockWindow_UnlockButton}"
-                                       VerticalAlignment="Center"/>
-                        </StackPanel>
-                    </Button.Content>
-                </Button>
-            </Border>
+            <Button x:Name="UnlockButton"
+                    Style="{StaticResource AuthPrimaryBtnStyle}"
+                    HorizontalAlignment="Center"
+                    Margin="0,0,0,16"
+                    IsDefault="True"
+                    Click="UnlockButton_Click">
+                <StackPanel Orientation="Horizontal">
+                    <Path Data="{StaticResource bx_lock}"
+                          Fill="{DynamicResource AuthButtonForeground}"
+                          Width="20"
+                          Height="20"
+                          Margin="8,0"
+                          Stretch="Uniform"
+                          VerticalAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource UnlockWindow_UnlockButton}"
+                               VerticalAlignment="Center"
+                               Foreground="{DynamicResource AuthButtonForeground}"/>
+                </StackPanel>
+            </Button>
 
-            <!-- رابط نسيان كلمة المرور -->
             <TextBlock x:Name="ForgotPasswordLink"
                        Text="{DynamicResource UnlockWindow_ForgotPassword}"
-                       Foreground="#E2BD56"
-                       FontSize="14"
-                       HorizontalAlignment="Center"
-                       Cursor="Hand"
-                       TextDecorations="Underline"
-                       MouseDown="ForgotPasswordLink_MouseDown">
-                <TextBlock.Style>
-                    <Style TargetType="TextBlock">
-                        <Style.Triggers>
-                            <Trigger Property="IsMouseOver"
-                                     Value="True">
-                                <Setter Property="Foreground"
-                                        Value="#FFD9BD56"/>
-                            </Trigger>
-                        </Style.Triggers>
-                    </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                       Style="{StaticResource Text.AuthLink}"
+                       MouseDown="ForgotPasswordLink_MouseDown"/>
         </StackPanel>
 
-        <!-- زر الإعدادات في الزاوية -->
         <Button x:Name="SettingsButton"
-                Width="50"
-                Height="50"
-                HorizontalAlignment="Right"
-                VerticalAlignment="Bottom"
-                Margin="20"
-                Background="Transparent"
-                BorderThickness="0"
-                Cursor="Hand"
-                Click="SettingsButton_Click">
-            <Button.Style>
-                <Style TargetType="Button">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="Button">
-                                <Border Background="{TemplateBinding Background}"
-                                        CornerRadius="25"
-                                        Width="50"
-                                        Height="50">
-                                    <Path Data="{StaticResource bx_settings}"
-                                          Fill="White"
-                                          Width="24"
-                                          Height="24"
-                                          Stretch="Uniform"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"/>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                    <Style.Triggers>
-                        <Trigger Property="IsMouseOver"
-                                 Value="True">
-                            <Setter Property="Background"
-                                    Value="#33E2BD56"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="Button">
-                                        <Border Background="#33E2BD56"
-                                                CornerRadius="25"
-                                                Width="50"
-                                                Height="50">
-                                            <Path Data="{StaticResource bx_settings}"
-                                                  Fill="#E2BD56"
-                                                  Width="24"
-                                                  Height="24"
-                                                  Stretch="Uniform"
-                                                  HorizontalAlignment="Center"
-                                                  VerticalAlignment="Center"/>
-                                        </Border>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Trigger>
-                    </Style.Triggers>
-                </Style>
-            </Button.Style>
-        </Button>
+                Style="{StaticResource AuthSettingsBtnStyle}"
+                Click="SettingsButton_Click"/>
 
-        <!-- قائمة الإعدادات (Popup) -->
         <Popup x:Name="SettingsPopup"
                Placement="Top"
                PlacementTarget="{Binding ElementName=SettingsButton}"
                StaysOpen="False"
                PopupAnimation="Fade">
-            <Border Background="#0C1C3A"
-                    BorderBrush="#E2BD56"
-                    BorderThickness="2"
-                    CornerRadius="8"
-                    Padding="10"
-                    MinWidth="200">
+            <Border Style="{StaticResource AuthPopupPanelStyle}">
                 <StackPanel>
                     <TextBlock Text="{DynamicResource Settings_Title}"
-                               Foreground="White"
-                               FontSize="16"
-                               FontWeight="Bold"
-                               Margin="0,0,0,0"/>
-                    <!-- يمكن إضافة خيارات الإعدادات هنا لاحقاً -->
+                               Foreground="{DynamicResource AuthTextColor}"
+                               FontSize="{StaticResource FontSizeSubtitle}"
+                               FontWeight="SemiBold"
+                               HorizontalAlignment="Center"/>
                 </StackPanel>
             </Border>
         </Popup>
+
+        <uc:ToastHost Panel.ZIndex="100"
+                      Margin="24"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Bottom"
+                      FlowDirection="{DynamicResource AppFlowDirection}"/>
     </Grid>
 </Window>

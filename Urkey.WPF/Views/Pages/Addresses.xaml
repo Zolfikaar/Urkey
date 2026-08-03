@@ -1,19 +1,112 @@
 <Page x:Class="Urkey.WPF.Views.Pages.Addresses"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:local="clr-namespace:Urkey.WPF.Views.Pages"
-      mc:Ignorable="d"
-      Title="Addresses"
+      Title="{DynamicResource AddressesTitle}"
       Foreground="{DynamicResource TextColor}"
-      Background="Transparent">
+      Background="{DynamicResource BgColor}"
+      FlowDirection="{DynamicResource AppFlowDirection}"
+      Loaded="OnPageLoaded">
 
-  <Grid>
-    <TextBlock VerticalAlignment="Center"
-               HorizontalAlignment="Center"
-               FontSize="30"
-               FontWeight="Bold"
-               Text="Addresses"/>
-  </Grid>
+    <Grid Margin="{StaticResource PageMargin}">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Margin="{StaticResource PageHeaderMargin}">
+            <TextBlock Text="{DynamicResource AddressesTitle}"
+                       Style="{StaticResource Text.PageTitle}"
+                       VerticalAlignment="Center"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="{DynamicResource AddButton}"
+                        Command="{Binding AddCommand}"
+                        Style="{StaticResource PrimaryBtnStyle}"
+                        Margin="0,0,8,0"/>
+                <Button Content="{DynamicResource EditButton}"
+                        Command="{Binding EditCommand}"
+                        Style="{StaticResource SecondaryBtnStyle}"
+                        Margin="0,0,8,0"/>
+                <Button Content="{DynamicResource DeleteButton}"
+                        Command="{Binding DeleteCommand}"
+                        Style="{StaticResource SecondaryBtnStyle}"/>
+            </StackPanel>
+        </Grid>
+
+        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="8">
+            <Grid>
+                <ListBox ItemsSource="{Binding Items}"
+                         SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         HorizontalContentAlignment="Stretch"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                         Visibility="{Binding IsEmpty, Converter={StaticResource InverseBoolToVisibility}}">
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="ListBoxItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                            <Setter Property="Padding" Value="0"/>
+                            <Setter Property="Margin" Value="4,6"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="ListBoxItem">
+                                        <Border x:Name="Bd"
+                                                Background="{DynamicResource ElevatedBgColor}"
+                                                BorderBrush="{DynamicResource BorderColor}"
+                                                BorderThickness="1"
+                                                CornerRadius="12"
+                                                Padding="16,14">
+                                            <ContentPresenter/>
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverColor}"/>
+                                            </Trigger>
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryColor}"/>
+                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowSelectedColor}"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding Name}"
+                                           FontWeight="SemiBold"
+                                           FontSize="15"
+                                           Foreground="{DynamicResource TextColor}"/>
+                                <TextBlock Style="{StaticResource Text.BodyMuted}" Margin="0,6,0,0" TextWrapping="Wrap">
+                                    <Run Text="{Binding Street}"/>
+                                    <Run Text=", "/>
+                                    <Run Text="{Binding City}"/>
+                                </TextBlock>
+                                <TextBlock Text="{Binding Country}"
+                                           Style="{StaticResource Text.Caption}"
+                                           Margin="0,6,0,0"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <StackPanel Style="{StaticResource EmptyStatePanelStyle}"
+                            Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
+                    <Path Data="{StaticResource bx_address}"
+                          Fill="{DynamicResource TextMutedColor}"
+                          Width="48" Height="48" Stretch="Uniform"
+                          Opacity="0.55" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+                    <TextBlock Text="{DynamicResource Addresses_Empty}"
+                               Style="{StaticResource Text.SectionTitle}"
+                               HorizontalAlignment="Center"
+                               TextAlignment="Center"/>
+                    <TextBlock Text="{DynamicResource Addresses_EmptyHint}"
+                               Style="{StaticResource Text.BodyMuted}"
+                               HorizontalAlignment="Center" TextAlignment="Center"
+                               Margin="0,8,0,0"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+    </Grid>
 </Page>

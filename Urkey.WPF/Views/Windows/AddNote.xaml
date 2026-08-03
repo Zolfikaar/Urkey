@@ -5,10 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Urkey.WPF.Views.Windows"
         mc:Ignorable="d"
-        Title="Add Note"
+        Title="{DynamicResource AddNoteTitle}"
         Height="520"
         Width="520"
         Background="{DynamicResource BgColor}"
+        Foreground="{DynamicResource TextColor}"
+        FlowDirection="{DynamicResource AppFlowDirection}"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         SizeToContent="Height">
@@ -90,14 +92,14 @@
                         Orientation="Horizontal"
                         HorizontalAlignment="Right"
                         Margin="0,10,0,0">
-                <Button Content="{DynamicResource CancelBtnTitle}"
+                <Button Content="{DynamicResource CancelButton}"
                         Style="{DynamicResource SecondaryBtnStyle}"
                         Margin="0,0,10,0"
-                        Click="OnCancelClick"/>
+                        Click="OnCancelClick" IsCancel="True"/>
                 <Button Content="{DynamicResource SaveBtnTitle}"
                         Style="{DynamicResource PrimaryBtnStyle}"
                         Padding="16,8"
-                        Click="OnSaveClick"/>
+                        Click="OnSaveClick" IsDefault="True"/>
             </StackPanel>
         </Grid>
     </Border>

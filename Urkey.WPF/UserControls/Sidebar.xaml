@@ -5,354 +5,179 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:Urkey.WPF.UserControls"
              xmlns:conv="clr-namespace:Urkey.WPF.Converters"
-             mc:Ignorable="d"
-             
-             >
-        <UserControl.Resources>
-             <conv:FlowDirectionToHorizontalAlignmentConverter x:Key="FlowToAlign"/>
-        <!-- Tooltip Style for Sidebar Buttons (only visible when collapsed) -->
-                <Style x:Key="SidebarButtonTooltipStyle" TargetType="ToolTip">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers>
-                <DataTrigger Binding="{Binding IsSidebarExpanded, RelativeSource={RelativeSource Self}}" Value="False">
-                            <Setter Property="Visibility" Value="Visible"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
+             mc:Ignorable="d">
 
-                <!-- Style for Sidebar Buttons -->
-                <Style x:Key="SidebarButtonStyle"
-                       TargetType="Button">
-                        <Setter Property="Background"
-                                Value="{DynamicResource BgColor}"/>
-                        <Setter Property="BorderThickness"
-                                Value="0"/>
-                        <Setter Property="Cursor"
-                                Value="Hand"/>
-                        <Setter Property="Width"
-                                Value="240"/>
-                        <Setter Property="Height"
-                                Value="60"/>
-                        <Setter Property="Foreground"
-                                Value="{DynamicResource TextColor}"/>
-                        <Setter Property="Template">
-                                <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}"
-                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <Grid>
-                                                                <WrapPanel Height="60"
-                                                                           Width="240">
-                                                                        <Border Focusable="False"
-                                                                                Height="60"
-                                                                                Width="60"
-                                                                                HorizontalAlignment="Left"
-                                                                                Background="{TemplateBinding Background}">
-                                                                                <Path
-                                                                                        Data="{TemplateBinding Tag}"
-                                                                                        Fill="{TemplateBinding Foreground}"
-                                                                                        Width="24"
-                                                                                        Height="24"/>
-                                                                        </Border>
-                                                                        <Border Focusable="False"
-                                                                                Height="60"
-                                                                                Width="180"
-                                                                                Background="{TemplateBinding Background}">
-                                                                                <TextBlock
-                                                                                        Focusable="False"
-                                                                                        Text="{TemplateBinding Content}"
-                                                                                        FontSize="20"
-                                                                                        FontWeight="Bold"
-                                                                                        Foreground="{TemplateBinding Foreground}"
-                                                                                        HorizontalAlignment="{Binding WordDirection, Converter={StaticResource FlowToAlign}}"
-                                                                                        VerticalAlignment="Center"
-                                                                                        FontFamily="Cairo"/>
-                                                                        </Border>
-                                                                </WrapPanel>
-                                                        </Grid>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
+    <UserControl.Resources>
+        <conv:FlowDirectionToHorizontalAlignmentConverter x:Key="FlowToAlign"/>
 
-                                                        <Trigger Property="IsMouseOver"
-                                                                 Value="True">
-                                                                <Setter Property="Background"
-                                                                        Value="{DynamicResource HoverColor}"/>
-                                                                <Setter Property="Foreground"
-                                                                        Value="{DynamicResource PrimaryColor}"/>
-                                                        </Trigger>
+        <Style x:Key="SidebarButtonTooltipStyle" TargetType="ToolTip">
+            <Setter Property="Background" Value="{DynamicResource ElevatedBgColor}"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+            <Setter Property="Padding" Value="10,6"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
 
-                                                        <Trigger Property="IsPressed"
-                                                                 Value="True">
-                                                                <Setter Property="Background"
-                                                                        Value="{DynamicResource SidebarSelectedColor}"/>
-                                                                <Setter Property="Foreground"
-                                                                        Value="{DynamicResource PrimaryColor}"/>
-                                                        </Trigger>
-                                                        <DataTrigger Binding="{Binding (local:Sidebar.IsActive), RelativeSource={RelativeSource Self}}"
-                                                                     Value="True">
-                                                                <Setter Property="Background"
-                                                                        Value="{DynamicResource SidebarSelectedColor}"/>
-                                                                <Setter Property="Foreground"
-                                                                        Value="{DynamicResource PrimaryColor}"/>
-                                                        </DataTrigger>
-                                                        <MultiDataTrigger>
-                                                                <MultiDataTrigger.Conditions>
-                                                                        <Condition Binding="{Binding (local:Sidebar.IsActive), RelativeSource={RelativeSource Self}}"
-                                                                                   Value="True"/>
-                                                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
-                                                                                   Value="True"/>
-                                                                </MultiDataTrigger.Conditions>
-                                                                <Setter Property="Background"
-                                                                        Value="{DynamicResource HoverColor}"/>
-                                                                <Setter Property="Foreground"
-                                                                        Value="{DynamicResource PrimaryColor}"/>
-                                                        </MultiDataTrigger>
-                                                        <Trigger Property="IsEnabled"
-                                                                 Value="False">
-                                                                <Setter Property="Opacity"
-                                                                        Value="0.5"/>
-                                                        </Trigger>
-                                                </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                </Setter.Value>
-                        </Setter>
-                </Style>
+        <Style x:Key="SidebarButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Height" Value="48"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Root"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Margin="8,2"
+                                SnapsToDevicePixels="True">
+                            <Grid Height="44">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="44"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="3"/>
+                                </Grid.ColumnDefinitions>
 
-                <!-- Style for Nested Menu Buttons -->
-                <Style x:Key="NestedMenuButtonStyle"
-                       TargetType="Button"
-                       BasedOn="{StaticResource SidebarButtonStyle}">
-                        <Setter Property="Height"
-                                Value="50"/>
-                        <Setter Property="Margin"
-                                Value="0,0,0,2"/>
-                        <Setter Property="Template">
-                                <Setter.Value>
-                                        <ControlTemplate TargetType="Button">
-                                                <Border Background="{TemplateBinding Background}"
-                                                        BorderBrush="{TemplateBinding BorderBrush}"
-                                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                                        <Grid>
-                                                                <WrapPanel Height="50"
-                                                                           Width="240">
-                                                                        <Border Focusable="False"
-                                                                                Height="50"
-                                                                                Width="60"
-                                                                                HorizontalAlignment="Left"
-                                                                                Background="{TemplateBinding Background}">
-                                                                                <Path
-                                                                                        Data="{TemplateBinding Tag}"
-                                                                                        Fill="{TemplateBinding Foreground}"
-                                                                                        Width="20"
-                                                                                        Height="20"/>
-                                                                        </Border>
-                                                                        <Border Focusable="False"
-                                                                                Height="50"
-                                                                                Width="180"
-                                                                                Background="{TemplateBinding Background}">
-                                                                                <TextBlock
-                                                                                        Focusable="False"
-                                                                                        Text="{TemplateBinding Content}"
-                                                                                        FontSize="18"
-                                                                                        FontWeight="Normal"
-                                                                                        Foreground="{TemplateBinding Foreground}"
-                                                                                        HorizontalAlignment="Left"
-                                                                                        VerticalAlignment="Center"
-                                                                                        FontFamily="Cairo"/>
-                                                                        </Border>
-                                                                </WrapPanel>
-                                                        </Grid>
-                                                </Border>
-                                                <ControlTemplate.Triggers>
-                                                        <Trigger Property="IsMouseOver"
-                                                                 Value="True">
-                                                                <Setter Property="Background"
-                                                                        Value="{DynamicResource HoverColor}"/>
-                                                                <Setter Property="Foreground"
-                                                                        Value="{DynamicResource PrimaryColor}"/>
-                                                        </Trigger>
-                                                        <Trigger Property="IsPressed"
-                                                                 Value="True">
-                                                                <Setter Property="Background"
-                                                                        Value="{DynamicResource SidebarSelectedColor}"/>
-                                                                <Setter Property="Foreground"
-                                                                        Value="{DynamicResource PrimaryColor}"/>
-                                                        </Trigger>
-                                                        <DataTrigger Binding="{Binding (local:Sidebar.IsActive), RelativeSource={RelativeSource Self}}"
-                                                                     Value="True">
-                                                                <Setter Property="Background"
-                                                                        Value="{DynamicResource SidebarSelectedColor}"/>
-                                                                <Setter Property="Foreground"
-                                                                        Value="{DynamicResource PrimaryColor}"/>
-                                                        </DataTrigger>
-                                                        <MultiDataTrigger>
-                                                                <MultiDataTrigger.Conditions>
-                                                                        <Condition Binding="{Binding (local:Sidebar.IsActive), RelativeSource={RelativeSource Self}}"
-                                                                                   Value="True"/>
-                                                                        <Condition Binding="{Binding IsMouseOver, RelativeSource={RelativeSource Self}}"
-                                                                                   Value="True"/>
-                                                                </MultiDataTrigger.Conditions>
-                                                                <Setter Property="Background"
-                                                                        Value="{DynamicResource HoverColor}"/>
-                                                                <Setter Property="Foreground"
-                                                                        Value="{DynamicResource PrimaryColor}"/>
-                                                        </MultiDataTrigger>
-                                                        <Trigger Property="IsEnabled"
-                                                                 Value="False">
-                                                                <Setter Property="Opacity"
-                                                                        Value="0.5"/>
-                                                        </Trigger>
-                                                </ControlTemplate.Triggers>
-                                        </ControlTemplate>
-                                </Setter.Value>
-                        </Setter>
-                </Style>
+                                <!-- Accent bar (end side — mirrors with FlowDirection) -->
+                                <Border x:Name="ActiveBar"
+                                        Grid.Column="2"
+                                        Background="{DynamicResource PrimaryColor}"
+                                        CornerRadius="2"
+                                        Visibility="Collapsed"
+                                        Margin="0,8"/>
 
-                
+                                <Viewbox Grid.Column="0"
+                                         Width="22"
+                                         Height="22"
+                                         HorizontalAlignment="Center"
+                                         VerticalAlignment="Center">
+                                    <Path x:Name="IconPath"
+                                          Data="{TemplateBinding Tag}"
+                                          Fill="{TemplateBinding Foreground}"
+                                          Stretch="Uniform"/>
+                                </Viewbox>
+
+                                <TextBlock x:Name="Label"
+                                           Grid.Column="1"
+                                           Text="{TemplateBinding Content}"
+                                           FontSize="14"
+                                           FontWeight="SemiBold"
+                                           Foreground="{TemplateBinding Foreground}"
+                                           VerticalAlignment="Center"
+                                           Margin="4,0,8,0"
+                                           TextTrimming="CharacterEllipsis"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource HoverColor}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource SidebarSelectedColor}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+                            </Trigger>
+                            <DataTrigger Binding="{Binding (local:Sidebar.IsActive), RelativeSource={RelativeSource Self}}"
+                                         Value="True">
+                                <Setter TargetName="Root" Property="Background" Value="{DynamicResource SidebarSelectedColor}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource PrimaryColor}"/>
+                                <Setter TargetName="ActiveBar" Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </UserControl.Resources>
 
-        <!-- Sidebar -->
-        <Border
-                BorderBrush="{x:Null}"
-                BorderThickness="0"
-                x:Name="SidebarWrapper"
-                Grid.Row="1"
-                Grid.RowSpan="2"
-                Grid.Column="0"
-                VerticalAlignment="Stretch">
-                <Border BorderBrush="{x:Null}"
-                        BorderThickness="0"
-                        Background="{DynamicResource BgColor}">
-                        <Border.Effect>
-                                <DropShadowEffect
-                                        Color="#03000000"
-                                        Direction="270"
-                                        ShadowDepth="7"
-                                        BlurRadius="25"
-                                        Opacity=".2"/>
+    <DockPanel LastChildFill="True" Background="{DynamicResource BgColor}">
 
-                        </Border.Effect>
+        <!-- Toggle — same 44px icon column as nav items -->
+        <Button x:Name="SidebarToggleBtn"
+                DockPanel.Dock="Top"
+                Style="{StaticResource SidebarButtonStyle}"
+                Tag="{StaticResource bx_sidebar}"
+                Content="{DynamicResource SidebarToggleLabel}"
+                Click="SidebarToggleBtn_Click"
+                ToolTip="{DynamicResource SidebarToggleLabel}"/>
 
-                        <DockPanel x:Name="SidebarPanel"
-                                   LastChildFill="false">
+        <Button x:Name="Settings"
+                DockPanel.Dock="Bottom"
+                Style="{StaticResource SidebarButtonStyle}"
+                Tag="{StaticResource bx_settings}"
+                Content="{DynamicResource Settings_Title}"
+                Click="SidebarBtnClicked"
+                ToolTip="{DynamicResource Settings_Title}"/>
 
-                                <!-- Top Buttons  -->
-                                <StackPanel x:Name="TopBtns"
-                                            DockPanel.Dock="Top">
+        <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled"
+                      Padding="0,4,0,4">
+            <StackPanel x:Name="TopBtns">
+                <Button Style="{StaticResource SidebarButtonStyle}"
+                        Click="SidebarBtnClicked"
+                        x:Name="Home"
+                        Tag="{StaticResource bx_home}"
+                        Content="{DynamicResource HomeTitle}"
+                        ToolTip="{DynamicResource HomeTitle}"/>
 
-                                        <Button Style="{StaticResource SidebarButtonStyle}"
-                                                Click="SidebarBtnClicked"
-                                                x:Name="Home"
-                                                Tag="{StaticResource bx_home}"
-                                                Content="{DynamicResource HomeTitle}">
-                                            <Button.ToolTip>
-                                                <ToolTip Content="{DynamicResource HomeTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
-                                            </Button.ToolTip>
-                                        </Button>
+                <Button Style="{StaticResource SidebarButtonStyle}"
+                        Click="SidebarBtnClicked"
+                        x:Name="AllEntries"
+                        Tag="{StaticResource bx_app}"
+                        Content="{DynamicResource AllEntriesTitle}"
+                        ToolTip="{DynamicResource AllEntriesTitle}"/>
 
-                                        <!-- All Entries as a normal item -->
-                                        <Button Style="{StaticResource SidebarButtonStyle}"
-                                                Click="SidebarBtnClicked"
-                                                x:Name="AllEntries"
-                                                Tag="{StaticResource bx_app}"
-                                                Content="{DynamicResource AllEntriesTitle}">
-                                            <Button.ToolTip>
-                                                <ToolTip Content="{DynamicResource AllEntriesTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
-                                            </Button.ToolTip>
-                                        </Button>
+                <Button Style="{StaticResource SidebarButtonStyle}"
+                        Click="SidebarBtnClicked"
+                        x:Name="Accounts"
+                        Tag="{StaticResource bx_userAccount}"
+                        Content="{DynamicResource AccountsTitle}"
+                        ToolTip="{DynamicResource AccountsTitle}"/>
 
-                                        <!-- Former nested items moved to top level -->
-                                        <Button Style="{StaticResource SidebarButtonStyle}"
-                                                Click="SidebarBtnClicked"
-                                                x:Name="Accounts"
-                                                Tag="{StaticResource bx_userAccount}"
-                                                Content="{DynamicResource AccountsTitle}">
-                                            <Button.ToolTip>
-                                                <ToolTip Content="{DynamicResource AccountsTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
-                                            </Button.ToolTip>
-                                        </Button>
+                <Button Style="{StaticResource SidebarButtonStyle}"
+                        Click="SidebarBtnClicked"
+                        x:Name="CreditCards"
+                        Tag="{StaticResource bx_credit_card}"
+                        Content="{DynamicResource BankCardsTitle}"
+                        ToolTip="{DynamicResource BankCardsTitle}"/>
 
-                                        <Button Style="{StaticResource SidebarButtonStyle}"
-                                                Click="SidebarBtnClicked"
-                                                x:Name="CreditCards"
-                                                Tag="{StaticResource bx_credit_card}"
-                                                Content="{DynamicResource BankCardsTitle}">
-                                            <Button.ToolTip>
-                                                <ToolTip Content="{DynamicResource BankCardsTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
-                                            </Button.ToolTip>
-                                        </Button>
+                <Button Style="{StaticResource SidebarButtonStyle}"
+                        Click="SidebarBtnClicked"
+                        x:Name="Addresses"
+                        Tag="{StaticResource bx_address}"
+                        Content="{DynamicResource AddressesTitle}"
+                        ToolTip="{DynamicResource AddressesTitle}"/>
 
-                                        <Button Style="{StaticResource SidebarButtonStyle}"
-                                                Click="SidebarBtnClicked"
-                                                x:Name="Addresses"
-                                                Tag="{StaticResource bx_address}"
-                                                Content="{DynamicResource AddressesTitle}">
-                                            <Button.ToolTip>
-                                                <ToolTip Content="{DynamicResource AddressesTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
-                                            </Button.ToolTip>
-                                        </Button>
+                <Button Style="{StaticResource SidebarButtonStyle}"
+                        Click="SidebarBtnClicked"
+                        x:Name="Notes"
+                        Tag="{StaticResource bx_notes}"
+                        Content="{DynamicResource NotesTitle}"
+                        ToolTip="{DynamicResource NotesTitle}"/>
 
-                                        <Button Style="{StaticResource SidebarButtonStyle}"
-                                                Click="SidebarBtnClicked"
-                                                x:Name="Notes"
-                                                Tag="{StaticResource bx_notes}"
-                                                Content="{DynamicResource NotesTitle}">
-                                            <Button.ToolTip>
-                                                <ToolTip Content="{DynamicResource NotesTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
-                                            </Button.ToolTip>
-                                        </Button>
+                <Button Style="{StaticResource SidebarButtonStyle}"
+                        Click="SidebarBtnClicked"
+                        x:Name="Docs"
+                        Tag="{StaticResource bx_doc}"
+                        Content="{DynamicResource DocumentsTitle}"
+                        ToolTip="{DynamicResource DocumentsTitle}"/>
 
-                                        <Button Style="{StaticResource SidebarButtonStyle}"
-                                                Click="SidebarBtnClicked"
-                                                x:Name="Docs"
-                                                Tag="{StaticResource bx_doc}"
-                                                Content="{DynamicResource DocsTitle}">
-                                            <Button.ToolTip>
-                                                <ToolTip Content="{DynamicResource DocsTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
-                                            </Button.ToolTip>
-                                        </Button>
+                <Button Style="{StaticResource SidebarButtonStyle}"
+                        Click="SidebarBtnClicked"
+                        x:Name="PasswordCheck"
+                        Tag="{StaticResource bx_passwords}"
+                        Content="{DynamicResource PasswordCheckTitle}"
+                        ToolTip="{DynamicResource PasswordCheckTitle}"/>
 
-                                        <Button Style="{StaticResource SidebarButtonStyle}"
-                                                Click="SidebarBtnClicked"
-                                                x:Name="PasswordCheck"
-                                                Tag="{StaticResource bx_passwords}"
-                                                Content="{DynamicResource PasswordCheckTitle}">
-                                            <Button.ToolTip>
-                                                <ToolTip Content="{DynamicResource PasswordCheckTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
-                                            </Button.ToolTip>
-                                        </Button>
-
-                                        <Button Style="{StaticResource SidebarButtonStyle}"
-                                                Click="SidebarBtnClicked"
-                                                x:Name="PasswordGenerator"
-                                                Tag="{StaticResource bx_password_gen}"
-                                                Content="{DynamicResource PasswordGeneratorTitle}">
-                                            <Button.ToolTip>
-                                                <ToolTip Content="{DynamicResource PasswordGeneratorTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
-                                            </Button.ToolTip>
-                                        </Button>
-
-                </StackPanel>
-
-
-                                <!-- Settings Button -->
-                                <Button DockPanel.Dock="Bottom"
-                                        Style="{StaticResource SidebarButtonStyle}"
-                                        Tag="{StaticResource bx_settings}"
-                                        Click="SidebarBtnClicked"
-                                        x:Name="Settings"
-                                        Content="{DynamicResource SettingsTitle}">
-                                    <Button.ToolTip>
-                                        <ToolTip Content="{DynamicResource SettingsTitle}" Style="{StaticResource SidebarButtonTooltipStyle}"/>
-                                    </Button.ToolTip>
-                                </Button>
-
-
-
-
-                        </DockPanel>
-                </Border>
-        </Border>
-
+                <Button Style="{StaticResource SidebarButtonStyle}"
+                        Click="SidebarBtnClicked"
+                        x:Name="PasswordGenerator"
+                        Tag="{StaticResource bx_password_gen}"
+                        Content="{DynamicResource PasswordGeneratorTitle}"
+                        ToolTip="{DynamicResource PasswordGeneratorTitle}"/>
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
 </UserControl>

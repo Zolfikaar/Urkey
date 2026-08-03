@@ -1,23 +1,44 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-  <SolidColorBrush x:Key="PrimaryColor"
-                   Color="{StaticResource PrimaryBrush}"/>
-  <SolidColorBrush x:Key="BgColor"
-                   Color="{StaticResource BgBrush}"/>
-  <SolidColorBrush x:Key="TextColor"
-                   Color="{StaticResource TextBrush}"/>
-  <SolidColorBrush x:Key="InputBgColor"
-                   Color="{StaticResource InputBgBrush}"/>
-  <SolidColorBrush x:Key="CardBgColor"
-                   Color="{StaticResource CardBgBrush}"/>
-  <SolidColorBrush x:Key="BorderColor"
-                   Color="{StaticResource BorderBrush}"/>
-  <SolidColorBrush x:Key="SecondaryTextColor"
-                   Color="{StaticResource SecondaryTextBrush}"/>
-  <SolidColorBrush x:Key="HoverColor"
-                   Color="{StaticResource HoverBrush}"/>
 
-  <!-- Sidebar selected background (fallbacks to hover if not theme-specific) -->
-  <SolidColorBrush x:Key="SidebarSelectedColor"
-                   Color="{StaticResource HoverBrush}"/>
+    <!-- Fallback brushes (overridden by Themes/Light|Dark at runtime) -->
+    <SolidColorBrush x:Key="PrimaryColor" Color="{StaticResource PrimaryBrush}"/>
+    <SolidColorBrush x:Key="BgColor" Color="{StaticResource BgBrush}"/>
+    <SolidColorBrush x:Key="TextColor" Color="{StaticResource TextBrush}"/>
+    <SolidColorBrush x:Key="InputBgColor" Color="{StaticResource InputBgBrush}"/>
+    <SolidColorBrush x:Key="CardBgColor" Color="{StaticResource CardBgBrush}"/>
+    <SolidColorBrush x:Key="BorderColor" Color="{StaticResource BorderBrush}"/>
+    <SolidColorBrush x:Key="SecondaryTextColor" Color="{StaticResource SecondaryTextBrush}"/>
+    <SolidColorBrush x:Key="TextMutedColor" Color="{StaticResource SecondaryTextBrush}"/>
+    <SolidColorBrush x:Key="SubTextColor" Color="{StaticResource SecondaryTextBrush}"/>
+    <SolidColorBrush x:Key="HoverColor" Color="{StaticResource HoverBrush}"/>
+    <SolidColorBrush x:Key="ElevatedBgColor" Color="#262838"/>
+    <SolidColorBrush x:Key="SidebarSelectedColor" Color="{StaticResource HoverBrush}"/>
+
+    <SolidColorBrush x:Key="ErrorColor" Color="#EF5350"/>
+    <SolidColorBrush x:Key="SuccessColor" Color="#81C784"/>
+    <SolidColorBrush x:Key="WarningBgColor" Color="#3D3420"/>
+    <SolidColorBrush x:Key="WarningBorderColor" Color="#D4AF56"/>
+    <SolidColorBrush x:Key="WarningTextColor" Color="#F0E6C8"/>
+    <SolidColorBrush x:Key="OverlayScrimColor" Color="#CC0E0F16"/>
+
+
+    <SolidColorBrush x:Key="AccentGold" Color="#D4AF56"/>
+    <SolidColorBrush x:Key="AccentGoldHover" Color="#E4C56A"/>
+    <SolidColorBrush x:Key="AccentGoldMuted" Color="#33D4AF56"/>
+
+    <SolidColorBrush x:Key="AuthBgColor" Color="#16171F"/>
+    <SolidColorBrush x:Key="AuthInputBg" Color="#12141F"/>
+    <SolidColorBrush x:Key="AuthPanelBg" Color="#1A1C2A"/>
+    <SolidColorBrush x:Key="AuthTextColor" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="AuthButtonForeground" Color="#16171F"/>
+    <SolidColorBrush x:Key="ButtonPrimaryBg" Color="{StaticResource PrimaryBrush}"/>
+    <SolidColorBrush x:Key="ButtonPrimaryHoverBg" Color="#6B73E0"/>
+    <SolidColorBrush x:Key="ButtonPrimaryPressedBg" Color="#4A52B8"/>
+    <SolidColorBrush x:Key="ButtonPrimaryText" Color="#FFFFFF"/>
+
+    <SolidColorBrush x:Key="RowHoverColor" Color="#262838"/>
+    <SolidColorBrush x:Key="RowSelectedColor" Color="#333555"/>
+    <SolidColorBrush x:Key="RowAltColor" Color="#1A1B28"/>
+
 </ResourceDictionary>

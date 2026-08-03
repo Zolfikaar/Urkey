@@ -6,6 +6,7 @@ using System.Windows.Input;
 using Urkey.Core.Models;
 using Urkey.Core.Services;
 using Urkey.WPF.Commands;
+using Urkey.WPF.Helpers;
 
 namespace Urkey.WPF.ViewModels
 {
@@ -127,11 +128,7 @@ namespace Urkey.WPF.ViewModels
                 _vaultService.AddEntry(newAccount);
                 _vaultService.Save();
 
-                MessageBox.Show(
-                    "Credential saved successfully!",
-                    "Success",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                ToastService.Success("Credential saved successfully!");
 
                 if (parameter is Window window)
                 {
@@ -141,11 +138,7 @@ namespace Urkey.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    $"Error saving credential: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                ToastService.Error($"Error saving credential: {ex.Message}");
             }
         }
 

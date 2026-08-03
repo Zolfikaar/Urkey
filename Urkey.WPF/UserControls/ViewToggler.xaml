@@ -23,7 +23,7 @@
                                 Background="{TemplateBinding Background}"
                                 BorderBrush="{TemplateBinding BorderBrush}"
                                 BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="8">
+                                CornerRadius="{StaticResource ControlCornerRadius}">
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"
                                               Margin="0"/>
@@ -50,7 +50,7 @@
                                         Property="BorderBrush"
                                         Value="{DynamicResource PrimaryColor}"/>
                                 <Setter Property="Foreground"
-                                        Value="White"/>
+                                        Value="{DynamicResource ButtonPrimaryText}"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
                                 <Setter TargetName="Root"
@@ -69,7 +69,7 @@
                 DockPanel.Dock="Right"
                 VerticalAlignment="Center">
         <ToggleButton x:Name="ListViewButton"
-                      ToolTip="List view"
+                      ToolTip="{DynamicResource View_List}"
                       Style="{StaticResource ViewToggleButtonStyle}"
                       Margin="0,0,8,0"
                       Click="OnListViewClicked">
@@ -85,7 +85,7 @@
             </Viewbox>
         </ToggleButton>
         <ToggleButton x:Name="GridViewButton"
-                      ToolTip="Grid view"
+                      ToolTip="{DynamicResource View_Grid}"
                       Style="{StaticResource ViewToggleButtonStyle}"
                       Margin="0,0,8,0"
                       Click="OnGridViewClicked">

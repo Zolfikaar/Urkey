@@ -1,50 +1,24 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+using Urkey.Core.Models;
+using Urkey.Core.Services;
+using Urkey.WPF.Helpers;
 
 namespace Urkey.WPF.Views.Windows
 {
-    /// <summary>
-    /// Interaction logic for AddNote.xaml
-    /// </summary>
     public partial class AddNote : Window
     {
+        public NoteEntry? Result { get; private set; }
+
         public AddNote()
         {
             InitializeComponent();
-            this.FlowDirection = App.Settings.Language == "ar"
-                ? FlowDirection.RightToLeft
-                : FlowDirection.LeftToRight;
-            Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            ApplyTheme();
-        }
-
-        private void ApplyTheme()
-        {
-            var currentTheme = SystemParameters.HighContrast ? "Dark" : "Light";
-        }
-
-        // Exposed properties for easy access
         public new string Title => TitleTextBox.Text;
         public new string Content => ContentTextBox.Text;
         public string Category => CategoryTextBox.Text;
         public string Tags => TagsTextBox.Text;
 
-        // Method to set initial values
         public void SetValues(string title = "", string content = "", string category = "", string tags = "")
         {
             TitleTextBox.Text = title;
@@ -55,23 +29,29 @@ namespace Urkey.WPF.Views.Windows
 
         private void OnCancelClick(object sender, RoutedEventArgs e)
         {
+            DialogResult = false;
             Close();
         }
 
         private void OnSaveClick(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(TitleTextBox.Text))
+            var entry = new NoteEntry
             {
-                MessageBox.Show("Title is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                Title = TitleTextBox.Text?.Trim() ?? string.Empty,
+                Content = ContentTextBox.Text?.Trim() ?? string.Empty,
+                Category = CategoryTextBox.Text?.Trim() ?? string.Empty,
+                Tags = TagsTextBox.Text?.Trim() ?? string.Empty
+            };
+
+            var validation = EntryValidator.ValidateNote(entry);
+            if (!validation.IsValid)
+            {
+                ToastService.Warning(Loc.Get(validation.ErrorResourceKey!));
                 return;
             }
 
-            // جمع القيم من الحقول
-            string title = TitleTextBox.Text;
-            string content = ContentTextBox.Text;
-            string category = CategoryTextBox.Text;
-            string tags = TagsTextBox.Text;
-
+            Result = entry;
+            DialogResult = true;
             Close();
         }
     }

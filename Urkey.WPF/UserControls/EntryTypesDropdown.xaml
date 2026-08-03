@@ -7,13 +7,12 @@
              mc:Ignorable="d"
              d:DesignHeight="450"
              d:DesignWidth="800"
-             Background="Transparent">
+        Background="Transparent"
+        Foreground="{DynamicResource TextColor}">
     <Grid>
         <Button x:Name="AddButton"
                 Content="{DynamicResource AddAccountTitle}"
-                Background="{DynamicResource PrimaryColor}"
-                Foreground="White"
-                FontWeight="Bold"
+                Style="{DynamicResource PrimaryBtnStyle}"
                 Padding="16,10"
                 Click="ToggleMenu"
                 HorizontalAlignment="Left"
@@ -26,12 +25,12 @@
                         <StackPanel Orientation="Horizontal"
                                     HorizontalAlignment="Center">
                             <Path Data="{StaticResource bx_plus}"
-                                  Fill="White"
+                                  Fill="{TemplateBinding Foreground}"
                                   Margin="0,0,6,0"/>
                             <TextBlock Text="{TemplateBinding Content}"
                                        VerticalAlignment="Center"/>
                             <Path Data="M0,0 L6,6 L12,0 Z"
-                                  Fill="White"
+                                  Fill="{TemplateBinding Foreground}"
                                   Width="10"
                                   Height="6"
                                   Margin="6,0,0,0"/>

@@ -2,48 +2,12 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using Urkey.WPF.Helpers;
-using Urkey.WPF.Views;
 using Urkey.WPF.Views.Pages;
-
-using Path = System.Windows.Shapes.Path; // for nested menu icon
 
 namespace Urkey.WPF.UserControls
 {
     public partial class Sidebar : UserControl
     {
-
-        //public string WordDirection = "";
-        private static string _bgColor = "#F6F6F9";
-        private static string _bgWhite = "#FFF";
-        private static string _textColor = "#363949";
-        private static string _primaryColor = "#7380EC";
-
-
-        public static string BgColor
-        {
-            get { return _bgColor; }
-            set { _bgColor = value; }
-        }
-        public static string BgWhite
-        {
-            get { return _bgWhite; }
-            set { _bgWhite = value; }
-        }
-        public static string TextColor
-        {
-            get { return _textColor; }
-            set { _textColor = value; }
-        }
-        public static string PrimaryColor
-        {
-            get { return _primaryColor; }
-            set { _primaryColor = value; }
-        }
-
-        public static bool _isSidebarOpen = true; // sidebar open by default
-
-
         public static readonly DependencyProperty IsActiveProperty =
             DependencyProperty.RegisterAttached(
                 "IsActive",
@@ -52,18 +16,14 @@ namespace Urkey.WPF.UserControls
                 new PropertyMetadata(false));
 
         public static void SetIsActive(Button button, bool value)
-        {
-            button.SetValue(IsActiveProperty, value);
-        }
+            => button.SetValue(IsActiveProperty, value);
 
         public static bool GetIsActive(Button button)
-        {
-            return (bool)button.GetValue(IsActiveProperty);
-        }
+            => (bool)button.GetValue(IsActiveProperty);
 
         public static readonly DependencyProperty IsSidebarExpandedProperty =
             DependencyProperty.Register(
-                "IsSidebarExpanded",
+                nameof(IsSidebarExpanded),
                 typeof(bool),
                 typeof(Sidebar),
                 new PropertyMetadata(false, OnIsSidebarExpandedChanged));
@@ -74,257 +34,117 @@ namespace Urkey.WPF.UserControls
             set => SetValue(IsSidebarExpandedProperty, value);
         }
 
-
-        private static void OnIsSidebarExpandedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        {
-            var sidebar = d as Sidebar;
-            sidebar?.UpdateSidebarTextVisibility();
-        }
+        public event EventHandler<SidebarNavigationEventArgs> OnNavigationRequested;
+        public event EventHandler OnToggleRequested;
 
         public Sidebar()
         {
             InitializeComponent();
-            SetButtonActive(Home);
-
-            
-
-            // Initialize sidebar state based on the dependency property
-            _isSidebarOpen = IsSidebarExpanded;
-
-
-
+            Loaded += (_, _) =>
+            {
+                SetButtonActive(Home);
+                UpdateSidebarTextVisibility();
+                UpdateToggleIcon(IsSidebarExpanded);
+            };
         }
 
-        public void ToggleSidebar(ContentControl MainContentArea, Border Topbar, Border Logo)
+        private static void OnIsSidebarExpandedChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            // Find the LogoWrapper inside the Logo border
-            WrapPanel logoWrapPanel = Logo.Child as WrapPanel;
-
-            if (_isSidebarOpen)
+            if (d is Sidebar sidebar)
             {
-                SidebarWrapper.Width = 60;
-                if (logoWrapPanel != null)
-                {
-                    logoWrapPanel.Width = 60;
-                    foreach (var item in logoWrapPanel.Children)
-                    {
-                        if (item is TextBlock textBlock && textBlock.Name == "LogoText")
-                        {
-                            textBlock.Visibility = Visibility.Hidden;
-                        }
-                        else if (item is TextBlock textBlockIcon && textBlockIcon.Name == "LogoIcon")
-                        {
-                            textBlockIcon.Visibility = Visibility.Visible;
+                sidebar.UpdateSidebarTextVisibility();
+                sidebar.UpdateToggleIcon((bool)e.NewValue);
+            }
+        }
 
-                        }
-                    }
-                }
-                Logo.Width = 60;
-                _isSidebarOpen = false;
-                IsSidebarExpanded = false;
-            }
-            else
-            {
-                SidebarWrapper.Width = 240;
-                if (logoWrapPanel != null)
-                {
-                    logoWrapPanel.Width = 240;
-                    foreach (var item in logoWrapPanel.Children)
-                    {
-                        if (item is TextBlock textBlock && textBlock.Name == "LogoText")
-                        {
-                            textBlock.Visibility = Visibility.Visible;
-                        }
-                        else if (item is TextBlock textBlockIcon && textBlockIcon.Name == "LogoIcon")
-                        {
-                            textBlockIcon.Visibility = Visibility.Visible;
-                        }
-                    }
-                }
-                Logo.Width = 240;
-                _isSidebarOpen = true;
-                IsSidebarExpanded = true;
-            }
-            UpdateSidebarTextVisibility();
+        private void SidebarToggleBtn_Click(object sender, RoutedEventArgs e)
+        {
+            OnToggleRequested?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void UpdateToggleIcon(bool expanded)
+        {
+            if (SidebarToggleBtn == null) return;
+
+            var key = expanded ? "bx_sidebar" : "bx_menu_alt_left";
+            if (TryFindResource(key) is Geometry geometry)
+                SidebarToggleBtn.Tag = geometry;
+
+            SidebarToggleBtn.ToolTip = TryFindResource(
+                expanded ? "SidebarCollapseLabel" : "SidebarExpandLabel") as string
+                ?? TryFindResource("SidebarToggleLabel") as string;
         }
 
         private void SidebarBtnClicked(object sender, RoutedEventArgs e)
         {
-            // First, completely reset ALL buttons to their default state
-            ResetAllButtons();
+            if (sender is not Button clickedButton) return;
 
-            // Then apply active state to the clicked button
-            if (sender is Button clickedButton)
+            SetButtonActive(clickedButton);
+
+            Page? page = clickedButton.Name switch
             {
-                SetButtonActive(clickedButton);
+                "Home" => new Home(),
+                "AllEntries" => new AllEntries(),
+                "Accounts" => new Accounts(),
+                "CreditCards" => new CreditCards(),
+                "Addresses" => new Addresses(),
+                "Notes" => new Notes(),
+                "Docs" => new Documents(),
+                "PasswordCheck" => new PasswordCheck(),
+                "PasswordGenerator" => new PasswordGenerator(),
+                "Settings" => new Settings(),
+                _ => null
+            };
 
-                // Navigation logic
-                switch (clickedButton.Name)
-                {
-                    case "Home":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Home()));
-                        break;
-                    case "AllEntries":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new AllEntries()));
-                        break;
-                    case "Accounts":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Accounts()));
-                        break;
+            if (page != null)
+                OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(page));
 
-                    case "CreditCards":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new CreditCards()));
-                        break;
-                    case "Addresses":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Addresses()));
-                        break;
-                    case "Notes":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Notes()));
-                        break;
-                    case "Docs":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Documents()));
-                        break;
-                    case "PasswordCheck":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new PasswordCheck()));
-                        break;
-                    case "PasswordGenerator":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new PasswordGenerator()));
-                        break;
-
-                        
-
-                    case "Settings":
-                        OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(new Settings()));
-                        break;
-                }
-
-                // Update text visibility after navigation
-                UpdateSidebarTextVisibility();
-            }
+            UpdateSidebarTextVisibility();
         }
 
         private void ResetAllButtons()
         {
-            // Reset Other Buttons
             foreach (var child in TopBtns.Children)
             {
                 if (child is Button btn)
-                {
                     SetIsActive(btn, false);
-                }
             }
-            SetIsActive(Settings, false);
 
-            //// Reset All Entries icon to default (down arrow)
-            //if (AllEntriesMenu != null)
-            //{
-            //    AllEntriesMenu.ApplyTemplate();
-            //    var icon = AllEntriesMenu.Template.FindName("PART_LeftIcon", AllEntriesMenu) as Path;
-            //    if (icon != null)
-            //    {
-            //        icon.Data = (Geometry)FindResource("bx_arrow_down");
-            //    }
-            //}
+            SetIsActive(Settings, false);
+            SetIsActive(SidebarToggleBtn, false);
         }
 
         private void SetButtonActive(Button button)
         {
-            // First, completely reset ALL buttons to their default state
             ResetAllButtons();
-
-            // Then apply active state to the clicked button
             SetIsActive(button, true);
         }
 
         public void UpdateSidebarTextVisibility()
         {
-            //TopBtns.HorizontalAlignment = IsSidebarExpanded ? HorizontalAlignment.Left : HorizontalAlignment.Center;
+            void UpdateButton(Button btn)
+            {
+                if (btn == null) return;
+                btn.ApplyTemplate();
+                if (btn.Template?.FindName("Label", btn) is TextBlock label)
+                    label.Visibility = IsSidebarExpanded ? Visibility.Visible : Visibility.Collapsed;
+            }
 
-            // Update all sidebar button text labels
             foreach (var child in TopBtns.Children)
             {
                 if (child is Button btn)
-                {
-                    // Set button width
-                    btn.Width = IsSidebarExpanded ? 240 : 60;
-
-                    if (btn.Content is WrapPanel wrapPanel)
-                    {
-                        // Set WrapPanel width
-                        wrapPanel.Width = IsSidebarExpanded ? 240 : 60;
-
-                        // Handle the first border (icon) - always keep it visible
-                        if (wrapPanel.Children.Count > 0 && wrapPanel.Children[0] is Border iconBorder)
-                        {
-                            // Keep icon visible but adjust width
-                            iconBorder.Width = IsSidebarExpanded ? 60 : 60;
-                            iconBorder.Visibility = Visibility.Visible;
-
-                            // Ensure the Path (icon) inside the icon border is visible
-                            if (iconBorder.Child is Path iconPath)
-                            {
-                                iconPath.Visibility = Visibility.Visible;
-                            }
-                        }
-
-                        // Handle the second border (text) - hide text when collapsed
-                        if (wrapPanel.Children.Count > 1 && wrapPanel.Children[1] is Border textBorder)
-                        {
-                            textBorder.Width = 180; // Keep width constant
-                            textBorder.Visibility = IsSidebarExpanded ? Visibility.Visible : Visibility.Collapsed;
-                            if (textBorder.Child is TextBlock textBlock)
-                            {
-                                textBlock.Visibility = IsSidebarExpanded ? Visibility.Visible : Visibility.Hidden;
-                            }
-                        }
-                    }
-                }
+                    UpdateButton(btn);
             }
 
-            // Update settings.
-            Settings.Width = IsSidebarExpanded ? 240 : 60;
-            if (Settings.Content is WrapPanel settingsWrapPanel)
-            {
-                settingsWrapPanel.Width = IsSidebarExpanded ? 240 : 60;
-
-                // Handle the first border (icon) - always keep it visible
-                if (settingsWrapPanel.Children.Count > 0 && settingsWrapPanel.Children[0] is Border iconBorder)
-                {
-                    // Keep icon visible but adjust width
-                    iconBorder.Width = IsSidebarExpanded ? 60 : 60;
-                    iconBorder.Visibility = Visibility.Visible;
-
-                    // Ensure the Path (icon) inside the icon border is visible
-                    if (iconBorder.Child is Path iconPath)
-                    {
-                        iconPath.Visibility = Visibility.Visible;
-                    }
-                }
-
-                // Handle the second border (text) - hide text when collapsed
-                if (settingsWrapPanel.Children.Count > 1 && settingsWrapPanel.Children[1] is Border textBorder)
-                {
-                    textBorder.Width = 180; // Keep width constant
-                    textBorder.Visibility = IsSidebarExpanded ? Visibility.Visible : Visibility.Collapsed;
-                    if (textBorder.Child is TextBlock textBlock)
-                    {
-                        textBlock.Visibility = IsSidebarExpanded ? Visibility.Visible : Visibility.Hidden;
-                    }
-                }
-            }
+            UpdateButton(Settings);
+            UpdateButton(SidebarToggleBtn);
         }
 
-        // Event for navigation
-        public event EventHandler<SidebarNavigationEventArgs> OnNavigationRequested;
-
-        /// <summary>
-        /// Sets the initial state of the sidebar
-        /// </summary>
-        /// <param name="isExpanded">Whether the sidebar should be expanded</param>
         public void SetInitialState(bool isExpanded)
         {
-            _isSidebarOpen = isExpanded;
             IsSidebarExpanded = isExpanded;
             UpdateSidebarTextVisibility();
+            UpdateToggleIcon(isExpanded);
         }
     }
 

@@ -27,11 +27,6 @@ namespace Urkey.WPF.Views
 
         private bool _isSidebarExpanded;
         private readonly MainViewModel _mainViewModel;
-        private readonly string _burgerIcon = "\uE700";
-        private readonly string _closeIcon = "\uE711";
-
-        private Rect _restoreBounds; // لحفظ موقع وحجم النافذة قبل التكبير
-        private bool _isCustomMaximized = false;
 
         public event PropertyChangedEventHandler PropertyChanged;
         public static event EventHandler<bool> SidebarStateChanged;
@@ -70,7 +65,7 @@ namespace Urkey.WPF.Views
             {
                 delay.Stop();
                 IsSidebarExpanded = expand;
-                BurgerIcon.Text = IsSidebarExpanded ? _closeIcon : _burgerIcon;
+                Sidebar.UpdateToggleIcon(IsSidebarExpanded);
                 UpdateLogoTextVisibility(IsSidebarExpanded);
                 App.Settings.SidebarExpanded = IsSidebarExpanded;
                 SettingsHelper.SaveSettings(App.Settings);
@@ -89,9 +84,9 @@ namespace Urkey.WPF.Views
             var langCode = App.Settings?.Language ?? "en";
             FlowDirection = langCode == "ar" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
 
-            // 📌 أحداث التنقل
             MainContentArea.Navigated += MainContentArea_Navigated;
             Sidebar.OnNavigationRequested += Sidebar_OnNavigationRequested;
+            Sidebar.OnToggleRequested += (_, _) => ToggleSidebar_Click(null!, null!);
 
             // 🎨 طبّق الثيم فقط (اللغة طُبقت قبل الإنشاء)
             ThemeManager.ApplyTheme(App.Settings.Theme);
@@ -106,6 +101,9 @@ namespace Urkey.WPF.Views
 
             // 🧭 التنقل الأولي حسب السيناريو
             NavigateInitialPage(startupPage);
+
+            Closed += (_, _) => IdleLockService.Stop();
+            IdleLockService.Start();
         }
 
         private void NavigateInitialPage(StartupPage startupPage)
@@ -137,12 +135,10 @@ namespace Urkey.WPF.Views
 
         private void NavigateToHome()
         {
-            MainContentArea.Content = new Home
-            {
-                DataContext = _mainViewModel
-            };
+            // Home sets its own HomeViewModel in the constructor — do not overwrite.
+            MainContentArea.Content = new Home();
 
-            _mainViewModel.CurrentPage = NavigationTarget.Home; // MainViewModel.PageType.Home;
+            _mainViewModel.CurrentPage = NavigationTarget.Home;
             UpdateSidebarActiveButton(NavigationTarget.Home);
         }
 
@@ -176,8 +172,7 @@ namespace Urkey.WPF.Views
             {
                 delay.Stop();
                 IsSidebarExpanded = !IsSidebarExpanded;
-                BurgerIcon.Text = IsSidebarExpanded ? _closeIcon : _burgerIcon;
-
+                Sidebar.UpdateToggleIcon(IsSidebarExpanded);
                 UpdateLogoTextVisibility(IsSidebarExpanded);
 
                 App.Settings.SidebarExpanded = IsSidebarExpanded;
@@ -214,21 +209,15 @@ namespace Urkey.WPF.Views
             if (LogoWrapper != null)
                 LogoWrapper.Width = SidebarContainer.Width;
 
-            BurgerIcon.Text = _isSidebarExpanded ? _closeIcon : _burgerIcon;
+            Sidebar.UpdateToggleIcon(_isSidebarExpanded);
             UpdateLogoTextVisibility(_isSidebarExpanded);
             SidebarStateChanged?.Invoke(this, _isSidebarExpanded);
         }
 
         private void UpdateLogoTextVisibility(bool isVisible)
         {
-            if (LogoWrapper != null)
-            {
-                foreach (var child in LogoWrapper.Children)
-                {
-                    if (child is TextBlock text && text.Name == "LogoText")
-                        text.Visibility = isVisible ? Visibility.Visible : Visibility.Hidden;
-                }
-            }
+            if (LogoText != null)
+                LogoText.Visibility = isVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
 

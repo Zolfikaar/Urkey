@@ -13,7 +13,6 @@ namespace Urkey.WPF.Views.Windows
 {
     public partial class AddAccount : Window
     {
-        private readonly VaultService _repo = new ();
         private readonly AccountEntry _entry = new ();
         private bool _passwordShown = false;
         private readonly List<string> _passwordHistory = new();
@@ -24,18 +23,11 @@ namespace Urkey.WPF.Views.Windows
         public AccountEntry ResultEntry => _entry;
 
         public AddAccount()
+            : this("Website")
         {
-            InitializeComponent();
-            
-            DataContext = _entry;
-
-            // Default selection
-            AccountTypeCombo.SelectedIndex = 0; // Website
-            TogglePanels("Website");
-            _lastPasswordSnapshot = string.Empty;
         }
 
-        public AddAccount(string defaultType)
+        public AddAccount(string defaultType, string? initialPassword = null)
         {
             InitializeComponent();
             DataContext = _entry;
@@ -47,21 +39,36 @@ namespace Urkey.WPF.Views.Windows
             {
                 type = "Application";
             }
-            // Try select the matching item by content
+
+            bool selected = false;
             foreach (var item in AccountTypeCombo.Items)
             {
                 if (item is ComboBoxItem cbi && string.Equals(cbi.Content as string, type, StringComparison.OrdinalIgnoreCase))
                 {
                     AccountTypeCombo.SelectedItem = cbi;
                     TogglePanels((cbi.Content as string) ?? "Website");
-                    return;
+                    selected = true;
+                    break;
                 }
             }
 
-            // Fallback to Website
-            AccountTypeCombo.SelectedIndex = 0;
-            TogglePanels("Website");
-            _lastPasswordSnapshot = string.Empty;
+            if (!selected)
+            {
+                AccountTypeCombo.SelectedIndex = 0;
+                TogglePanels("Website");
+            }
+
+            if (!string.IsNullOrEmpty(initialPassword))
+            {
+                PasswordBox.Password = initialPassword;
+                PasswordRevealBox.Text = initialPassword;
+                _lastPasswordSnapshot = initialPassword;
+                _entry.Password = initialPassword;
+            }
+            else
+            {
+                _lastPasswordSnapshot = string.Empty;
+            }
         }
 
         private void OnAccountTypeChanged(object sender, SelectionChangedEventArgs e)
@@ -116,6 +123,7 @@ namespace Urkey.WPF.Views.Windows
             if (!string.IsNullOrEmpty(pwd))
             {
                 ClipboardHelper.CopyText(pwd, App.Settings.ClipboardClearSeconds);
+                ToastService.Success(Loc.Get("Toast_CopiedPassword"));
             }
         }
 
@@ -178,7 +186,14 @@ namespace Urkey.WPF.Views.Windows
                 _lastPasswordSnapshot = _entry.Password;
             }
 
-            _repo.AddEntry(_entry);
+            var validation = EntryValidator.ValidateAccount(_entry);
+            if (!validation.IsValid)
+            {
+                ToastService.Warning(Loc.Get(validation.ErrorResourceKey!));
+                return;
+            }
+
+            // Persistence is handled by the caller / EntryDialogHelper.
             DialogResult = true;
             Close();
         }

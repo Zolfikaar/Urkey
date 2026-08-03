@@ -1,6 +1,4 @@
-﻿using System;
-using System.Formats.Tar;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace Urkey.Core.Models
 {
@@ -13,5 +11,7 @@ namespace Urkey.Core.Models
     public abstract class VaultEntry
     {
         public Guid Id { get; set; } = Guid.NewGuid();
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }

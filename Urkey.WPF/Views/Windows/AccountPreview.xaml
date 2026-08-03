@@ -1,98 +1,284 @@
 <Window x:Class="Urkey.WPF.Views.Windows.AccountPreview"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Account Preview"
-        Height="520" Width="800"
+        Title="{DynamicResource AccountPreviewTitle}"
+        Height="560" Width="560"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize"
-        Background="{DynamicResource BgColor}">
+        MinWidth="480"
+        MinHeight="420"
+        Background="{DynamicResource BgColor}"
+        Foreground="{DynamicResource TextColor}"
+        FlowDirection="{DynamicResource AppFlowDirection}">
     <Window.Resources>
-        <Style x:Key="CircularButtonStyle" TargetType="Button">
+        <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextMutedColor}"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style x:Key="FieldValueStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style x:Key="CopyIconBtnStyle" TargetType="Button">
+            <Setter Property="Width" Value="36"/>
+            <Setter Property="Height" Value="36"/>
+            <Setter Property="Margin" Value="8,0,0,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Width" Value="44"/>
-            <Setter Property="Height" Value="44"/>
-            <Setter Property="Cursor" Value="Hand"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                               CornerRadius="22"
-                               Width="{TemplateBinding Width}"
-                               Height="{TemplateBinding Height}">
-                            <ContentPresenter HorizontalAlignment="Center" 
-                                            VerticalAlignment="Center"/>
+                        <Border x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="8"
+                                Width="{TemplateBinding Width}"
+                                Height="{TemplateBinding Height}">
+                            <Viewbox Width="16" Height="16"
+                                     HorizontalAlignment="Center"
+                                     VerticalAlignment="Center">
+                                <Path Data="{TemplateBinding Tag}"
+                                      Fill="{DynamicResource TextColor}"
+                                      Stretch="Uniform"/>
+                            </Viewbox>
                         </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverColor}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
-                </Trigger>
-            </Style.Triggers>
         </Style>
     </Window.Resources>
 
-    <Border Style="{DynamicResource CardStyle}" Margin="20" Padding="10">
+    <Border Style="{DynamicResource CardStyle}" Margin="20">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
             <!-- Header -->
-            <Grid Grid.Row="0" Height="60" VerticalAlignment="Center">
+            <Grid Grid.Row="0" Margin="0,0,0,16">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-
                 <StackPanel Grid.Column="0">
-                    <TextBlock FontSize="20" 
+                    <TextBlock FontSize="22"
                                FontWeight="Bold"
                                Foreground="{DynamicResource TextColor}"
-                               Text="{Binding ServiceName}"/>
-                    <TextBlock FontSize="12"
-                               Foreground="{DynamicResource SecondaryTextColor}"
-                               Margin="0,4,0,0"
-                               Text="{Binding AccountType}"/>
+                               Text="{Binding ServiceName}"
+                               TextWrapping="Wrap"/>
+                    <Border HorizontalAlignment="Left"
+                            Margin="0,8,0,0"
+                            Padding="10,3"
+                            CornerRadius="10"
+                            Background="{DynamicResource InputBgColor}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1">
+                        <TextBlock FontSize="12"
+                                   Foreground="{DynamicResource PrimaryColor}"
+                                   Text="{Binding AccountType}"/>
+                    </Border>
                 </StackPanel>
-
-                <StackPanel Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Style="{StaticResource CircularButtonStyle}" Click="CloseButton_Click" ToolTip="Close">
-                        <TextBlock Text="✕" FontSize="18" Foreground="{DynamicResource TextColor}"/>
-                    </Button>
-                </StackPanel>
+                <Button Grid.Column="1"
+                        Style="{StaticResource CopyIconBtnStyle}"
+                        Click="CloseButton_Click"
+                        ToolTip="{DynamicResource CloseButton}"
+                        Tag="{x:Null}"
+                        VerticalAlignment="Top">
+                    <Button.Template>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="Bd" Background="Transparent" CornerRadius="18" Width="36" Height="36">
+                                <TextBlock Text="✕" FontSize="16"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           Foreground="{DynamicResource TextColor}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverColor}"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
             </Grid>
 
-            <!-- Details body -->
-            <Grid Grid.Row="1" Margin="0,10,0,0">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                    <RowDefinition Height="Auto"/>
-                </Grid.RowDefinitions>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+                <StackPanel>
+                    <!-- Username -->
+                    <Border Background="{DynamicResource ElevatedBgColor}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="14"
+                            Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{DynamicResource UserNameFieldTitle}" Style="{StaticResource FieldLabelStyle}"/>
+                                <TextBlock x:Name="UsernameValue"
+                                           Text="{Binding Username}"
+                                           Style="{StaticResource FieldValueStyle}"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Style="{StaticResource CopyIconBtnStyle}"
+                                    Tag="{StaticResource bx_copy}"
+                                    ToolTip="{DynamicResource CopyBtnTitle}"
+                                    Click="CopyUsername_Click"
+                                    VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
 
-                <TextBlock Grid.Row="0" Grid.Column="0" Margin="0,0,10,12" FontWeight="Bold" Foreground="{DynamicResource TextColor}" Text="Username:"/>
-                <TextBlock Grid.Row="0" Grid.Column="1" Margin="0,0,0,12" Foreground="{DynamicResource TextColor}" Text="{Binding Username}"/>
+                    <!-- Password -->
+                    <Border Background="{DynamicResource ElevatedBgColor}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="14"
+                            Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{DynamicResource PasswordFieldTitle}" Style="{StaticResource FieldLabelStyle}"/>
+                                <TextBlock x:Name="PasswordMasked"
+                                           Text="••••••••••••"
+                                           FontFamily="Consolas"
+                                           Style="{StaticResource FieldValueStyle}"/>
+                                <TextBlock x:Name="PasswordRevealed"
+                                           Visibility="Collapsed"
+                                           FontFamily="Consolas"
+                                           TextWrapping="Wrap"
+                                           Style="{StaticResource FieldValueStyle}"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Style="{StaticResource CopyIconBtnStyle}"
+                                    Tag="{StaticResource bx_eye}"
+                                    ToolTip="{DynamicResource ShowBtnTitle}"
+                                    Click="TogglePassword_Click"
+                                    VerticalAlignment="Center"/>
+                            <Button Grid.Column="2"
+                                    Style="{StaticResource CopyIconBtnStyle}"
+                                    Tag="{StaticResource bx_copy}"
+                                    ToolTip="{DynamicResource CopyBtnTitle}"
+                                    Click="CopyPassword_Click"
+                                    VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
 
-                <TextBlock Grid.Row="1" Grid.Column="0" Margin="0,0,10,12" FontWeight="Bold" Foreground="{DynamicResource TextColor}" Text="Email:"/>
-                <TextBlock Grid.Row="1" Grid.Column="1" Margin="0,0,0,12" Foreground="{DynamicResource TextColor}" Text="{Binding Email}"/>
+                    <!-- Email -->
+                    <Border Background="{DynamicResource ElevatedBgColor}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="14"
+                            Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{DynamicResource EmailFieldTitle}" Style="{StaticResource FieldLabelStyle}"/>
+                                <TextBlock x:Name="EmailValue"
+                                           Text="{Binding Email}"
+                                           Style="{StaticResource FieldValueStyle}"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Style="{StaticResource CopyIconBtnStyle}"
+                                    Tag="{StaticResource bx_copy}"
+                                    ToolTip="{DynamicResource CopyBtnTitle}"
+                                    Click="CopyEmail_Click"
+                                    VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
 
-                <TextBlock Grid.Row="2" Grid.Column="0" Margin="0,0,10,12" FontWeight="Bold" Foreground="{DynamicResource TextColor}" Text="URL:"/>
-                <TextBlock Grid.Row="2" Grid.Column="1" Margin="0,0,0,12" Foreground="{DynamicResource TextColor}" Text="{Binding Url}" TextWrapping="Wrap"/>
+                    <!-- Website / URL -->
+                    <Border Background="{DynamicResource ElevatedBgColor}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="14"
+                            Margin="0,0,0,10">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="{DynamicResource WebsiteFieldTitle}" Style="{StaticResource FieldLabelStyle}"/>
+                                <TextBlock x:Name="UrlValue"
+                                           Text="{Binding Url}"
+                                           Style="{StaticResource FieldValueStyle}"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Style="{StaticResource CopyIconBtnStyle}"
+                                    Tag="{StaticResource bx_copy}"
+                                    ToolTip="{DynamicResource CopyBtnTitle}"
+                                    Click="CopyUrl_Click"
+                                    VerticalAlignment="Center"/>
+                        </Grid>
+                    </Border>
 
-                <TextBlock Grid.Row="3" Grid.Column="0" Margin="0,0,10,12" FontWeight="Bold" Foreground="{DynamicResource TextColor}" Text="App Path:"/>
-                <TextBlock Grid.Row="3" Grid.Column="1" Margin="0,0,0,12" Foreground="{DynamicResource TextColor}" Text="{Binding ApplicationPath}" TextWrapping="Wrap"/>
-            </Grid>
+                    <!-- Application path -->
+                    <Border Background="{DynamicResource ElevatedBgColor}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="14"
+                            Margin="0,0,0,10">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource AccountsType}" Style="{StaticResource FieldLabelStyle}"/>
+                            <TextBlock Text="{Binding ApplicationPath}" Style="{StaticResource FieldValueStyle}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Notes -->
+                    <Border Background="{DynamicResource ElevatedBgColor}"
+                            BorderBrush="{DynamicResource BorderColor}"
+                            BorderThickness="1"
+                            CornerRadius="10"
+                            Padding="14">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource NotesFieldTitle}" Style="{StaticResource FieldLabelStyle}"/>
+                            <TextBlock Text="{Binding Notes}" Style="{StaticResource FieldValueStyle}"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+
+            <StackPanel Grid.Row="2"
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Right"
+                        Margin="0,16,0,0">
+                <Button Content="{DynamicResource CopyBtnTitle}"
+                        Style="{StaticResource SecondaryBtnStyle}"
+                        MinWidth="110"
+                        Margin="0,0,8,0"
+                        Click="CopyPassword_Click"/>
+                <Button Content="{DynamicResource CloseButton}"
+                        Style="{StaticResource PrimaryBtnStyle}"
+                        MinWidth="110"
+                        IsCancel="True"
+                        IsDefault="True"
+                        Click="CloseButton_Click"/>
+            </StackPanel>
         </Grid>
     </Border>
 </Window>

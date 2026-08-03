@@ -1,9 +1,9 @@
 using System;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using Urkey.WPF.Helpers;
 using Urkey.WPF.Views;
+using Urkey.WPF.Views.Windows;
 using static Urkey.WPF.Views.MainWindow;
 
 namespace Urkey.WPF.Views.Pages
@@ -106,9 +106,83 @@ namespace Urkey.WPF.Views.Pages
             // حفظ التغييرات
             SettingsHelper.SaveSettings(App.Settings);
 
-            // رسالة تأكيد
-            MessageBox.Show(newTheme == "Dark" ? "Dark theme applied" : "Light theme applied");
+            ToastService.Success(Loc.Get(newTheme == "Dark" ? "Theme_Applied_Dark" : "Theme_Applied_Light"));
+        }
 
+        private void OnChangeMasterPasswordClick(object sender, RoutedEventArgs e)
+        {
+            var win = new ChangeMasterPasswordWindow
+            {
+                Owner = Application.Current.MainWindow
+            };
+            win.ShowDialog();
+        }
+
+        private void OnImportPasswordsClick(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Microsoft.Win32.OpenFileDialog
+            {
+                Title = Loc.Get("Import_SelectFileTitle"),
+                Filter = Loc.Get("Import_FileFilter"),
+                CheckFileExists = true,
+                Multiselect = false
+            };
+
+            if (dialog.ShowDialog(Application.Current.MainWindow) != true)
+                return;
+
+            var win = new ImportPasswordsWindow(dialog.FileName)
+            {
+                Owner = Application.Current.MainWindow
+            };
+            win.ShowDialog();
+        }
+
+        private void AutoLockButton_Click(object sender, RoutedEventArgs e)
+        {
+            AutoLockPopup.IsOpen = !AutoLockPopup.IsOpen;
+        }
+
+        private void AutoLock_Selected(object sender, RoutedEventArgs e)
+        {
+            if (sender is not Button button || AutoLockButton == null)
+                return;
+
+            AutoLockButton.Content = button.Content;
+            AutoLockPopup.IsOpen = false;
+
+            App.Settings.AutoLockMinutes = button.Name switch
+            {
+                "AutoLock1" => 1,
+                "AutoLock5" => 5,
+                "AutoLock15" => 15,
+                "AutoLock30" => 30,
+                "AutoLockNever" => 0,
+                _ => App.Settings.AutoLockMinutes
+            };
+
+            SettingsHelper.SaveSettings(App.Settings);
+            IdleLockService.NotifyActivity();
+        }
+
+        private void ApplyAutoLockSettingToUi()
+        {
+            if (AutoLockButton == null)
+                return;
+
+            var key = App.Settings.AutoLockMinutes switch
+            {
+                1 => "AutoLock_1Minute",
+                5 => "AutoLock_5Minutes",
+                15 => "AutoLock_15Minutes",
+                30 => "AutoLock_30Minutes",
+                0 => "AutoLock_Never",
+                _ => "AutoLock_5Minutes"
+            };
+
+            AutoLockButton.Content = TryFindResource(key)
+                                     ?? Application.Current.TryFindResource(key)
+                                     ?? key;
         }
 
         private void SidebarToggle_Loaded(object sender, RoutedEventArgs e)
@@ -177,6 +251,21 @@ namespace Urkey.WPF.Views.Pages
         private void Settings_Loaded(object sender, RoutedEventArgs e)
         {
             ApplyClipboardSettingToUi();
+            ApplyAutoLockSettingToUi();
+
+            if (SignOutButton != null)
+            {
+                SignOutButton.Click -= OnSignOutClick;
+                SignOutButton.Click += OnSignOutClick;
+            }
+        }
+
+        private void OnSignOutClick(object sender, RoutedEventArgs e)
+        {
+            if (!EntryDialogHelper.ConfirmSignOut())
+                return;
+
+            App.LockAndShowUnlockWindow();
         }
 
         private void ClipboardTime_Selected(object sender, RoutedEventArgs e)

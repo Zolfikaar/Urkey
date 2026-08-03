@@ -1,26 +1,24 @@
-﻿using System;
-using System.IO;
+﻿using Urkey.Core.Services;
 
 namespace Urkey.Core.Managers
 {
-
-    public class VaultManager
+    /// <summary>
+    /// Process-wide vault unlock flag. Locking always clears the encryption key.
+    /// </summary>
+    public static class VaultManager
     {
+        public static bool IsUnlocked { get; private set; }
 
-        public bool IsUnlocked { get; private set; }
-
-        public bool Unlock()
+        public static bool Unlock()
         {
             IsUnlocked = true;
             return true;
         }
 
-        public void Lock()
+        public static void Lock()
         {
             IsUnlocked = false;
+            EncryptionService.Clear();
         }
-
-
     }
-
 }

@@ -1,0 +1,16 @@
+<UserControl x:Class="Urkey.WPF.UserControls.ToastHost"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             IsHitTestVisible="False"
+             HorizontalAlignment="Stretch"
+             VerticalAlignment="Bottom">
+    <ItemsControl x:Name="ToastItems"
+                  HorizontalAlignment="Right"
+                  Margin="0,0,0,0">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel Orientation="Vertical" HorizontalAlignment="Right"/>
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+    </ItemsControl>
+</UserControl>

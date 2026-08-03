@@ -1,22 +1,16 @@
-﻿using System;
-using Urkey.Core.Services;
-using Urkey.WPF.Helpers;
+﻿using Urkey.Core.Services;
+
 namespace Urkey.WPF.ViewModels;
 
-    public class UserViewModel
-    {
-        private UserService _userService;
-        public UserViewModel()
-        {
-            _userService = new UserService();
-            
-            // UserService constructor automatically loads user data from user.json via UserRepository
-            // No need to manually load from AppSettings anymore
-        }
+public class UserViewModel
+{
+    private readonly UserService _userService;
 
-    public bool Unlock(string enteredMasterPassword)
+    public UserViewModel()
     {
-        return _userService.NormalSetup(enteredMasterPassword);
+        _userService = new UserService();
     }
-    
+
+    public UserService.UnlockResult Unlock(string enteredMasterPassword)
+        => _userService.Unlock(enteredMasterPassword);
 }

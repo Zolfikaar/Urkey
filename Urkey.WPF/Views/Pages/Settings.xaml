@@ -6,7 +6,9 @@
       xmlns:local="clr-namespace:Urkey.WPF.Views.Pages"
       mc:Ignorable="d"
       Title="{DynamicResource Settings_Title}"
-      Foreground="{DynamicResource TextColor}">
+      Foreground="{DynamicResource TextColor}"
+      Background="{DynamicResource BgColor}"
+      FlowDirection="{DynamicResource AppFlowDirection}">
 
     <Page.Resources>
         <Style TargetType="ScrollBar">
@@ -54,8 +56,8 @@
 
     </Page.Resources>
 
-    <Border
-        Margin="20">
+    <ScrollViewer Margin="{StaticResource PageMargin}"
+                  VerticalScrollBarVisibility="Auto">
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -63,21 +65,15 @@
             </Grid.RowDefinitions>
 
             <!-- Page Header -->
-            <Border Grid.Row="0"
-                    Background="Transparent"
-                    Margin="30,30,30,20">
-                <TextBlock Text="{DynamicResource Settings_Title}"
-                           FontSize="24"
-                           FontWeight="Bold"
-                           VerticalAlignment="Center"/>
-            </Border>
+            <TextBlock Grid.Row="0"
+                       Text="{DynamicResource Settings_Title}"
+                       Style="{StaticResource Text.PageTitle}"
+                       Margin="0,0,0,20"/>
 
             <!-- Settings Content -->
-            <ScrollViewer Grid.Row="1"
-                          VerticalScrollBarVisibility="Auto"
-                          Margin="30,0,30,30">
-                <Grid>
+            <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -92,24 +88,13 @@
                     <Border x:Name="SecurityCard"
                             Grid.Row="0"
                             Grid.Column="0"
-                            CornerRadius="8"
-                            BorderThickness="1"
                             Margin="0,0,15,20"
                             VerticalAlignment="Stretch"
-                            Style="{StaticResource CardStyle}">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                Color="#03000000"
-                                Direction="270"
-                                ShadowDepth="7"
-                                BlurRadius="25"
-                                Opacity=".2"/>
-                        </Border.Effect>
-                        <StackPanel Margin="20">
+                            Style="{StaticResource SettingsCardStyle}">
+                        <StackPanel>
                             <TextBlock Text="{DynamicResource SecuritySettings_Title}"
-                                       FontSize="18"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,20"/>
+                                       Style="{StaticResource Text.SectionTitle}"
+                                       Margin="{StaticResource SectionSpacing}"/>
 
                             <!-- Master Password Change -->
                             <Grid Margin="0,0,0,15">
@@ -120,20 +105,84 @@
 
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="{DynamicResource MasterPassword_Title}"
-                                               FontSize="14"
-                                               FontWeight="SemiBold"
+                                               Style="{StaticResource Text.Body}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{DynamicResource MasterPassword_Description}"
-                                               FontSize="12"
-                                               Foreground="{DynamicResource SecondaryTextColor}"/>
+                                               Style="{StaticResource Text.BodyMuted}"/>
                                 </StackPanel>
 
-                                <Button Grid.Column="1"
+                                <Button x:Name="ChangeMasterPasswordButton"
+                                        Grid.Column="1"
                                         Content="{DynamicResource ChangeBtn}"
                                         Style="{StaticResource PrimaryBtnStyle}"
                                         FontSize="12"
                                         Padding="12,6"
-                                        VerticalAlignment="Center"/>
+                                        VerticalAlignment="Center"
+                                        Click="OnChangeMasterPasswordClick"/>
+                            </Grid>
+
+                            <!-- Auto-lock timeout -->
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{DynamicResource AutoLock_Title}"
+                                               Style="{StaticResource Text.Body}"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="{DynamicResource AutoLock_Description}"
+                                               Style="{StaticResource Text.BodyMuted}"/>
+                                </StackPanel>
+
+                                <Grid Grid.Column="1" VerticalAlignment="Center">
+                                    <Button x:Name="AutoLockButton"
+                                            Content="{DynamicResource AutoLock_5Minutes}"
+                                            Background="{DynamicResource CardBgColor}"
+                                            Foreground="{DynamicResource TextColor}"
+                                            BorderBrush="{DynamicResource BorderColor}"
+                                            BorderThickness="1"
+                                            Padding="12,8"
+                                            MinWidth="120"
+                                            FontSize="12"
+                                            Cursor="Hand"
+                                            Click="AutoLockButton_Click"/>
+                                    <Popup x:Name="AutoLockPopup"
+                                           PlacementTarget="{Binding ElementName=AutoLockButton}"
+                                           Placement="Bottom"
+                                           StaysOpen="False"
+                                           AllowsTransparency="True">
+                                        <Border Background="{DynamicResource CardBgColor}"
+                                                BorderBrush="{DynamicResource BorderColor}"
+                                                BorderThickness="1"
+                                                CornerRadius="8"
+                                                Padding="8"
+                                                MinWidth="150">
+                                            <StackPanel>
+                                                <Button x:Name="AutoLock1"
+                                                        Content="{DynamicResource AutoLock_1Minute}"
+                                                        Margin="0,0,0,4"
+                                                        Click="AutoLock_Selected"/>
+                                                <Button x:Name="AutoLock5"
+                                                        Content="{DynamicResource AutoLock_5Minutes}"
+                                                        Margin="0,0,0,4"
+                                                        Click="AutoLock_Selected"/>
+                                                <Button x:Name="AutoLock15"
+                                                        Content="{DynamicResource AutoLock_15Minutes}"
+                                                        Margin="0,0,0,4"
+                                                        Click="AutoLock_Selected"/>
+                                                <Button x:Name="AutoLock30"
+                                                        Content="{DynamicResource AutoLock_30Minutes}"
+                                                        Margin="0,0,0,4"
+                                                        Click="AutoLock_Selected"/>
+                                                <Button x:Name="AutoLockNever"
+                                                        Content="{DynamicResource AutoLock_Never}"
+                                                        Click="AutoLock_Selected"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </Popup>
+                                </Grid>
                             </Grid>
                         </StackPanel>
                     </Border>
@@ -141,24 +190,13 @@
                     <!-- Language Settings -->
                     <Border Grid.Row="0"
                             Grid.Column="1"
-                            CornerRadius="8"
-                            BorderThickness="1"
                             Margin="15,0,0,20"
                             Height="{Binding ActualHeight, ElementName=SecurityCard}"
-                            Style="{StaticResource CardStyle}">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                Color="#03000000"
-                                Direction="270"
-                                ShadowDepth="7"
-                                BlurRadius="25"
-                                Opacity=".2"/>
-                        </Border.Effect>
-                        <StackPanel Margin="20">
+                            Style="{StaticResource SettingsCardStyle}">
+                        <StackPanel>
                             <TextBlock Text="{DynamicResource LanguageSettings_Title}"
-                                       FontSize="18"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,20"/>
+                                       Style="{StaticResource Text.SectionTitle}"
+                                       Margin="{StaticResource SectionSpacing}"/>
 
                             <Grid Margin="0,0,0,15">
                                 <Grid.ColumnDefinitions>
@@ -168,9 +206,7 @@
 
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="{DynamicResource LanguageSettings_Description}"
-                                               FontSize="12"
-                                               Margin="0,0,0,5"
-                                               Foreground="{DynamicResource SecondaryTextColor}"/>
+                                               Style="{StaticResource Text.BodyMuted}"/>
                                 </StackPanel>
 
                                 <ToggleButton x:Name="LangToggle"
@@ -186,25 +222,14 @@
                     <!-- Theme Settings -->
                     <Border Grid.Row="1"
                             Grid.Column="0"
-                            CornerRadius="8"
-                            BorderThickness="1"
                             Margin="0,0,15,20"
                             Height="{Binding ActualHeight, ElementName=SecurityCard}"
                             Width="{Binding ActualWidth, ElementName=SecurityCard}"
-                            Style="{StaticResource CardStyle}">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                Color="#03000000"
-                                Direction="270"
-                                ShadowDepth="7"
-                                BlurRadius="25"
-                                Opacity=".2"/>
-                        </Border.Effect>
-                        <StackPanel Margin="20">
+                            Style="{StaticResource SettingsCardStyle}">
+                        <StackPanel>
                             <TextBlock Text="{DynamicResource ThemeSettings_Title}"
-                                       FontSize="18"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,20"/>
+                                       Style="{StaticResource Text.SectionTitle}"
+                                       Margin="{StaticResource SectionSpacing}"/>
 
                             <Grid Margin="0,0,0,15">
                                 <Grid.ColumnDefinitions>
@@ -214,9 +239,7 @@
 
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="{DynamicResource ThemeSettings_Description}"
-                                               FontSize="12"
-                                               Margin="0,0,0,5"
-                                               Foreground="{DynamicResource SecondaryTextColor}"/>
+                                               Style="{StaticResource Text.BodyMuted}"/>
                                 </StackPanel>
 
                                 <Button x:Name="ThemeToggle"
@@ -234,24 +257,13 @@
                     <!-- Sidebar Default State Toggle -->
                     <Border Grid.Row="1"
                             Grid.Column="1"
-                            CornerRadius="8"
-                            BorderThickness="1"
                             Margin="15,0,0,20"
                             Height="{Binding ActualHeight, ElementName=SecurityCard}"
-                            Style="{StaticResource CardStyle}">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                Color="#03000000"
-                                Direction="270"
-                                ShadowDepth="7"
-                                BlurRadius="25"
-                                Opacity=".2"/>
-                        </Border.Effect>
-                        <StackPanel Margin="20">
+                            Style="{StaticResource SettingsCardStyle}">
+                        <StackPanel>
                             <TextBlock Text="{DynamicResource SidebarSettings_Title}"
-                                       FontSize="18"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,20"/>
+                                       Style="{StaticResource Text.SectionTitle}"
+                                       Margin="{StaticResource SectionSpacing}"/>
 
                             <Grid Margin="0,0,0,15">
                                 <Grid.ColumnDefinitions>
@@ -261,12 +273,10 @@
 
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="{DynamicResource SidebarSettings_DefaultState}"
-                                               FontSize="14"
-                                               FontWeight="SemiBold"
+                                               Style="{StaticResource Text.Body}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{DynamicResource SidebarSettings_Description}"
-                                               FontSize="12"
-                                               Foreground="{DynamicResource SecondaryTextColor}"/>
+                                               Style="{StaticResource Text.BodyMuted}"/>
                                 </StackPanel>
 
                                 <ToggleButton x:Name="SidebarToggle"
@@ -283,25 +293,14 @@
                     <!-- Clipboard Clear Time -->
                     <Border Grid.Row="2"
                             Grid.Column="0"
-                            CornerRadius="8"
-                            BorderThickness="1"
                             Margin="0,0,15,20"
                             Height="{Binding ActualHeight, ElementName=SecurityCard}"
                             Width="{Binding ActualWidth, ElementName=SecurityCard}"
-                            Style="{StaticResource CardStyle}">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                Color="#03000000"
-                                Direction="270"
-                                ShadowDepth="7"
-                                BlurRadius="25"
-                                Opacity=".2"/>
-                        </Border.Effect>
-                        <StackPanel Margin="20">
+                            Style="{StaticResource SettingsCardStyle}">
+                        <StackPanel>
                             <TextBlock Text="{DynamicResource ClipboardSettings_Title}"
-                                       FontSize="18"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,20"/>
+                                       Style="{StaticResource Text.SectionTitle}"
+                                       Margin="{StaticResource SectionSpacing}"/>
 
                             <Grid Margin="0,0,0,15">
                                 <Grid.ColumnDefinitions>
@@ -311,12 +310,10 @@
 
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="{DynamicResource ClipboardSettings_ClearAfter}"
-                                               FontSize="14"
-                                               FontWeight="SemiBold"
+                                               Style="{StaticResource Text.Body}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{DynamicResource ClipboardSettings_Description}"
-                                               FontSize="12"
-                                               Foreground="{DynamicResource SecondaryTextColor}"/>
+                                               Style="{StaticResource Text.BodyMuted}"/>
                                 </StackPanel>
 
                                 <Grid Grid.Column="1"
@@ -440,24 +437,13 @@
                     <!-- User Account -->
                     <Border Grid.Row="2"
                             Grid.Column="1"
-                            CornerRadius="8"
-                            BorderThickness="1"
                             Margin="15,0,0,20"
                             Height="{Binding ActualHeight, ElementName=SecurityCard}"
-                            Style="{StaticResource CardStyle}">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                Color="#03000000"
-                                Direction="270"
-                                ShadowDepth="7"
-                                BlurRadius="25"
-                                Opacity=".2"/>
-                        </Border.Effect>
-                        <StackPanel Margin="20">
+                            Style="{StaticResource SettingsCardStyle}">
+                        <StackPanel>
                             <TextBlock Text="{DynamicResource UserAccount_Title}"
-                                       FontSize="18"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,20"/>
+                                       Style="{StaticResource Text.SectionTitle}"
+                                       Margin="{StaticResource SectionSpacing}"/>
 
                             <Grid Margin="0,0,0,15">
                                 <Grid.ColumnDefinitions>
@@ -468,12 +454,10 @@
                                 <StackPanel Grid.Column="0">
                                     <TextBlock x:Name="AccountNameText"
                                                Text="{DynamicResource UserAccount_Name}"
-                                               FontSize="14"
-                                               FontWeight="SemiBold"
+                                               Style="{StaticResource Text.Body}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{DynamicResource UserAccount_Description}"
-                                               FontSize="12"
-                                               Foreground="{DynamicResource SecondaryTextColor}"/>
+                                               Style="{StaticResource Text.BodyMuted}"/>
                                 </StackPanel>
 
                                 <Button x:Name="SignOutButton"
@@ -490,25 +474,14 @@
                     <!-- Autosave and Autofill -->
                     <Border Grid.Row="3"
                             Grid.Column="0"
-                            CornerRadius="8"
-                            BorderThickness="1"
-                            Margin="0,0,15,0"
+                            Margin="0,0,15,20"
                             Height="{Binding ActualHeight, ElementName=SecurityCard}"
                             Width="{Binding ActualWidth, ElementName=SecurityCard}"
-                            Style="{StaticResource CardStyle}">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                Color="#03000000"
-                                Direction="270"
-                                ShadowDepth="7"
-                                BlurRadius="25"
-                                Opacity=".2"/>
-                        </Border.Effect>
-                        <StackPanel Margin="20">
+                            Style="{StaticResource SettingsCardStyle}">
+                        <StackPanel>
                             <TextBlock Text="{DynamicResource AutosaveAutofill_Title}"
-                                       FontSize="18"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,20"/>
+                                       Style="{StaticResource Text.SectionTitle}"
+                                       Margin="{StaticResource SectionSpacing}"/>
 
                             <StackPanel>
                                 <CheckBox x:Name="AutosavePasswordsCheck"
@@ -552,24 +525,13 @@
                     <!-- Sync Across Devices -->
                     <Border Grid.Row="3"
                             Grid.Column="1"
-                            CornerRadius="8"
-                            BorderThickness="1"
-                            Margin="15,0,0,0"
+                            Margin="15,0,0,20"
                             Height="{Binding ActualHeight, ElementName=SecurityCard}"
-                            Style="{StaticResource CardStyle}">
-                        <Border.Effect>
-                            <DropShadowEffect
-                                Color="#03000000"
-                                Direction="270"
-                                ShadowDepth="7"
-                                BlurRadius="25"
-                                Opacity=".2"/>
-                        </Border.Effect>
-                        <StackPanel Margin="20">
+                            Style="{StaticResource SettingsCardStyle}">
+                        <StackPanel>
                             <TextBlock Text="{DynamicResource SyncSettings_Title}"
-                                       FontSize="18"
-                                       FontWeight="SemiBold"
-                                       Margin="0,0,0,20"/>
+                                       Style="{StaticResource Text.SectionTitle}"
+                                       Margin="{StaticResource SectionSpacing}"/>
 
                             <Grid Margin="0,0,0,15">
                                 <Grid.ColumnDefinitions>
@@ -579,12 +541,10 @@
 
                                 <StackPanel Grid.Column="0">
                                     <TextBlock Text="{DynamicResource SyncSettings_SyncDevices}"
-                                               FontSize="14"
-                                               FontWeight="SemiBold"
+                                               Style="{StaticResource Text.Body}"
                                                Margin="0,0,0,5"/>
                                     <TextBlock Text="{DynamicResource SyncSettings_Description}"
-                                               FontSize="12"
-                                               Foreground="{DynamicResource SecondaryTextColor}"
+                                               Style="{StaticResource Text.BodyMuted}"
                                                TextWrapping="Wrap"/>
                                 </StackPanel>
 
@@ -595,10 +555,46 @@
                             </Grid>
                         </StackPanel>
                     </Border>
-                </Grid>
 
+                    <!-- Import Passwords -->
+                    <Border Grid.Row="4"
+                            Grid.Column="0"
+                            Margin="0,0,15,0"
+                            Height="{Binding ActualHeight, ElementName=SecurityCard}"
+                            Width="{Binding ActualWidth, ElementName=SecurityCard}"
+                            Style="{StaticResource SettingsCardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource ImportSettings_Title}"
+                                       Style="{StaticResource Text.SectionTitle}"
+                                       Margin="{StaticResource SectionSpacing}"/>
 
-            </ScrollViewer>
+                            <Grid Margin="0,0,0,15">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{DynamicResource ImportSettings_Heading}"
+                                               Style="{StaticResource Text.Body}"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="{DynamicResource ImportSettings_Description}"
+                                               Style="{StaticResource Text.BodyMuted}"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <Button x:Name="ImportPasswordsButton"
+                                        Grid.Column="1"
+                                        Content="{DynamicResource Import_Button}"
+                                        Style="{StaticResource PrimaryBtnStyle}"
+                                        FontSize="12"
+                                        Padding="12,6"
+                                        VerticalAlignment="Center"
+                                        Click="OnImportPasswordsClick"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+            </Grid>
         </Grid>
-    </Border>
+    </ScrollViewer>
 </Page>

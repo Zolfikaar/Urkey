@@ -11,6 +11,7 @@ using System.Windows.Input;
 using Urkey.Core.Models;
 using Urkey.Core.Services;
 using Urkey.WPF.Commands;
+using Urkey.WPF.Helpers;
 using Urkey.WPF.Views.Windows;
 
 namespace Urkey.WPF.ViewModels
@@ -54,6 +55,8 @@ namespace Urkey.WPF.ViewModels
 
         public bool IsGridView => !_isListView;
 
+        public bool IsEmpty => !FilteredAccounts.Cast<object>().Any();
+
         private string _searchText = string.Empty;
         public string SearchText
         {
@@ -64,6 +67,7 @@ namespace Urkey.WPF.ViewModels
                 OnPropertyChanged(nameof(SearchText));
                 FilteredAccounts.Refresh();
                 EnsureSelectionVisible();
+                OnPropertyChanged(nameof(IsEmpty));
             }
         }
 
@@ -77,6 +81,7 @@ namespace Urkey.WPF.ViewModels
                 OnPropertyChanged(nameof(SelectedCategory));
                 FilteredAccounts.Refresh();
                 EnsureSelectionVisible();
+                OnPropertyChanged(nameof(IsEmpty));
             }
         }
 
@@ -110,7 +115,7 @@ namespace Urkey.WPF.ViewModels
             OpenAccountCommand = new RelayCommand<AccountEntry>(OpenAccount, CanOpenAccount);
         }
 
-        private void Reload()
+        public void Reload()
         {
             _vault = _vaultService.LoadVault();
 
@@ -124,6 +129,7 @@ namespace Urkey.WPF.ViewModels
 
             RebuildCategories();
             FilteredAccounts.Refresh();
+            OnPropertyChanged(nameof(IsEmpty));
         }
 
         private void ToggleFavorite()
@@ -148,7 +154,14 @@ namespace Urkey.WPF.ViewModels
 
             if (editor.ShowDialog() == true)
             {
-                _vaultService.Save();
+                var validation = EntryValidator.ValidateAccount(SelectedAccount);
+                if (!validation.IsValid)
+                {
+                    ToastService.Warning(Loc.Get(validation.ErrorResourceKey!));
+                    return;
+                }
+
+                _vaultService.UpdateEntry(SelectedAccount);
                 Reload();
             }
         }
@@ -157,25 +170,11 @@ namespace Urkey.WPF.ViewModels
         {
             if (SelectedAccount == null) return;
 
-            var result = MessageBox.Show(
-                $"Delete account \"{SelectedAccount.ServiceName}\"?",
-                "Confirm delete",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning);
+            if (!EntryDialogHelper.ConfirmDelete(SelectedAccount.ServiceName))
+                return;
 
-            if (result != MessageBoxResult.Yes) return;
-
-            var target = _vault.Entries.FirstOrDefault(e => e.Id == SelectedAccount.Id);
-            if (target != null)
-            {
-                _vault.Entries.Remove(target);
-                _vaultService.Save();
-            }
-
-            Accounts.Remove(SelectedAccount);
-            SelectedAccount = Accounts.FirstOrDefault();
-            RebuildCategories();
-            FilteredAccounts.Refresh();
+            _vaultService.RemoveEntry(SelectedAccount.Id);
+            Reload();
         }
 
         private bool OnFilterAccount(object obj)
@@ -241,7 +240,7 @@ namespace Urkey.WPF.ViewModels
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Open failed");
+                ToastService.Error(ex.Message);
             }
         }
 
@@ -265,40 +264,26 @@ namespace Urkey.WPF.ViewModels
             // Check if account already exists in vault
             var existingEntry = _vault.Entries.FirstOrDefault(e => e.Id == entry.Id);
             
-            if (existingEntry is AccountEntry existingAccount)
+            var validation = EntryValidator.ValidateAccount(entry);
+            if (!validation.IsValid)
             {
-                // Update existing entry properties
-                existingAccount.ServiceName = entry.ServiceName;
-                existingAccount.Username = entry.Username;
-                existingAccount.Password = entry.Password;
-                existingAccount.Email = entry.Email;
-                existingAccount.Url = entry.Url;
-                existingAccount.ApplicationPath = entry.ApplicationPath;
-                existingAccount.Notes = entry.Notes;
-                existingAccount.AccountType = entry.AccountType;
-                existingAccount.LicenseKey = entry.LicenseKey;
-                existingAccount.Category = entry.Category;
-                // Preserve IsFavorite when updating
+                ToastService.Warning(Loc.Get(validation.ErrorResourceKey!));
+                return;
+            }
 
-                // Update in Accounts collection - find and replace
-                var existingInCollection = Accounts.FirstOrDefault(a => a.Id == entry.Id);
-                if (existingInCollection != null)
-                {
-                    var index = Accounts.IndexOf(existingInCollection);
-                    Accounts[index] = existingAccount;
-                }
+            if (existingEntry is AccountEntry)
+            {
+                bool wasFavorite = ((AccountEntry)existingEntry).IsFavorite;
+                entry.IsFavorite = wasFavorite;
+                _vaultService.UpdateEntry(entry);
             }
             else
             {
-                // Add new entry
-                _vault.Entries.Add(entry);
-                Accounts.Add(entry);
+                _vaultService.AddEntry(entry);
             }
 
-            _vaultService.Save();
-            RebuildCategories();
-            FilteredAccounts.Refresh();
-            SelectedAccount = entry;
+            Reload();
+            SelectedAccount = Accounts.FirstOrDefault(a => a.Id == entry.Id);
         }
     }
 }

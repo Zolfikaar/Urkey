@@ -25,8 +25,8 @@ namespace Urkey.WPF.Helpers
                 SaveSettings(settings);
             }
 
-            // نحمل كلمة المرور من التخزين الآمن (إن وجدت)
-            settings.MasterPassword = SecureStorage.LoadSecure("MasterPassword");
+            // DPAPI master-password storage is intentionally disabled (Phase 1 decision).
+            settings.MasterPassword = null;
 
             return settings;
         }
@@ -35,13 +35,10 @@ namespace Urkey.WPF.Helpers
         {
             Directory.CreateDirectory(Path.GetDirectoryName(_settingsPath)!);
 
-            // نحفظ الإعدادات العامة فقط
+            // Persist non-secret settings only — never write the master password.
+            settings.MasterPassword = null;
             string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
             File.WriteAllText(_settingsPath, json);
-
-            // نخزن كلمة المرور إن وُجدت
-            if (!string.IsNullOrEmpty(settings.MasterPassword))
-                SecureStorage.SaveSecure("MasterPassword", settings.MasterPassword);
         }
     }
 }

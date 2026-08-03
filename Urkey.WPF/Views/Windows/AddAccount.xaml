@@ -11,6 +11,7 @@
         
         Width="520"
         Background="{DynamicResource BgColor}"
+        Foreground="{DynamicResource TextColor}"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize"
         SizeToContent="Manual"
@@ -109,8 +110,11 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Grid.Column="0" Text="{DynamicResource AccountTypeTitle}"/>
-                <ComboBox x:Name="AccountTypeCombo" Grid.Column="1" SelectionChanged="OnAccountTypeChanged" Height="40">
-                    <ComboBoxItem Content="{DynamicResource WebsiteType}"/>
+                <ComboBox x:Name="AccountTypeCombo"
+                          Grid.Column="1"
+                          Style="{StaticResource FormComboBoxStyle}"
+                          SelectionChanged="OnAccountTypeChanged">
+                    <ComboBoxItem Content="{DynamicResource AccountTypeWebsite}"/>
                     <ComboBoxItem Content="{DynamicResource AccountsType}"/>
                     <ComboBoxItem Content="{DynamicResource OtherType}"/>
                 </ComboBox>
@@ -259,7 +263,7 @@
                     <ToggleButton Content="{DynamicResource DisabledText}" Width="90" Style="{DynamicResource PrimaryToggleButtonStyle}"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" DockPanel.Dock="Right" HorizontalAlignment="Right">
-                    <Button Content="{DynamicResource CancelBtnTitle}"
+                    <Button Content="{DynamicResource CancelButton}"
                             Style="{DynamicResource SecondaryBtnStyle}"
                             MinWidth="90" Height="50"
                             Click="OnCancelClick"

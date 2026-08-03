@@ -1,14 +1,9 @@
-﻿using System.Collections.Generic;
-
-namespace Urkey.Core.Models
+﻿namespace Urkey.Core.Models
 {
     public class Vault
     {
-        public List<VaultEntry> Entries { get; set; } = new List<VaultEntry>();
-        
-        // public Guid Id { get; set; } = Guid.NewGuid();
-         public string Title { get; set; } = string.Empty;
-        
-        
+        public List<VaultEntry> Entries { get; set; } = new();
+        public string Title { get; set; } = "Urkey Vault";
+        public List<ActivityLogEntry> ActivityLog { get; set; } = new();
     }
 }

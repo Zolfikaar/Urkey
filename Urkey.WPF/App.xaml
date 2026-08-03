@@ -7,19 +7,18 @@
         <ResourceDictionary>
             <!-- Global converters -->
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibility" />
+            <conv:InverseBoolToVisibilityConverter x:Key="InverseBoolToVisibility" />
+            <conv:LocaleDateConverter x:Key="LocaleDate" />
+            <conv:LocaleNumberConverter x:Key="LocaleNumber" />
             <ResourceDictionary.MergedDictionaries>
-                
-                <!-- 🎨 موارد خاصة اخرى -->
                 <ResourceDictionary Source="Resources/Colors.xaml"/>
                 <ResourceDictionary Source="Resources/Brushes.xaml"/>
+                <ResourceDictionary Source="Resources/Spacing.xaml"/>
+                <ResourceDictionary Source="Resources/Typography.xaml"/>
                 <ResourceDictionary Source="Resources/Icons.xaml"/>
                 <ResourceDictionary Source="Resources/Fonts.xaml"/>
                 <ResourceDictionary Source="Resources/Styles.xaml"/>
-                <!-- 🌐 اللغة الافتراضية -->
                 <ResourceDictionary Source="Resources/Languages/Strings.en.xaml"/>
-                
-
-                
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

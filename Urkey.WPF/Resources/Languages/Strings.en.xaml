@@ -1,12 +1,55 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+    <!-- App -->
     <sys:String x:Key="AppTitle">Urkey</sys:String>
+    <FlowDirection x:Key="AppFlowDirection">LeftToRight</FlowDirection>
+
+    <!-- Common actions -->
     <sys:String x:Key="AddButton">Add</sys:String>
     <sys:String x:Key="CancelButton">Cancel</sys:String>
-    <sys:String x:Key="Settings_Title">Settings</sys:String>
-    <sys:String x:Key="MainWindowTitle">Urkey</sys:String>
     <sys:String x:Key="ChangeBtn">Change</sys:String>
+    <sys:String x:Key="SaveBtnTitle">Save</sys:String>
+    <sys:String x:Key="EditButton">Edit</sys:String>
+    <sys:String x:Key="DeleteButton">Delete</sys:String>
+    <sys:String x:Key="DownloadButton">Download</sys:String>
+    <sys:String x:Key="ReloadButton">Reload</sys:String>
+    <sys:String x:Key="ShowBtnTitle">Show</sys:String>
+    <sys:String x:Key="CopyBtnTitle">Copy</sys:String>
+    <sys:String x:Key="SignOutButton">Sign Out</sys:String>
+
+    <!-- Navigation / page titles -->
+    <sys:String x:Key="HomeTitle">Home</sys:String>
+    <sys:String x:Key="AllEntriesTitle">All Entries</sys:String>
+    <sys:String x:Key="AccountsTitle">Accounts</sys:String>
+    <sys:String x:Key="BankCardsTitle">Bank Cards</sys:String>
+    <sys:String x:Key="AddressesTitle">Addresses</sys:String>
+    <sys:String x:Key="NotesTitle">Notes</sys:String>
+    <sys:String x:Key="DocumentsTitle">Documents</sys:String>
+    <sys:String x:Key="PasswordCheckTitle">Password Check</sys:String>
+    <sys:String x:Key="PasswordGeneratorTitle">Password Generator</sys:String>
+    <sys:String x:Key="Settings_Title">Settings</sys:String>
+
+    <!-- Chrome -->
+    <sys:String x:Key="SearchPlaceholder">Search</sys:String>
+    <sys:String x:Key="SidebarToggleLabel">Toggle sidebar</sys:String>
+    <sys:String x:Key="SidebarCollapseLabel">Collapse sidebar</sys:String>
+    <sys:String x:Key="SidebarExpandLabel">Expand sidebar</sys:String>
+    <sys:String x:Key="EmptyStateTitle">Nothing here yet</sys:String>
+    <sys:String x:Key="EmptyStateSubtitle">Items you add will show up in this view.</sys:String>
+    <sys:String x:Key="CloseButton">Close</sys:String>
+
+    <!-- Home -->
+    <sys:String x:Key="WelcomeHomeText">Welcome to password manager</sys:String>
+    <sys:String x:Key="WelcomeSubtitle">Secure and organized management of all your passwords.</sys:String>
+    <sys:String x:Key="PasswordsTotal">Total Passwords</sys:String>
+    <sys:String x:Key="VaultsTotal">Vaults</sys:String>
+    <sys:String x:Key="SecurityPoints">Security Score</sys:String>
+    <sys:String x:Key="RecentActivityTitle">Recent Activity</sys:String>
+    <sys:String x:Key="RecentActivityEmpty">No recent activity</sys:String>
+
+    <!-- Settings -->
     <sys:String x:Key="LanguageSettings_Title">Language Settings</sys:String>
     <sys:String x:Key="LanguageSettings_Description">Change the main application language</sys:String>
     <sys:String x:Key="SecuritySettings_Title">Security Settings</sys:String>
@@ -14,36 +57,11 @@
     <sys:String x:Key="MasterPassword_Description">Change the master password to protect all passwords</sys:String>
     <sys:String x:Key="ThemeSettings_Title">Theme Settings</sys:String>
     <sys:String x:Key="ThemeSettings_Description">Change the main application background color</sys:String>
-    <sys:String x:Key="Username">Username</sys:String>
-    <sys:String x:Key="Profile">Profile</sys:String>
-    <sys:String x:Key="Logout">Logout</sys:String>
-    <!-- Sidebar titles -->
-    <sys:String x:Key="HomeTitle">Home</sys:String>
-    <sys:String x:Key="AllEntriesTitle">All Entries</sys:String>
-    <sys:String x:Key="AccountsTitle">Accounts</sys:String>
-    <sys:String x:Key="BankCardsTitle">Bank Cards</sys:String>
-    <sys:String x:Key="AddressesTitle">Addresses</sys:String>
-    <sys:String x:Key="NotesTitle">Notes</sys:String>
-    <sys:String x:Key="DocsTitle">Documents</sys:String>
-    <sys:String x:Key="PasswordCheckTitle">Password Check</sys:String>
-    <sys:String x:Key="PasswordGeneratorTitle">Password Generator</sys:String>
-    <sys:String x:Key="SettingsTitle">Settings</sys:String>
-    
-
-    <!-- Home Page Translations -->
-    <sys:String x:Key="WelcomeHomeText">Welcome to password manager</sys:String>
-    <sys:String x:Key="WelcomeSubtitle">Secure and organized management of all your passwords.</sys:String>
-    <sys:String x:Key="PasswordsTotal">Total Passwords</sys:String>
-    <sys:String x:Key="VaultsTotal">Valuts</sys:String>
-    <sys:String x:Key="SecurityPoints">Security Points</sys:String>
-
-    <!-- Settings Page Translations -->
     <sys:String x:Key="SidebarSettings_Title">Sidebar Settings</sys:String>
     <sys:String x:Key="SidebarSettings_DefaultState">Default Sidebar State</sys:String>
     <sys:String x:Key="SidebarSettings_Description">Set the default expanded state of the sidebar</sys:String>
     <sys:String x:Key="SidebarState_Expanded">Expanded</sys:String>
     <sys:String x:Key="SidebarState_Shrunk">Shrunk</sys:String>
-
     <sys:String x:Key="ClipboardSettings_Title">Clipboard Settings</sys:String>
     <sys:String x:Key="ClipboardSettings_ClearAfter">Clear Clipboard After</sys:String>
     <sys:String x:Key="ClipboardSettings_Description">Automatically clear clipboard after specified time</sys:String>
@@ -51,12 +69,11 @@
     <sys:String x:Key="ClipboardTime_30Seconds">30 seconds</sys:String>
     <sys:String x:Key="ClipboardTime_1Minute">1 minute</sys:String>
     <sys:String x:Key="ClipboardTime_Never">Never</sys:String>
-
     <sys:String x:Key="UserAccount_Title">User Account</sys:String>
     <sys:String x:Key="UserAccount_Name">Guest User</sys:String>
     <sys:String x:Key="UserAccount_Description">Manage your account settings</sys:String>
-    <sys:String x:Key="SignOutButton">Sign Out</sys:String>
-
+    <sys:String x:Key="Username">Username</sys:String>
+    <sys:String x:Key="Profile">Profile</sys:String>
     <sys:String x:Key="AutosaveAutofill_Title">Autosave &amp; Autofill</sys:String>
     <sys:String x:Key="AutosavePasswords">Autosave Passwords</sys:String>
     <sys:String x:Key="AutofillPasswords">Autofill Passwords</sys:String>
@@ -64,15 +81,66 @@
     <sys:String x:Key="AutofillAddresses">Autofill Addresses</sys:String>
     <sys:String x:Key="AutosaveBankCards">Autosave Bank Cards</sys:String>
     <sys:String x:Key="AutofillBankCards">Autofill Bank Cards</sys:String>
-
     <sys:String x:Key="SyncSettings_Title">Sync Settings</sys:String>
     <sys:String x:Key="SyncSettings_SyncDevices">Sync Across Devices</sys:String>
     <sys:String x:Key="SyncSettings_Description">Sync your passwords and data across all your devices</sys:String>
+    <sys:String x:Key="Settings_ChangeLanguage">Change Language</sys:String>
 
-    <!-- Forms Translations -->
-    <sys:String x:Key="CancelBtnTitle">Cancel</sys:String>
-    <sys:String x:Key="SaveBtnTitle">Save</sys:String>
-    <!-- Add Account Form Fields Translations -->
+    <!-- Import passwords -->
+    <sys:String x:Key="ImportSettings_Title">Import Passwords</sys:String>
+    <sys:String x:Key="ImportSettings_Heading">Import from a file</sys:String>
+    <sys:String x:Key="ImportSettings_Description">Import accounts from a CSV or TXT export (Chrome, Kaspersky, and similar)</sys:String>
+    <sys:String x:Key="Import_Button">Import</sys:String>
+    <sys:String x:Key="Import_WindowTitle">Import Passwords</sys:String>
+    <sys:String x:Key="Import_SelectFileTitle">Select password export file</sys:String>
+    <sys:String x:Key="Import_FileFilter">CSV or Text files|*.csv;*.txt|All files|*.*</sys:String>
+    <sys:String x:Key="Import_Parsing">Reading and parsing the file…</sys:String>
+    <sys:String x:Key="Import_Importing">Encrypting and saving entries…</sys:String>
+    <sys:String x:Key="Import_Continue">Continue</sys:String>
+    <sys:String x:Key="Import_Confirm">Import selected</sys:String>
+    <sys:String x:Key="Import_Done">Done</sys:String>
+    <sys:String x:Key="Import_SelectAll">Select all</sys:String>
+    <sys:String x:Key="Import_DeselectAll">Deselect all</sys:String>
+    <sys:String x:Key="Import_Mapping_Description">We could not confidently match the columns. Choose which column maps to each field.</sys:String>
+    <sys:String x:Key="Import_Mapping_Name">Name / title</sys:String>
+    <sys:String x:Key="Import_Mapping_Url">URL / website</sys:String>
+    <sys:String x:Key="Import_Mapping_Username">Username / login</sys:String>
+    <sys:String x:Key="Import_Mapping_Email">Email</sys:String>
+    <sys:String x:Key="Import_Mapping_Password">Password</sys:String>
+    <sys:String x:Key="Import_Mapping_Notes">Notes / comment</sys:String>
+    <sys:String x:Key="Import_Mapping_None">(None)</sys:String>
+    <sys:String x:Key="Import_Preview_Subtitle">Review entries before importing. Passwords are masked.</sys:String>
+    <sys:String x:Key="Import_Preview_Count">{0} entries ready ({1} likely duplicates)</sys:String>
+    <sys:String x:Key="Import_Duplicate">Duplicate</sys:String>
+    <sys:String x:Key="Import_Duplicates_Global">For all duplicates:</sys:String>
+    <sys:String x:Key="Import_Dup_Skip">Skip</sys:String>
+    <sys:String x:Key="Import_Dup_ImportAnyway">Import anyway</sys:String>
+    <sys:String x:Key="Import_Dup_Overwrite">Overwrite</sys:String>
+    <sys:String x:Key="Import_Summary_Title">Import complete</sys:String>
+    <sys:String x:Key="Import_Summary_Subtitle">Summary of the import operation</sys:String>
+    <sys:String x:Key="Import_Summary_Imported">{0} entries imported</sys:String>
+    <sys:String x:Key="Import_Summary_Skipped">{0} skipped as duplicates</sys:String>
+    <sys:String x:Key="Import_Summary_Overwritten">{0} overwritten</sys:String>
+    <sys:String x:Key="Import_Summary_Failed">{0} failed</sys:String>
+    <sys:String x:Key="Import_Summary_FailureLine">Row {0}: {1}</sys:String>
+    <sys:String x:Key="Import_Summary_MoreFailures">…and {0} more</sys:String>
+    <sys:String x:Key="Import_SecureDelete">Securely delete the original import file from disk</sys:String>
+    <sys:String x:Key="Import_SecureDelete_Hint">Recommended. The file contains passwords in plain text.</sys:String>
+    <sys:String x:Key="Import_SecureDelete_Failed">Could not securely delete the import file. You should delete it manually.</sys:String>
+    <sys:String x:Key="Import_Error_EmptyFile">The selected file is empty.</sys:String>
+    <sys:String x:Key="Import_Error_UnrecognizedFormat">The file format was not recognized or is malformed.</sys:String>
+    <sys:String x:Key="Import_Error_Encoding">Could not read the file encoding.</sys:String>
+    <sys:String x:Key="Import_Error_FileNotFound">The selected file could not be found.</sys:String>
+    <sys:String x:Key="Import_Error_ReadFailed">Could not read the selected file.</sys:String>
+    <sys:String x:Key="Import_Error_PasswordColumnRequired">Please select which column contains the password.</sys:String>
+    <sys:String x:Key="Import_Error_NoValidEntries">No valid entries were found to import ({0} rows failed).</sys:String>
+    <sys:String x:Key="Import_Error_NothingSelected">Select at least one entry to import.</sys:String>
+    <sys:String x:Key="Import_Error_SaveFailed">Could not save imported entries to the vault.</sys:String>
+    <sys:String x:Key="Import_FailReason_EmptyRow">Empty row</sys:String>
+    <sys:String x:Key="Import_FailReason_Validation">Failed validation</sys:String>
+    <sys:String x:Key="Import_FailReason_MissingPassword">Missing password</sys:String>
+
+    <!-- Form fields -->
     <sys:String x:Key="AccountNameFieldTitle">Account Name</sys:String>
     <sys:String x:Key="UserNameFieldTitle">User Name</sys:String>
     <sys:String x:Key="PasswordFieldTitle">Password</sys:String>
@@ -81,16 +149,12 @@
     <sys:String x:Key="NotesFieldTitle">Notes</sys:String>
     <sys:String x:Key="AccountTypeTitle">Application Type</sys:String>
     <sys:String x:Key="LicenseKeyFieldTitle">License Key (optional)</sys:String>
-    
-    
-    <!-- Add Bank Card Form Fields Translations -->
     <sys:String x:Key="CardNameFieldTitle">Card Name</sys:String>
     <sys:String x:Key="CardNumberFieldTitle">Card Number</sys:String>
     <sys:String x:Key="ExpiryDateFieldTitle">Expiry Date</sys:String>
     <sys:String x:Key="CvvFieldTitle">CVV</sys:String>
     <sys:String x:Key="BankFieldTitle">Bank</sys:String>
-
-    <!-- Add Document Form Fields Translations -->
+    <sys:String x:Key="PinFieldTitle">PIN</sys:String>
     <sys:String x:Key="DocumentNameFieldTitle">Document Name</sys:String>
     <sys:String x:Key="TypeFieldTitle">Type</sys:String>
     <sys:String x:Key="NumberFieldTitle">Number</sys:String>
@@ -98,31 +162,21 @@
     <sys:String x:Key="DocumentImageTitle">Document Image</sys:String>
     <sys:String x:Key="MaxImageSizeTitle">⚠️ Max image size: 500 KB</sys:String>
     <sys:String x:Key="AttachImageTitle">Attach Image</sys:String>
-    
-
-    <!-- Add Address Form Fields Translations -->
     <sys:String x:Key="AddressNameFieldTitle">Name</sys:String>
     <sys:String x:Key="StreetFieldTitle">Street</sys:String>
     <sys:String x:Key="CityFieldTitle">City</sys:String>
     <sys:String x:Key="GovernorateFieldTitle">Governorate</sys:String>
     <sys:String x:Key="ZipCodeFieldTitle">ZIP Code</sys:String>
     <sys:String x:Key="CountryFieldTitle">Country</sys:String>
-
-    <!-- Add Notes Form Fields Translations -->
     <sys:String x:Key="TitleFieldTitle">Title</sys:String>
     <sys:String x:Key="ContentFieldTitle">Content</sys:String>
     <sys:String x:Key="CategoryFieldTitle">Category</sys:String>
     <sys:String x:Key="TagsFieldTitle">Tags</sys:String>
 
-    <!-- Documents Page Translations -->
-    <sys:String x:Key="DocumentsTitle">Documents</sys:String>
+    <!-- Documents -->
     <sys:String x:Key="AddDocumentButton">+ Add document</sys:String>
-    <sys:String x:Key="ReloadButton">Reload</sys:String>
     <sys:String x:Key="DocumentType">Document</sys:String>
     <sys:String x:Key="SelectDocumentToPreview">Select a document to preview</sys:String>
-    <sys:String x:Key="EditButton">Edit</sys:String>
-    <sys:String x:Key="DeleteButton">Delete</sys:String>
-    <sys:String x:Key="DownloadButton">Download</sys:String>
     <sys:String x:Key="FavoriteButton">Favorite</sys:String>
     <sys:String x:Key="MoreOptionsButton">More options</sys:String>
     <sys:String x:Key="ZoomResetButton">Reset</sys:String>
@@ -130,10 +184,16 @@
     <sys:String x:Key="SecurityWarningMessage">⚠️ For better security, consider deleting the original file after adding the document. The encrypted copy is safely stored in your vault.</sys:String>
     <sys:String x:Key="OtherType">Other</sys:String>
 
-
-    <!-- Accounts Page Translations -->
+    <!-- Accounts / entry types -->
     <sys:String x:Key="AddAccountTitle">Add Account</sys:String>
-    <!-- (Add Dropdown menu) -->
+    <sys:String x:Key="EditAccountTitle">Edit Account</sys:String>
+    <sys:String x:Key="AccountDetailsTitle">Account Details</sys:String>
+    <sys:String x:Key="AccountPreviewTitle">Account Preview</sys:String>
+    <sys:String x:Key="AddDocumentTitle">Add Document</sys:String>
+    <sys:String x:Key="DocumentDetailsTitle">Document Details</sys:String>
+    <sys:String x:Key="AddNoteTitle">Add Note</sys:String>
+    <sys:String x:Key="AddAddressTitle">Add Address</sys:String>
+    <sys:String x:Key="AddBankCardTitle">Add Bank Card</sys:String>
     <sys:String x:Key="AccountType">Account</sys:String>
     <sys:String x:Key="AccountTypeEmail">Email</sys:String>
     <sys:String x:Key="AccountTypeWebsite">Website</sys:String>
@@ -141,20 +201,12 @@
     <sys:String x:Key="AccountTypeDocument">Document</sys:String>
     <sys:String x:Key="AccountTypeAddress">Address</sys:String>
     <sys:String x:Key="AccountTypeNote">Note</sys:String>
-
-    <!-- App Flow Direction -->
-    <FlowDirection x:Key="AppFlowDirection">LeftToRight</FlowDirection>
-
-    <!-- Add Account Window Translations -->
-    <sys:String x:Key="WebsiteType">Website</sys:String>
     <sys:String x:Key="AccountsType">Application</sys:String>
     <sys:String x:Key="NewItemTitle">New item</sys:String>
     <sys:String x:Key="DetailsTitle">Details</sys:String>
     <sys:String x:Key="CredentialsTitle">Credentials</sys:String>
     <sys:String x:Key="AutologinTitle">Autologin</sys:String>
     <sys:String x:Key="DisabledText">Disabled</sys:String>
-    <sys:String x:Key="ShowBtnTitle">Show</sys:String>
-    <sys:String x:Key="CopyBtnTitle">Copy</sys:String>
     <sys:String x:Key="PasswordChangeHistoryTitle">Password change history</sys:String>
     <sys:String x:Key="AddCommentTitle">Add comment</sys:String>
     <sys:String x:Key="NoHistoryMessage">No History</sys:String>
@@ -164,9 +216,10 @@
     <sys:String x:Key="WebsiteCredentialsTitle">Website credentials</sys:String>
     <sys:String x:Key="ApplicationCredentialsTitle">Application credentials</sys:String>
     <sys:String x:Key="OtherCredentialsTitle">Secure details</sys:String>
+    <sys:String x:Key="View_List">List view</sys:String>
+    <sys:String x:Key="View_Grid">Grid view</sys:String>
 
-    <!-- UnlockWindow Translations -->
-    <sys:String x:Key="UnlockWindow_Title">Urkey</sys:String>
+    <!-- Unlock -->
     <sys:String x:Key="UnlockWindow_VaultLocked">Vault is Locked</sys:String>
     <sys:String x:Key="UnlockWindow_EnterMasterPassword">Please enter your master password to unlock</sys:String>
     <sys:String x:Key="UnlockWindow_UnlockButton">Unlock</sys:String>
@@ -174,21 +227,186 @@
     <sys:String x:Key="UnlockWindow_MasterPasswordPlaceholder">Master Password</sys:String>
     <sys:String x:Key="UnlockWindow_ShowPassword">Show Password</sys:String>
     <sys:String x:Key="UnlockWindow_HidePassword">Hide Password</sys:String>
+    <sys:String x:Key="UnlockWindow_ErrorTitle">Error</sys:String>
+    <sys:String x:Key="UnlockWindow_InfoTitle">Info</sys:String>
+    <sys:String x:Key="UnlockWindow_IncorrectPassword">Master password is incorrect.</sys:String>
+    <sys:String x:Key="UnlockWindow_UnlockFailed">Unable to unlock the vault. Please try again.</sys:String>
+    <sys:String x:Key="UnlockWindow_VaultLoadFailed">Vault could not be loaded. The file may be corrupted.</sys:String>
+    <sys:String x:Key="UnlockWindow_MigrationFailed">Vault security upgrade failed. Your data was not modified. Please try again.</sys:String>
+    <sys:String x:Key="UnlockWindow_LockoutMessage">Too many failed attempts. Please wait {0} seconds before trying again.</sys:String>
+    <sys:String x:Key="UnlockWindow_ForgotPasswordPlaceholder">Password recovery is not available yet. If you forget your master password, vault data cannot be recovered. A recovery option may be added in a future version.</sys:String>
 
-    <!-- SplashScreen Translations -->
-    <sys:String x:Key="SplashScreen_AppName">Urkey</sys:String>
+    <!-- Splash -->
     <sys:String x:Key="SplashScreen_Tagline">Your Digital Key to Secure Passwords</sys:String>
 
-    <!-- FirstTimeSetupWindow Translations -->
+    <!-- First-time setup -->
+    <sys:String x:Key="FirstTimeSetupWindow_Title">Urkey – First Time Setup</sys:String>
     <sys:String x:Key="Setup_WelcomeTitle">Welcome to Urkey</sys:String>
     <sys:String x:Key="Setup_WelcomeSubtitle">Let's set up your master password to protect all your stored accounts.</sys:String>
     <sys:String x:Key="Setup_MasterPasswordTitle">Master Password</sys:String>
     <sys:String x:Key="Setup_MasterPasswordConfirmTitle">Confirm Password</sys:String>
     <sys:String x:Key="Setup_ContinueButton">Continue</sys:String>
-    <sys:String x:Key="Setup_EmailTitle">Email</sys:String>
     <sys:String x:Key="Setup_PhoneTitle">Phone Number</sys:String>
-    <sys:String x:Key="Settings_ChangeLanguage">Change Language</sys:String>
-    <sys:String x:Key="FirstTimeSetupWindow_Title">Urkey – First Time Setup</sys:String>
+    <sys:String x:Key="Setup_Error_EmptyPassword">Master password is required.</sys:String>
+    <sys:String x:Key="Setup_Error_InvalidPassword">Master password is too short.</sys:String>
+    <sys:String x:Key="Setup_Error_InvalidEmail">Email address is invalid.</sys:String>
+    <sys:String x:Key="Setup_Error_InvalidPhone">Phone number is invalid.</sys:String>
+    <sys:String x:Key="Setup_Error_PasswordMismatch">Master password and confirmation do not match.</sys:String>
+    <sys:String x:Key="Setup_Error_Generic">Setup failed. Please try again.</sys:String>
 
+    <!-- Password Generator -->
+    <sys:String x:Key="PasswordGenerator_Length">Length</sys:String>
+    <sys:String x:Key="PasswordGenerator_Charset">Character sets</sys:String>
+    <sys:String x:Key="PasswordGenerator_Lowercase">Lowercase (a-z)</sys:String>
+    <sys:String x:Key="PasswordGenerator_Uppercase">Uppercase (A-Z)</sys:String>
+    <sys:String x:Key="PasswordGenerator_Digits">Numbers (0-9)</sys:String>
+    <sys:String x:Key="PasswordGenerator_Symbols">Symbols</sys:String>
+    <sys:String x:Key="PasswordGenerator_Generated">Generated password</sys:String>
+    <sys:String x:Key="PasswordGenerator_Generate">Generate</sys:String>
+    <sys:String x:Key="PasswordGenerator_Copy">Copy</sys:String>
+    <sys:String x:Key="PasswordGenerator_Copied">Copied to clipboard</sys:String>
+    <sys:String x:Key="PasswordGenerator_SaveAsEntry">Save as account</sys:String>
+    <sys:String x:Key="PasswordGenerator_SelectCharset">Select at least one character set.</sys:String>
+    <sys:String x:Key="PasswordGenerator_GenerateFirst">Generate a password first.</sys:String>
+    <sys:String x:Key="PasswordGenerator_Saved">Password saved as a new account.</sys:String>
+    <sys:String x:Key="PasswordGenerator_Error">Could not generate password.</sys:String>
+    <sys:String x:Key="PasswordGenerator_StrengthFormat">Strength: {0} · ~{1} bits entropy</sys:String>
+
+    <!-- Password Check -->
+    <sys:String x:Key="PasswordCheck_Subtitle">Local review of weak, reused, or low-entropy passwords. No data is sent online.</sys:String>
+    <sys:String x:Key="PasswordCheck_Empty">No password issues found</sys:String>
+    <sys:String x:Key="PasswordCheck_EmptyHint">All stored passwords look strong and unique.</sys:String>
+    <sys:String x:Key="PasswordCheck_Summary">{0} passwords checked · {1} issues · {2} weak · {3} reused</sys:String>
+    <sys:String x:Key="PasswordCheck_SummaryStrong">{0} checked · {1} strong · {2} strong with issues · {3} issues · {4} weak · {5} reused</sys:String>
+    <sys:String x:Key="PasswordCheck_Stat_Checked">Checked</sys:String>
+    <sys:String x:Key="PasswordCheck_Stat_Strong">Strong</sys:String>
+    <sys:String x:Key="PasswordCheck_Stat_StrongWithIssues">Strong with issues</sys:String>
+    <sys:String x:Key="PasswordCheck_Stat_Issues">Issues</sys:String>
+    <sys:String x:Key="PasswordCheck_Stat_Weak">Weak</sys:String>
+    <sys:String x:Key="PasswordCheck_Stat_Reused">Reused</sys:String>
+    <sys:String x:Key="PasswordCheck_Filter_IssuesOnly">Issues only</sys:String>
+    <sys:String x:Key="PasswordCheck_Tag_Length">{0} chars</sys:String>
+    <sys:String x:Key="PasswordCheck_Tag_Lower">a-z</sys:String>
+    <sys:String x:Key="PasswordCheck_Tag_Upper">A-Z</sys:String>
+    <sys:String x:Key="PasswordCheck_Tag_Digit">0-9</sys:String>
+    <sys:String x:Key="PasswordCheck_Tag_Symbol">Symbols</sys:String>
+    <sys:String x:Key="Toast_Copied">Copied to clipboard</sys:String>
+    <sys:String x:Key="Toast_CopiedPassword">Password copied</sys:String>
+    <sys:String x:Key="AllCategories">All categories</sys:String>
+    <sys:String x:Key="OpenAccountPreview">Open</sys:String>
+    <sys:String x:Key="HideBtnTitle">Hide</sys:String>
+    <sys:String x:Key="PasswordCheck_EntropyFormat">~{0} bits</sys:String>
+    <sys:String x:Key="PasswordCheck_Strength_Empty">Empty</sys:String>
+    <sys:String x:Key="PasswordCheck_Strength_Weak">Weak</sys:String>
+    <sys:String x:Key="PasswordCheck_Strength_Medium">Medium</sys:String>
+    <sys:String x:Key="PasswordCheck_Strength_Strong">Strong</sys:String>
+    <sys:String x:Key="PasswordCheck_Issue_Empty">Password is empty</sys:String>
+    <sys:String x:Key="PasswordCheck_Issue_TooShort">Shorter than 8 characters</sys:String>
+    <sys:String x:Key="PasswordCheck_Issue_Short">Shorter than 12 characters</sys:String>
+    <sys:String x:Key="PasswordCheck_Issue_Case">Missing upper or lower case</sys:String>
+    <sys:String x:Key="PasswordCheck_Issue_Digit">Missing digits</sys:String>
+    <sys:String x:Key="PasswordCheck_Issue_Symbol">Missing symbols</sys:String>
+    <sys:String x:Key="PasswordCheck_Issue_Repeated">Repeated characters</sys:String>
+    <sys:String x:Key="PasswordCheck_Issue_Sequence">Common sequence detected</sys:String>
+    <sys:String x:Key="PasswordCheck_Issue_Common">Common password pattern</sys:String>
+    <sys:String x:Key="PasswordCheck_Issue_Reused">Reused across accounts</sys:String>
+
+    <!-- Change master password / auto-lock -->
+    <sys:String x:Key="ChangeMasterPassword_Title">Change Master Password</sys:String>
+    <sys:String x:Key="ChangeMasterPassword_Current">Current master password</sys:String>
+    <sys:String x:Key="ChangeMasterPassword_New">New master password</sys:String>
+    <sys:String x:Key="ChangeMasterPassword_Confirm">Confirm new password</sys:String>
+    <sys:String x:Key="ChangeMasterPassword_Required">All password fields are required.</sys:String>
+    <sys:String x:Key="ChangeMasterPassword_Failed">Could not change master password. Check the current password and try again.</sys:String>
+    <sys:String x:Key="ChangeMasterPassword_Success">Master password changed. The vault was re-encrypted.</sys:String>
+    <sys:String x:Key="AutoLock_Title">Auto-lock</sys:String>
+    <sys:String x:Key="AutoLock_Description">Lock the vault after a period of inactivity</sys:String>
+    <sys:String x:Key="AutoLock_1Minute">1 minute</sys:String>
+    <sys:String x:Key="AutoLock_5Minutes">5 minutes</sys:String>
+    <sys:String x:Key="AutoLock_15Minutes">15 minutes</sys:String>
+    <sys:String x:Key="AutoLock_30Minutes">30 minutes</sys:String>
+    <sys:String x:Key="AutoLock_Never">Never</sys:String>
+    <sys:String x:Key="Theme_Applied_Dark">Dark theme applied</sys:String>
+    <sys:String x:Key="Theme_Applied_Light">Light theme applied</sys:String>
+
+    <!-- Accounts table -->
+    <sys:String x:Key="Column_Service">Service</sys:String>
+    <sys:String x:Key="Column_Username">Username</sys:String>
+    <sys:String x:Key="Column_Email">Email</sys:String>
+    <sys:String x:Key="Column_Type">Type</sys:String>
+    <sys:String x:Key="Column_UrlPath">URL / Path</sys:String>
+    <sys:String x:Key="Column_Action">Action</sys:String>
+    <sys:String x:Key="Accounts_Empty">No accounts yet</sys:String>
+    <sys:String x:Key="Accounts_EmptyHint">Add an account to get started.</sys:String>
+    <sys:String x:Key="Cards_Empty">No bank cards yet</sys:String>
+    <sys:String x:Key="Cards_EmptyHint">Add a card to store it securely.</sys:String>
+    <sys:String x:Key="Addresses_Empty">No addresses yet</sys:String>
+    <sys:String x:Key="Addresses_EmptyHint">Add an address to keep it in your vault.</sys:String>
+    <sys:String x:Key="Notes_Empty">No notes yet</sys:String>
+    <sys:String x:Key="Notes_EmptyHint">Add a note to keep private text here.</sys:String>
+    <sys:String x:Key="Documents_Empty">No documents yet</sys:String>
+    <sys:String x:Key="Documents_EmptyHint">Add a document to encrypt and store it.</sys:String>
+    <sys:String x:Key="AllEntries_EmptyHint">Try another filter, or add an entry from the sidebar.</sys:String>
+    <sys:String x:Key="DetailsMenuItem">Details</sys:String>
+    <sys:String x:Key="OpenMenuItem">Open</sys:String>
+    <sys:String x:Key="ZoomInButton">Zoom in</sys:String>
+    <sys:String x:Key="ZoomOutButton">Zoom out</sys:String>
+    <sys:String x:Key="RotateButton">Rotate</sys:String>
+    <sys:String x:Key="ConfirmSignOut_Title">Sign out</sys:String>
+    <sys:String x:Key="ConfirmSignOut_Message">Lock the vault and return to the unlock screen?</sys:String>
+    <sys:String x:Key="Busy_PleaseWait">Please wait…</sys:String>
+
+    <!-- All Entries -->
+    <sys:String x:Key="AllEntries_Subtitle">Browse every item stored in your vault.</sys:String>
+    <sys:String x:Key="AllEntries_Empty">No entries yet</sys:String>
+    <sys:String x:Key="Filter_AllTypes">All types</sys:String>
+
+    <!-- Document preview overlay -->
+    <sys:String x:Key="DocumentPreview_Title">Document preview</sys:String>
+    <sys:String x:Key="SelectEntryToPreview">Select an entry to preview</sys:String>
+
+    <!-- Validation -->
+    <sys:String x:Key="Validation_Title">Validation</sys:String>
+    <sys:String x:Key="Validation_UnknownEntryType">Unknown entry type.</sys:String>
+    <sys:String x:Key="Validation_AccountNameRequired">Account name is required.</sys:String>
+    <sys:String x:Key="Validation_AccountCredentialsRequired">Enter a username, email, or password.</sys:String>
+    <sys:String x:Key="Validation_InvalidEmail">Email address is invalid.</sys:String>
+    <sys:String x:Key="Validation_CardNameRequired">Cardholder name is required.</sys:String>
+    <sys:String x:Key="Validation_InvalidCardNumber">Card number is invalid.</sys:String>
+    <sys:String x:Key="Validation_InvalidCvv">CVV must be 3 or 4 digits.</sys:String>
+    <sys:String x:Key="Validation_InvalidPin">PIN must be 4 to 8 digits.</sys:String>
+    <sys:String x:Key="Validation_InvalidExpiry">Expiry date is invalid. Use MM/YY.</sys:String>
+    <sys:String x:Key="Validation_AddressNameRequired">Address name is required.</sys:String>
+    <sys:String x:Key="Validation_AddressLocationRequired">Street or city is required.</sys:String>
+    <sys:String x:Key="Validation_NoteTitleRequired">Note title is required.</sys:String>
+    <sys:String x:Key="Validation_DocumentNameRequired">Document name is required.</sys:String>
+
+    <!-- Confirm delete -->
+    <sys:String x:Key="ConfirmDelete_Title">Confirm delete</sys:String>
+    <sys:String x:Key="ConfirmDelete_Message">Delete "{0}"?</sys:String>
+
+    <!-- Activity -->
+    <sys:String x:Key="Activity_Added">Added {0} ({1})</sys:String>
+    <sys:String x:Key="Activity_Edited">Edited {0} ({1})</sys:String>
+    <sys:String x:Key="Activity_Deleted">Deleted {0} ({1})</sys:String>
+    <sys:String x:Key="Activity_Uploaded">Uploaded {0} ({1})</sys:String>
+    <sys:String x:Key="Activity_Imported">Imported {0} entries from file</sys:String>
+
+    <!-- Documents messages -->
+    <sys:String x:Key="Documents_Saved">Document saved successfully.</sys:String>
+    <sys:String x:Key="Documents_Deleted">Document deleted successfully.</sys:String>
+    <sys:String x:Key="Documents_Downloaded">Document downloaded successfully.</sys:String>
+    <sys:String x:Key="Documents_SelectFirst">Select a document first.</sys:String>
+    <sys:String x:Key="Documents_NoImage">This document has no attached image.</sys:String>
+    <sys:String x:Key="Documents_FileMissing">The encrypted image file was not found.</sys:String>
+    <sys:String x:Key="Documents_ExtractFailed">Failed to extract the document image. The file may be corrupted.</sys:String>
+    <sys:String x:Key="Documents_Corrupted">The document image appears corrupted. Try re-adding this document.</sys:String>
+    <sys:String x:Key="Documents_PreviewFailed">Could not load the document preview.</sys:String>
+    <sys:String x:Key="Documents_Error_Null">Document is missing.</sys:String>
+    <sys:String x:Key="Documents_Error_InvalidType">Only PNG and JPEG images are allowed.</sys:String>
+    <sys:String x:Key="Documents_Error_TooLarge">Selected image is too large. Maximum size is 500 KB.</sys:String>
+    <sys:String x:Key="Documents_Error_Save">Could not save the document.</sys:String>
+    <sys:String x:Key="Documents_Error_Delete">Could not delete the document.</sys:String>
+    <sys:String x:Key="Documents_Error_Download">Could not download the document.</sys:String>
 
 </ResourceDictionary>

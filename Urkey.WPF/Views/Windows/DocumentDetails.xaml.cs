@@ -9,9 +9,6 @@ namespace Urkey.WPF.Views.Windows
         {
             InitializeComponent();
             DataContext = document;
-            this.FlowDirection = App.Settings.Language == "ar"
-                ? FlowDirection.RightToLeft
-                : FlowDirection.LeftToRight;
         }
 
         private void OnCloseClick(object sender, RoutedEventArgs e)

@@ -5,8 +5,17 @@ public static class LanguageManager
 {
     public static void ApplyLanguage(string langCode)
     {
-        var culture = new CultureInfo(langCode);
+        // Map app language codes to full cultures for date/number formatting.
+        string cultureName = langCode switch
+        {
+            "ar" => "ar-IQ",
+            "en" => "en-US",
+            _ => langCode
+        };
 
+        var culture = CultureInfo.GetCultureInfo(cultureName);
+        CultureInfo.CurrentCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
         CultureInfo.DefaultThreadCurrentCulture = culture;
         CultureInfo.DefaultThreadCurrentUICulture = culture;
 

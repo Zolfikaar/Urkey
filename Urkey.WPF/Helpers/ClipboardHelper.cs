@@ -21,7 +21,7 @@ namespace Urkey.WPF.Helpers
             }
             catch
             {
-                // Clipboard might be unavailable; fail silently for MVP simplicity.
+                // Clipboard might be unavailable; fail silently.
             }
         }
 
@@ -43,9 +43,9 @@ namespace Urkey.WPF.Helpers
         {
             try
             {
-                await Task.Delay(delay, token);
+                await Task.Delay(delay, token).ConfigureAwait(false);
             }
-            catch (TaskCanceledException)
+            catch (OperationCanceledException)
             {
                 return;
             }
@@ -55,19 +55,40 @@ namespace Urkey.WPF.Helpers
 
             try
             {
-                Application.Current?.Dispatcher.Invoke(() =>
+                var dispatcher = Application.Current?.Dispatcher;
+                if (dispatcher == null)
+                    return;
+
+                await dispatcher.InvokeAsync(() =>
                 {
-                    if (Clipboard.ContainsText() &&
-                        string.Equals(Clipboard.GetText(), text, StringComparison.Ordinal))
+                    try
                     {
-                        Clipboard.Clear();
+                        if (Clipboard.ContainsText() &&
+                            string.Equals(Clipboard.GetText(), text, StringComparison.Ordinal))
+                        {
+                            Clipboard.Clear();
+                        }
+                    }
+                    catch
+                    {
+                        // Clipboard might be unavailable; ignore.
                     }
                 });
             }
             catch
             {
-                // Clipboard might be unavailable; ignore for MVP.
+                // App may be shutting down.
             }
+        }
+
+        /// <summary>
+        /// Cancel pending clear timers (e.g. on lock/logout). Does not clear clipboard content.
+        /// </summary>
+        public static void CancelPendingClear()
+        {
+            _clearCts?.Cancel();
+            _clearCts?.Dispose();
+            _clearCts = null;
         }
     }
 }

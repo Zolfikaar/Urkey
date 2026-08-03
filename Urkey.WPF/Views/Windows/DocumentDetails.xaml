@@ -5,9 +5,11 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="Document Details"
+        Title="{DynamicResource DocumentDetailsTitle}"
         Width="500"
         Background="{DynamicResource BgColor}"
+        Foreground="{DynamicResource TextColor}"
+        FlowDirection="{DynamicResource AppFlowDirection}"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
         SizeToContent="Height">
@@ -49,35 +51,31 @@
             </Grid.Resources>
 
             <!-- Name -->
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="Name:"/>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{DynamicResource DocumentNameFieldTitle}"/>
             <TextBlock Grid.Row="0" Grid.Column="1" Text="{Binding Name}" Style="{StaticResource ValueStyle}"/>
 
             <!-- Type -->
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Type:"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="{DynamicResource TypeFieldTitle}"/>
             <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding Type}" Style="{StaticResource ValueStyle}"/>
 
             <!-- Number -->
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Number:"/>
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="{DynamicResource NumberFieldTitle}"/>
             <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding Number}" Style="{StaticResource ValueStyle}"/>
 
             <!-- Issuer -->
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="Issuer:"/>
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="{DynamicResource IssuerFieldTitle}"/>
             <TextBlock Grid.Row="3" Grid.Column="1" Text="{Binding Issuer}" Style="{StaticResource ValueStyle}"/>
 
             <!-- Expiry Date -->
-            <TextBlock Grid.Row="4" Grid.Column="0" Text="Expiry Date:"/>
+            <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource ExpiryDateFieldTitle}"/>
             <TextBlock Grid.Row="4" Grid.Column="1" Style="{StaticResource ValueStyle}">
                 <TextBlock.Text>
-                    <Binding Path="ExpiryDate" StringFormat="{}{0:dd/MM/yyyy}">
-                        <Binding.FallbackValue>
-                            <sys:String>Default text</sys:String>
-                        </Binding.FallbackValue>
-                    </Binding>
+                    <Binding Path="ExpiryDate" Converter="{StaticResource LocaleDate}" ConverterParameter="d"/>
                 </TextBlock.Text>
             </TextBlock>
 
             <!-- Notes -->
-            <TextBlock Grid.Row="5" Grid.Column="0" Text="Notes:" VerticalAlignment="Top" Margin="0,0,10,12"/>
+            <TextBlock Grid.Row="5" Grid.Column="0" Text="{DynamicResource NotesFieldTitle}" VerticalAlignment="Top" Margin="0,0,10,12"/>
             <TextBlock Grid.Row="5" Grid.Column="1" 
                       Text="{Binding Notes}" 
                       TextWrapping="Wrap"
@@ -87,7 +85,7 @@
             <!-- Close Button -->
             <Button Grid.Row="6" 
                    Grid.ColumnSpan="2"
-                   Content="Close"
+                   Content="{DynamicResource CloseButton}"
                    Style="{DynamicResource PrimaryBtnStyle}"
                    Padding="16,8"
                    HorizontalAlignment="Right"

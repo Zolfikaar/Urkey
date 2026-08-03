@@ -5,6 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 using Urkey.Core.Models;
+using Urkey.WPF.Helpers;
 using Urkey.WPF.Views;
 
 namespace Urkey.WPF.ViewModels
@@ -99,9 +100,7 @@ namespace Urkey.WPF.ViewModels
 
         public void LoadMainwindow()
         {
-            // here show initialize the data 
-            //object value = System.Diagnostics.Debug(MessageBox);
-            MessageBox.Show("Load main Window");
+            // Initialize session UI state after unlock.
         }
 
         private void CheckInitialLaunchStatus()

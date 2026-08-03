@@ -1,4 +1,6 @@
 ﻿using Urkey.Core.Models;
+using Urkey.Core.Services;
+using Urkey.WPF.Helpers;
 using System;
 using System.IO;
 using System.Windows;
@@ -20,9 +22,6 @@ namespace Urkey.WPF.Views.Windows
         {
             InitializeComponent();
             _editDocument = documentToEdit;
-            this.FlowDirection = App.Settings.Language == "ar"
-                ? FlowDirection.RightToLeft
-                : FlowDirection.LeftToRight;
             Loaded += OnLoaded;
             
             if (_editDocument != null)
@@ -63,17 +62,26 @@ namespace Urkey.WPF.Views.Windows
                 try
                 {
                     string tempPath = Urkey.Core.Services.FileHelper.ExtractDocumentImage(_editDocument.ExternalImagePath);
-                    if (System.IO.File.Exists(tempPath))
+                    try
                     {
-                        // Don't set _selectedImagePath here - only set it if user selects a new image
-                        SelectedImageName.Text = "Current image loaded";
-                        
-                        var bitmap = new BitmapImage();
-                        bitmap.BeginInit();
-                        bitmap.UriSource = new Uri(tempPath);
-                        bitmap.DecodePixelWidth = 120;
-                        bitmap.EndInit();
-                        PreviewImage.Source = bitmap;
+                        if (System.IO.File.Exists(tempPath))
+                        {
+                            // Don't set _selectedImagePath here - only set it if user selects a new image
+                            SelectedImageName.Text = "Current image loaded";
+
+                            var bitmap = new BitmapImage();
+                            bitmap.BeginInit();
+                            bitmap.UriSource = new Uri(tempPath);
+                            bitmap.DecodePixelWidth = 120;
+                            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                            bitmap.EndInit();
+                            bitmap.Freeze();
+                            PreviewImage.Source = bitmap;
+                        }
+                    }
+                    finally
+                    {
+                        Urkey.Core.Services.FileHelper.TryDeleteTempFile(tempPath);
                     }
                 }
                 catch
@@ -87,37 +95,36 @@ namespace Urkey.WPF.Views.Windows
 
         private void OnSaveClick(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(DocumentNameTextBox.Text))
-            {
-                MessageBox.Show("Document name is required.", "Validation Error",
-                                MessageBoxButton.OK, MessageBoxImage.Warning);
-                return;
-            }
-
             DateOnly? parsed = null;
             var text = ExpiryTextBox.Text?.Trim();
             if (!string.IsNullOrEmpty(text) && DateOnly.TryParse(text, out var d))
                 parsed = d;
 
-            // ✅ إنشاء كائن الوثيقة من بيانات المستخدم
             Document = new DocumentEntry
             {
-                Name = DocumentNameTextBox.Text ?? string.Empty,
-                Type = TypeTextBox.Text ?? string.Empty,
-                Number = NumberTextBox.Text ?? string.Empty,
-                Issuer = IssuerTextBox.Text ?? string.Empty,
+                Name = DocumentNameTextBox.Text?.Trim() ?? string.Empty,
+                Type = TypeTextBox.Text?.Trim() ?? string.Empty,
+                Number = NumberTextBox.Text?.Trim() ?? string.Empty,
+                Issuer = IssuerTextBox.Text?.Trim() ?? string.Empty,
                 Notes = NotesTextBox.Text,
                 ExpiryDate = parsed,
                 ExternalImagePath = _selectedImagePath
             };
 
-            // If editing and no new image selected, keep the original encrypted image path
-            if (_editDocument != null && string.IsNullOrEmpty(_selectedImagePath))
+            if (_editDocument != null)
             {
-                Document.ExternalImagePath = _originalImagePath;
+                Document.Id = _editDocument.Id;
+                if (string.IsNullOrEmpty(_selectedImagePath))
+                    Document.ExternalImagePath = _originalImagePath;
             }
 
-            // ✅ علّم الصفحة الأم أن العملية تمت بنجاح
+            var validation = EntryValidator.ValidateDocument(Document);
+            if (!validation.IsValid)
+            {
+                ToastService.Warning(Loc.Get(validation.ErrorResourceKey!));
+                return;
+            }
+
             DialogResult = true;
             Close();
         }
@@ -134,8 +141,7 @@ namespace Urkey.WPF.Views.Windows
                 var fileInfo = new FileInfo(dlg.FileName);
                 if (fileInfo.Length > MaxImageSize)
                 {
-                    MessageBox.Show($"Selected image is too large ({fileInfo.Length / 1024} KB).\nMaximum allowed size is 500 KB.",
-                                    "File too large", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ToastService.Warning(Loc.Get("Documents_Error_TooLarge"));
                     return;
                 }
 

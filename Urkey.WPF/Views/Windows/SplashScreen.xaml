@@ -7,68 +7,15 @@
         AllowsTransparency="False"
         ResizeMode="NoResize"
         ShowInTaskbar="False"
-        Loaded="SplashScreen_Loaded"
-        >
+        Background="{DynamicResource AuthBgColor}"
+        FlowDirection="{DynamicResource AppFlowDirection}"
+        Loaded="SplashScreen_Loaded">
 
     <Grid>
-        <!-- Background -->
-        <Grid.Background>
-            <ImageBrush ImageSource="/Assets/Backgrounds/splash-bg.jpg"
-                        Stretch="Fill"/>
-        </Grid.Background>
+        <Image Source="/Assets/Backgrounds/splash-bg.jpg"
+               Stretch="UniformToFill"
+               Opacity="0.92"/>
 
-        <!-- ========================================= -->
-        <!-- 1) GLOW — خلف اللوغو — يظهر شعاعه فقط -->
-        <!-- ========================================= -->
-
-        <Ellipse x:Name="glowCircle"
-                 Width="150"
-                 Height="150"
-                 HorizontalAlignment="Center"
-                 VerticalAlignment="Center"
-                 Fill="#FFEFC36D"
-                 Margin="0,0,0,200"
-                 Opacity="0">
-
-            <Ellipse.Effect>
-                <BlurEffect Radius="80"/>
-            </Ellipse.Effect>
-
-            <Ellipse.Triggers>
-                <EventTrigger RoutedEvent="Loaded">
-                    <BeginStoryboard>
-                        <Storyboard>
-
-                            <!-- ظهور التوهج (يبدأ بعد 0.5 ثانية) -->
-                            <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                                             From="0"
-                                             To="0.4"
-                                             BeginTime="0:0:0.1"
-                                             Duration="0:0:3"/>
-
-                            <!-- التمدد من صغير جداً إلى حجم متوسط (أصغر بكثير من اللوغو) -->
-                            <!-- اللوغو 640x900، التوهج يصل إلى 400 كحد أقصى -->
-                            <DoubleAnimation Storyboard.TargetProperty="Width"
-                                             From="150"
-                                             To="270"
-                                             BeginTime="0:0:0.1"
-                                             Duration="0:0:3"/>
-
-                            <DoubleAnimation Storyboard.TargetProperty="Height"
-                                             From="150"
-                                             To="270"
-                                             BeginTime="0:0:0.5"
-                                             Duration="0:0:3.5"/>
-
-                        </Storyboard>
-                    </BeginStoryboard>
-                </EventTrigger>
-            </Ellipse.Triggers>
-        </Ellipse>
-
-        <!-- ============================== -->
-        <!-- 2) LOGO — ثابت لا يتحرك أبداً -->
-        <!-- ============================== -->
         <Image Source="/Assets/Logos/Logo_with_bg.png"
                Width="640"
                Height="900"
@@ -77,19 +24,17 @@
                Margin="0,0,0,130"
                Opacity="1"/>
 
-        <!-- اسم التطبيق -->
-        <TextBlock Text="{DynamicResource SplashScreen_AppName}"
-                   Foreground="White"
-                   FontSize="75"
+        <TextBlock Text="{DynamicResource AppTitle}"
+                   Foreground="{DynamicResource AuthTextColor}"
+                   FontSize="64"
                    FontWeight="Bold"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
                    Margin="0,0,0,150"/>
 
-        <!-- الوصف -->
         <TextBlock Text="{DynamicResource SplashScreen_Tagline}"
-                   Foreground="White"
-                   FontSize="28"
+                   Foreground="{DynamicResource AccentGold}"
+                   FontSize="22"
                    HorizontalAlignment="Center"
                    VerticalAlignment="Bottom"
                    Margin="0,0,0,100"

@@ -1,83 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
+﻿using System.Windows;
+using Urkey.Core.Models;
+using Urkey.Core.Services;
+using Urkey.WPF.Helpers;
 
 namespace Urkey.WPF.Views.Windows
 {
-    /// <summary>
-    /// Interaction logic for AddBankCard.xaml
-    /// </summary>
     public partial class AddBankCard : Window
     {
+        public CardEntry? Result { get; private set; }
+
         public AddBankCard()
         {
             InitializeComponent();
-            this.FlowDirection = App.Settings.Language == "ar"
-                ? FlowDirection.RightToLeft
-                : FlowDirection.LeftToRight;
-            Loaded += OnLoaded;
         }
 
-        private void OnLoaded(object sender, RoutedEventArgs e)
-        {
-            ApplyTheme();
-        }
-
-        private void ApplyTheme()
-        {
-            var currentTheme = SystemParameters.HighContrast ? "Dark" : "Light";
-        }
-
-        // Exposed properties for easy access
         public string CardName => CardNameTextBox.Text;
         public string CardNumber => CardNumberBox.Password;
         public string Expiry => ExpiryTextBox.Text;
         public string Cvv => CvvBox.Password;
-        public string Bank => BankTextBox.Text;
+        public string Pin => PinBox.Password;
         public string Notes => NotesTextBox.Text;
 
-        // Method to set initial values
-        public void SetValues(string cardName = "", string cardNumber = "", string expiry = "", string cvv = "", string bank = "", string notes = "")
+        public void SetValues(
+            string cardName = "",
+            string cardNumber = "",
+            string expiry = "",
+            string cvv = "",
+            string pin = "",
+            string notes = "")
         {
             CardNameTextBox.Text = cardName;
             CardNumberBox.Password = cardNumber;
             ExpiryTextBox.Text = expiry;
             CvvBox.Password = cvv;
-            BankTextBox.Text = bank;
+            PinBox.Password = pin;
             NotesTextBox.Text = notes;
         }
 
         private void OnCancelClick(object sender, RoutedEventArgs e)
         {
+            DialogResult = false;
             Close();
         }
 
         private void OnSaveClick(object sender, RoutedEventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(CardNameTextBox.Text))
+            var entry = new CardEntry
             {
-                MessageBox.Show("Card Name is required.", "Validation", MessageBoxButton.OK, MessageBoxImage.Warning);
+                HolderName = CardNameTextBox.Text?.Trim() ?? string.Empty,
+                Number = new string((CardNumberBox.Password ?? string.Empty).Where(char.IsDigit).ToArray()),
+                Cvv = string.IsNullOrWhiteSpace(CvvBox.Password) ? null : CvvBox.Password.Trim(),
+                Pin = string.IsNullOrWhiteSpace(PinBox.Password) ? null : PinBox.Password.Trim(),
+                Notes = NotesTextBox.Text?.Trim() ?? string.Empty
+            };
+
+            if (!string.IsNullOrWhiteSpace(ExpiryTextBox.Text))
+            {
+                if (!EntryValidator.TryParseCardExpiry(ExpiryTextBox.Text, out var expiry))
+                {
+                    ToastService.Warning(Loc.Get("Validation_InvalidExpiry"));
+                    return;
+                }
+                entry.ExpiryDate = expiry;
+            }
+
+            var validation = EntryValidator.ValidateCard(entry);
+            if (!validation.IsValid)
+            {
+                ToastService.Warning(Loc.Get(validation.ErrorResourceKey!));
                 return;
             }
 
-            // جمع القيم من الحقول
-            string cardName = CardNameTextBox.Text;
-            string cardNumber = CardNumberBox.Password;
-            string expiry = ExpiryTextBox.Text;
-            string cvv = CvvBox.Password;
-            string bank = BankTextBox.Text;
-            string notes = NotesTextBox.Text;
-
+            Result = entry;
+            DialogResult = true;
             Close();
         }
     }

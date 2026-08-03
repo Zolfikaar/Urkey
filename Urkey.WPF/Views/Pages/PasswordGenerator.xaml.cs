@@ -1,18 +1,13 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
-using System.Security.Cryptography;
-using System.Text;
+using Urkey.Core.Services;
 using Urkey.WPF.Helpers;
+using Urkey.WPF.Views.Windows;
 
 namespace Urkey.WPF.Views.Pages
 {
-    /// <summary>
-    /// Interaction logic for PasswordGenerator.xaml
-    /// </summary>
     public partial class PasswordGenerator : Page
     {
-        private const string Charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()-_=+[]{};:,.?";
-
         public PasswordGenerator()
         {
             InitializeComponent();
@@ -26,15 +21,70 @@ namespace Urkey.WPF.Views.Pages
 
         private void GenerateButton_Click(object sender, RoutedEventArgs e)
         {
-            var length = (int)LengthSlider.Value;
-            GeneratedPasswordBox.Text = GeneratePassword(length);
+            try
+            {
+                var options = BuildOptions();
+                if (!options.UseLowercase && !options.UseUppercase && !options.UseDigits && !options.UseSymbols)
+                {
+                    ToastService.Warning(Loc.Get("PasswordGenerator_SelectCharset"));
+                    return;
+                }
+
+                GeneratedPasswordBox.Text = PasswordGeneratorService.Generate(options);
+                UpdateStrengthLabel();
+            }
+            catch (Exception)
+            {
+                ToastService.Error(Loc.Get("PasswordGenerator_Error"));
+            }
         }
 
         private void CopyButton_Click(object sender, RoutedEventArgs e)
         {
             var text = GeneratedPasswordBox.Text;
+            if (string.IsNullOrWhiteSpace(text))
+                return;
+
             ClipboardHelper.CopyText(text, App.Settings.ClipboardClearSeconds);
+            ToastService.Success(Loc.Get("PasswordGenerator_Copied"));
         }
+
+        private void SaveAsEntryButton_Click(object sender, RoutedEventArgs e)
+        {
+            var password = GeneratedPasswordBox.Text;
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                ToastService.Warning(Loc.Get("PasswordGenerator_GenerateFirst"));
+                return;
+            }
+
+            var win = new AddAccount("Website", password)
+            {
+                Owner = Application.Current.MainWindow
+            };
+
+            if (win.ShowDialog() == true)
+            {
+                var validation = EntryValidator.ValidateAccount(win.ResultEntry);
+                if (!validation.IsValid)
+                {
+                    ToastService.Warning(Loc.Get(validation.ErrorResourceKey!));
+                    return;
+                }
+
+                App.VaultService.AddEntry(win.ResultEntry);
+                ToastService.Success(Loc.Get("PasswordGenerator_Saved"));
+            }
+        }
+
+        private PasswordGeneratorOptions BuildOptions() => new()
+        {
+            Length = (int)LengthSlider.Value,
+            UseLowercase = LowercaseCheck.IsChecked == true,
+            UseUppercase = UppercaseCheck.IsChecked == true,
+            UseDigits = DigitsCheck.IsChecked == true,
+            UseSymbols = SymbolsCheck.IsChecked == true
+        };
 
         private void UpdateLengthLabel()
         {
@@ -42,19 +92,22 @@ namespace Urkey.WPF.Views.Pages
                 LengthValueText.Text = ((int)LengthSlider.Value).ToString();
         }
 
-        private static string GeneratePassword(int length)
+        private void UpdateStrengthLabel()
         {
-            if (length <= 0)
-                return string.Empty;
-
-            var chars = new char[length];
-            for (var i = 0; i < length; i++)
+            if (StrengthText == null) return;
+            var analysis = PasswordStrengthEvaluator.Analyze(GeneratedPasswordBox.Text);
+            string levelKey = analysis.Level switch
             {
-                var index = RandomNumberGenerator.GetInt32(Charset.Length);
-                chars[i] = Charset[index];
-            }
+                PasswordStrengthLevel.Strong => "PasswordCheck_Strength_Strong",
+                PasswordStrengthLevel.Medium => "PasswordCheck_Strength_Medium",
+                PasswordStrengthLevel.Weak => "PasswordCheck_Strength_Weak",
+                _ => "PasswordCheck_Strength_Empty"
+            };
 
-            return new string(chars);
+            StrengthText.Text = Loc.Format(
+                "PasswordGenerator_StrengthFormat",
+                Loc.Get(levelKey),
+                analysis.EntropyBits);
         }
     }
 }

@@ -8,6 +8,7 @@ using Microsoft.Win32;
 using Urkey.Core.Models;
 using Urkey.Core.Services;
 using Urkey.WPF.ViewModels;
+using Urkey.WPF.Helpers;
 
 namespace Urkey.WPF.Views.Windows
 {
@@ -42,15 +43,8 @@ namespace Urkey.WPF.Views.Windows
                 ImageScrollViewer.LayoutUpdated -= _layoutHandler;
             }
 
-            // Cleanup: Delete temp file
-            try
-            {
-                if (_tempExtractedPath != null && File.Exists(_tempExtractedPath))
-                {
-                    File.Delete(_tempExtractedPath);
-                }
-            }
-            catch { /* Ignore cleanup errors */ }
+            FileHelper.TryDeleteTempFile(_tempExtractedPath);
+            _tempExtractedPath = null;
         }
 
         private void LoadImage()
@@ -60,8 +54,7 @@ namespace Urkey.WPF.Views.Windows
                 // Validate encrypted image path before attempting extraction
                 if (string.IsNullOrWhiteSpace(_encryptedImagePath))
                 {
-                    MessageBox.Show("Document image path is not set. The document may not have been saved properly.", 
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ToastService.Error("Document image path is not set. The document may not have been saved properly.");
                     return;
                 }
 
@@ -69,8 +62,7 @@ namespace Urkey.WPF.Views.Windows
 
                 if (string.IsNullOrWhiteSpace(_tempExtractedPath) || !File.Exists(_tempExtractedPath))
                 {
-                    MessageBox.Show($"Failed to extract document image. The encrypted file may not exist or may be corrupted.\n\nPath: {_encryptedImagePath}", 
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ToastService.Error($"Failed to extract document image. The encrypted file may not exist or may be corrupted.\n\nPath: {_encryptedImagePath}");
                     return;
                 }
 
@@ -97,13 +89,11 @@ namespace Urkey.WPF.Views.Windows
             }
             catch (FileNotFoundException ex)
             {
-                MessageBox.Show($"Document image file not found. The file may not have been saved yet or may have been moved.\n\nDetails: {ex.Message}\n\nPath: {_encryptedImagePath}", 
-                    "File Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ToastService.Warning($"Document image file not found. The file may not have been saved yet or may have been moved.\n\nDetails: {ex.Message}\n\nPath: {_encryptedImagePath}");
             }
             catch (DirectoryNotFoundException ex)
             {
-                MessageBox.Show($"Document images directory not found. The application will attempt to create it.\n\nDetails: {ex.Message}", 
-                    "Directory Not Found", MessageBoxButton.OK, MessageBoxImage.Warning);
+                ToastService.Warning($"Document images directory not found. The application will attempt to create it.\n\nDetails: {ex.Message}");
                 // Try to reload after a brief delay to allow directory creation
                 Thread.Sleep(100);
                 try
@@ -113,14 +103,12 @@ namespace Urkey.WPF.Views.Windows
                 catch
                 {
                     // If retry fails, show error
-                    MessageBox.Show("Failed to load document image after retry. Please try again.", 
-                        "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    ToastService.Error("Failed to load document image after retry. Please try again.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error loading image: {ex.Message}\n\nPath: {_encryptedImagePath}", 
-                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ToastService.Error($"Error loading image: {ex.Message}\n\nPath: {_encryptedImagePath}");
             }
         }
 
@@ -325,7 +313,7 @@ namespace Urkey.WPF.Views.Windows
             {
                 if (_tempExtractedPath == null || !File.Exists(_tempExtractedPath))
                 {
-                    MessageBox.Show("Image not loaded yet.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ToastService.Warning("Image not loaded yet.");
                     return;
                 }
 
@@ -338,12 +326,12 @@ namespace Urkey.WPF.Views.Windows
                 if (saveDialog.ShowDialog() == true)
                 {
                     File.Copy(_tempExtractedPath, saveDialog.FileName, overwrite: true);
-                    MessageBox.Show("Image exported successfully.", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ToastService.Success("Image exported successfully.");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Error exporting image: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ToastService.Error($"Error exporting image: {ex.Message}");
             }
         }
 
@@ -393,12 +381,7 @@ namespace Urkey.WPF.Views.Windows
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    this,
-                    $"Error editing document: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                ToastService.Error($"Error editing document: {ex.Message}");
             }
         }
 
@@ -406,15 +389,8 @@ namespace Urkey.WPF.Views.Windows
         {
             if (_document == null) return;
 
-            var result = MessageBox.Show(
-                this,
-                $"Are you sure you want to delete '{_document.Name}'?",
-                "Confirm Delete",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Warning,
-                MessageBoxResult.No);
-
-            if (result != MessageBoxResult.Yes) return;
+            if (!EntryDialogHelper.ConfirmDelete(_document.Name ?? "document"))
+                return;
 
             try
             {
@@ -440,12 +416,7 @@ namespace Urkey.WPF.Views.Windows
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    this,
-                    $"Error deleting document: {ex.Message}",
-                    "Error",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                ToastService.Error($"Error deleting document: {ex.Message}");
             }
         }
 
@@ -457,7 +428,7 @@ namespace Urkey.WPF.Views.Windows
             {
                 if (_tempExtractedPath == null || !File.Exists(_tempExtractedPath))
                 {
-                    MessageBox.Show(this, "Image not loaded yet.", "Warning", MessageBoxButton.OK, MessageBoxImage.Warning);
+                    ToastService.Warning("Image not loaded yet.");
                     return;
                 }
 
@@ -470,12 +441,12 @@ namespace Urkey.WPF.Views.Windows
                 if (saveDialog.ShowDialog() == true)
                 {
                     File.Copy(_tempExtractedPath, saveDialog.FileName, overwrite: true);
-                    MessageBox.Show(this, "Document downloaded successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    ToastService.Success("Document downloaded successfully!");
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, $"Error downloading document: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                ToastService.Error($"Error downloading document: {ex.Message}");
             }
         }
     }

@@ -16,10 +16,6 @@ namespace Urkey.WPF.Views.Pages
             _DocVM = new DocumentsViewModel(App.VaultService);
             DataContext = _DocVM;
 
-            // Apply language direction
-            this.FlowDirection = App.Settings.Language == "ar"
-                ? FlowDirection.RightToLeft
-                : FlowDirection.LeftToRight;
         }
 
         private void OnPageLoaded(object sender, RoutedEventArgs e)

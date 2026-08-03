@@ -1,9 +1,9 @@
 ﻿using System.Windows;
+using Urkey.Core.Managers;
 using Urkey.Core.Services;
 using Urkey.WPF.Helpers;
 using Urkey.WPF.Views;
 using Urkey.WPF.Views.Windows;
-//using static System.Net.Mime.MediaTypeNames;
 
 namespace Urkey.WPF
 {
@@ -11,53 +11,37 @@ namespace Urkey.WPF
     {
         private bool _devMode = false;
         public static AppSettings Settings { get; private set; } = new();
-        //private UserService _userService;
-        public static VaultService VaultService;
+        public static VaultService VaultService = null!;
+
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
 
-            if(!_devMode)
+            if (!_devMode)
             {
+                Settings = SettingsHelper.LoadSettings();
+                VaultService = new VaultService();
 
+                LanguageManager.ApplyLanguage(Settings.Language);
+                ThemeManager.ApplyTheme(Settings.Theme);
 
-            Settings = SettingsHelper.LoadSettings();
-            // initialize services
-            //_userService = new UserService();
-            VaultService = new VaultService();
+                Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-            
-            LanguageManager.ApplyLanguage(Settings.Language);
-            ThemeManager.ApplyTheme(Settings.Theme);
+                var splashWindow = new Views.Windows.SplashScreen();
+                await splashWindow.RunAsync();
 
-            // منع التطبيق من الإغلاق التلقائي أثناء الفترة الانتقالية
-            Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+                Window next = VaultService.VaultExists()
+                    ? new UnlockWindow(VaultService)
+                    : new FirstTimeSetupWindow(VaultService);
 
-            var splashWindow = new Views.Windows.SplashScreen();
+                Application.Current.MainWindow = next;
+                next.Show();
 
-
-            await splashWindow.RunAsync();
-
-            Window next;
-
-            if (VaultService.VaultExists())
-                next = new UnlockWindow(VaultService);
-            
-            else
-                next = new FirstTimeSetupWindow(VaultService);
-
-            Application.Current.MainWindow = next;
-            next.Show();
-
-            // الآن نرجع البرنامج لسلوك الإغلاق الطبيعي
-            Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
-
+                Application.Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
             }
             else
             {
                 Settings = SettingsHelper.LoadSettings();
-                // initialize services
-                //_userService = new UserService();
                 VaultService = new VaultService();
 
                 LanguageManager.ApplyLanguage(Settings.Language);
@@ -67,18 +51,41 @@ namespace Urkey.WPF
                 Application.Current.MainWindow = next;
                 next.Show();
             }
-
         }
 
+        /// <summary>
+        /// Clear decrypted session state and return to the unlock screen.
+        /// </summary>
+        public static void LockAndShowUnlockWindow()
+        {
+            IdleLockService.Stop();
+            ClipboardHelper.CancelPendingClear();
+            try { Clipboard.Clear(); } catch { /* ignore */ }
 
+            VaultService?.ClearSession();
+            FileHelper.CleanupTempDocumentImages();
+
+            var currentMain = Current.MainWindow;
+            Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+            var unlock = new UnlockWindow(VaultService);
+            Current.MainWindow = unlock;
+            unlock.Show();
+
+            if (currentMain != null && !ReferenceEquals(currentMain, unlock))
+            {
+                currentMain.Close();
+            }
+
+            Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
+        }
 
         protected override void OnExit(ExitEventArgs e)
         {
+            VaultManager.Lock();
+            FileHelper.CleanupTempDocumentImages();
             SettingsHelper.SaveSettings(Settings);
             base.OnExit(e);
         }
-
     }
-
-
 }

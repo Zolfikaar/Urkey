@@ -1,6 +1,5 @@
 ﻿using System.IO;
 using System.Text.Json;
-using System.Windows;
 using Urkey.Core.Models;
 using Urkey.Core.Services;
 
@@ -23,23 +22,27 @@ namespace Urkey.Core.Repository
             _vaultFilePath = Path.Combine(_vaultDirectory, "vault.json");
         }
 
-        public bool VaultExists()
-       => File.Exists(_vaultFilePath);
+        public bool VaultExists() => File.Exists(_vaultFilePath);
 
         public Vault Load()
         {
             if (!VaultExists())
                 return new Vault();
 
+            var encryptedJson = File.ReadAllText(_vaultFilePath);
+            if (string.IsNullOrWhiteSpace(encryptedJson))
+                return new Vault();
+
             try
             {
-                var encryptedJson = File.ReadAllText(_vaultFilePath);
                 var decryptedJson = EncryptionService.Decrypt(encryptedJson);
                 return JsonSerializer.Deserialize<Vault>(decryptedJson) ?? new Vault();
             }
-            catch
+            catch (Exception ex)
             {
-                return new Vault();
+                // Never return an empty vault when ciphertext exists — that risked overwriting real data.
+                throw new InvalidOperationException(
+                    "Failed to decrypt vault. Wrong key or corrupted vault file.", ex);
             }
         }
 
@@ -52,6 +55,5 @@ namespace Urkey.Core.Repository
 
         public string GetVaultDirectory() => _vaultDirectory;
         public string GetVaultPath() => _vaultFilePath;
-
     }
 }

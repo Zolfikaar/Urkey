@@ -9,11 +9,15 @@ namespace Urkey.WPF.Helpers
         public string DataPath { get; set; } = "data/passwords.json";
         public int ClipboardClearSeconds { get; set; } = 10;
 
-        // هذا الحقل لا نخزنه في نفس الملف (نخليه في SecureStorage)
+        /// <summary>
+        /// Idle minutes before auto-lock. 0 = never.
+        /// </summary>
+        public int AutoLockMinutes { get; set; } = 5;
+
+        // DPAPI master-password storage remains disabled.
         [JsonIgnore]
         public string? MasterPassword { get; set; }
 
         public bool SidebarExpanded { get; set; } = true;
-
     }
 }

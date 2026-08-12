@@ -5,7 +5,7 @@
         Height="600" Width="800"
         WindowStartupLocation="CenterOwner"
         ResizeMode="CanResize"
-        Background="{DynamicResource BgColor}"
+        Background="#16181D"
         Foreground="{DynamicResource TextColor}"
         FlowDirection="{DynamicResource AppFlowDirection}">
     <Window.Resources>
@@ -31,20 +31,24 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="{DynamicResource HoverColor}"/>
+                    <Setter Property="Background" Value="#33FFFFFF"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
 
-    <Border Style="{DynamicResource CardStyle}" Margin="20" Padding="10">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
 
-            <Grid Grid.Row="0" Height="60" VerticalAlignment="Center">
+            <Border Grid.Row="0"
+                    Background="#1E2128"
+                    BorderBrush="#2F343E"
+                    BorderThickness="0,0,0,1"
+                    Padding="16,10">
+            <Grid VerticalAlignment="Center">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto"/>
                     <ColumnDefinition Width="*"/>
@@ -53,12 +57,12 @@
 
                 <!-- Document Title -->
                 <StackPanel Grid.Column="0">
-                    <TextBlock FontSize="20" 
+                    <TextBlock FontSize="18" 
                               FontWeight="Bold"
-                              Foreground="{DynamicResource TextColor}"
+                              Foreground="White"
                               Text="{Binding DocumentName}"/>
                     <TextBlock FontSize="12"
-                              Foreground="{DynamicResource TextMutedColor}"
+                              Foreground="#9AA0AB"
                               Margin="0,4,0,0"
                               Text="{Binding DocumentType}">
                         <TextBlock.Style>
@@ -83,16 +87,14 @@
                             Style="{StaticResource CircularButtonStyle}"
                             Margin="0,0,8,0"
                             ToolTip="{DynamicResource ZoomOutButton}">
-                        <TextBlock Text="−" 
-                                  VerticalAlignment="Center" 
-                                  HorizontalAlignment="Center"
-                                  FontSize="18"
-                                  Foreground="{DynamicResource TextColor}"/>
+                        <Viewbox Width="16" Height="16">
+                            <Path Data="{StaticResource bx_minus}" Fill="White" Stretch="Uniform"/>
+                        </Viewbox>
                     </Button>
                     <Slider Value="{Binding ZoomLevel}" 
                            Minimum="0.05" 
                            Maximum="3.0" 
-                           Width="200"
+                           Width="180"
                            TickFrequency="0.1"
                            IsSnapToTickEnabled="True"
                            Margin="0,0,8,0"
@@ -103,65 +105,61 @@
                             Style="{StaticResource CircularButtonStyle}"
                             Margin="0,0,8,0"
                             ToolTip="{DynamicResource ZoomInButton}">
-                        <TextBlock Text="+" 
-                                  VerticalAlignment="Center" 
-                                  HorizontalAlignment="Center"
-                                  FontSize="18"
-                                  Foreground="{DynamicResource TextColor}"/>
+                        <Viewbox Width="16" Height="16">
+                            <Path Data="{StaticResource bx_plus}" Fill="White" Stretch="Uniform"/>
+                        </Viewbox>
                     </Button>
                     <Button Command="{Binding ZoomResetCommand}"
                             Style="{StaticResource CircularButtonStyle}"
                             ToolTip="{DynamicResource ZoomResetButton}">
-                        <TextBlock Text="{DynamicResource ZoomResetButton}" 
-                                  VerticalAlignment="Center"
-                                  HorizontalAlignment="Center"
-                                  FontSize="12"
-                                  Foreground="{DynamicResource TextColor}"/>
+                        <Viewbox Width="16" Height="16">
+                            <Path Data="{StaticResource bx_search}" Fill="White" Stretch="Uniform"/>
+                        </Viewbox>
                     </Button>
                 </StackPanel>
 
                 <!-- Action Buttons -->
                 <StackPanel Grid.Column="2" 
                            Orientation="Horizontal" 
-                           HorizontalAlignment="Right" 
-                           Margin="0,0,0,0">
+                           HorizontalAlignment="Right">
                     <Button Style="{StaticResource CircularButtonStyle}"
                            Margin="0,0,8,0"
                            ToolTip="{DynamicResource RotateButton}"
                            Command="{Binding RotateCommand}">
                         <Path Data="{StaticResource bx_rotate}" 
-                             Fill="{DynamicResource TextColor}"
-                             Width="20" Height="20"/>
+                             Fill="White"
+                             Width="18" Height="18"/>
                     </Button>
                     <Button Style="{StaticResource CircularButtonStyle}"
                            Margin="0,0,8,0"
                            ToolTip="{DynamicResource EditButton}"
                            Click="OnEditClick">
                         <Path Data="{StaticResource bx_edit}" 
-                             Fill="{DynamicResource TextColor}"
-                             Width="20" Height="20"/>
+                             Fill="White"
+                             Width="18" Height="18"/>
                     </Button>
                     <Button Style="{StaticResource CircularButtonStyle}"
                            Margin="0,0,8,0"
                            ToolTip="{DynamicResource DownloadButton}"
                            Click="OnDownloadClick">
                         <Path Data="{StaticResource bx_download}" 
-                             Fill="{DynamicResource TextColor}"
-                             Width="20" Height="20"/>
+                             Fill="White"
+                             Width="18" Height="18"/>
                     </Button>
                     <Button Style="{StaticResource CircularButtonStyle}"
                            ToolTip="{DynamicResource DeleteButton}"
                            Click="OnDeleteClick">
                         <Path Data="{StaticResource bx_delete}" 
-                             Fill="{DynamicResource TextColor}"
-                             Width="20" Height="20"/>
+                             Fill="White"
+                             Width="18" Height="18"/>
                     </Button>
                 </StackPanel>
             </Grid>
+            </Border>
 
             <!-- Document Image Container -->
             <ScrollViewer Grid.Row="1" 
-                         Background="{DynamicResource BgColor}"
+                         Background="#16181D"
                          HorizontalScrollBarVisibility="Auto"
                          VerticalScrollBarVisibility="Auto"
                          x:Name="ImageScrollViewer"
@@ -169,7 +167,9 @@
                          VerticalContentAlignment="Center">
                 <Grid x:Name="ImageContainer"
                       HorizontalAlignment="Center"
-                      VerticalAlignment="Center">
+                      VerticalAlignment="Center"
+                      Margin="24">
+                    <Border Background="#2A2E36" CornerRadius="6" Padding="10">
                     <Image Source="{Binding PreviewImage}"
                           Stretch="None"
                           HorizontalAlignment="Center"
@@ -180,14 +180,13 @@
                           RenderOptions.CachingHint="Cache">
                         <Image.LayoutTransform>
                             <TransformGroup>
-                                <!-- Rotation transform (includes EXIF correction) -->
                                 <RotateTransform Angle="{Binding RotationAngle}"/>
-                                <!-- Zoom/scale transform -->
                                 <ScaleTransform ScaleX="{Binding ZoomLevel}" 
                                               ScaleY="{Binding ZoomLevel}"/>
                             </TransformGroup>
                         </Image.LayoutTransform>
                     </Image>
+                    </Border>
                 </Grid>
             </ScrollViewer>
 
@@ -203,31 +202,14 @@
                    IsHitTestVisible="False">
                 <StackPanel>
                     <TextBlock Text="Debug Info"
-                              Foreground="{DynamicResource TextColor}"
+                              Foreground="White"
                               FontWeight="Bold"
                               Margin="0,0,0,4"/>
-                    <TextBlock Foreground="{DynamicResource TextColor}" FontSize="10">
-                        <Run Text="Image: "/>
-                        <Run Text="{Binding PreviewImage.PixelWidth, Mode=OneWay, StringFormat='{}{0}'}"/>
-                        <Run Text=" × "/>
-                        <Run Text="{Binding PreviewImage.PixelHeight, Mode=OneWay, StringFormat='{}{0}'}"/>
-                    </TextBlock>
-                    <TextBlock Foreground="{DynamicResource TextColor}" FontSize="10">
-                        <Run Text="Viewport: "/>
-                        <Run Text="{Binding ElementName=ImageScrollViewer, Path=ViewportWidth, Mode=OneWay, StringFormat='{}{0:F0}'}"/>
-                        <Run Text=" × "/>
-                        <Run Text="{Binding ElementName=ImageScrollViewer, Path=ViewportHeight, Mode=OneWay, StringFormat='{}{0:F0}'}"/>
-                    </TextBlock>
-                    <TextBlock Foreground="{DynamicResource TextColor}" FontSize="10">
+                    <TextBlock Foreground="White" FontSize="10">
                         <Run Text="Zoom: "/>
                         <Run Text="{Binding ZoomLevel, StringFormat='{}{0:F2}'}"/>
                     </TextBlock>
-                    <TextBlock Foreground="{DynamicResource TextColor}" FontSize="10">
-                        <Run Text="Rotation: "/>
-                        <Run Text="{Binding RotationAngle, StringFormat='{}{0:F0}°'}"/>
-                    </TextBlock>
                 </StackPanel>
             </Border>
-        </Grid>
-    </Border>
+    </Grid>
 </Window>

@@ -16,7 +16,7 @@ using Urkey.WPF.Views.Windows;
 
 namespace Urkey.WPF.ViewModels
 {
-    public class AccountsViewModel : ViewModelBase
+    public class AccountsViewModel : ViewModelBase, ISupportsViewMode
     {
         private const string AllCategoriesLabel = "All categories";
 
@@ -86,6 +86,7 @@ namespace Urkey.WPF.ViewModels
         }
 
         public ICommand ReloadCommand { get; }
+        public ICommand AddCommand { get; }
         public ICommand ToggleFavoriteCommand { get; }
         public ICommand EditAccountCommand { get; }
         public ICommand DeleteAccountCommand { get; }
@@ -109,10 +110,13 @@ namespace Urkey.WPF.ViewModels
             RebuildCategories();
 
             ReloadCommand = new RelayCommand<object>(_ => Reload());
+            AddCommand = new RelayCommand<object>(_ => AddAccount());
             ToggleFavoriteCommand = new RelayCommand<object>(_ => ToggleFavorite(), _ => SelectedAccount != null);
             EditAccountCommand = new RelayCommand<object>(_ => EditSelectedAccount(), _ => SelectedAccount != null);
             DeleteAccountCommand = new RelayCommand<object>(_ => DeleteSelectedAccount(), _ => SelectedAccount != null);
             OpenAccountCommand = new RelayCommand<AccountEntry>(OpenAccount, CanOpenAccount);
+
+            EnsureSelectionVisible();
         }
 
         public void Reload()
@@ -129,7 +133,14 @@ namespace Urkey.WPF.ViewModels
 
             RebuildCategories();
             FilteredAccounts.Refresh();
+            EnsureSelectionVisible();
             OnPropertyChanged(nameof(IsEmpty));
+        }
+
+        private void AddAccount()
+        {
+            if (EntryDialogHelper.AddAccount() != null)
+                Reload();
         }
 
         private void ToggleFavorite()
@@ -253,7 +264,7 @@ namespace Urkey.WPF.ViewModels
         private void EnsureSelectionVisible()
         {
             var visible = FilteredAccounts.OfType<AccountEntry>().ToList();
-            if (!visible.Contains(SelectedAccount))
+            if (SelectedAccount == null || !visible.Contains(SelectedAccount))
                 SelectedAccount = visible.FirstOrDefault();
         }
 

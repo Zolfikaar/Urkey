@@ -7,7 +7,7 @@ using Urkey.WPF.Helpers;
 
 namespace Urkey.WPF.ViewModels
 {
-    public class NotesViewModel : ViewModelBase
+    public class NotesViewModel : ViewModelBase, ISupportsViewMode
     {
         private readonly VaultService _vaultService;
 
@@ -35,6 +35,19 @@ namespace Urkey.WPF.ViewModels
             }
         }
 
+        private bool _isListView = true;
+        public bool IsListView
+        {
+            get => _isListView;
+            set
+            {
+                if (!SetProperty(ref _isListView, value)) return;
+                OnPropertyChanged(nameof(IsGridView));
+            }
+        }
+
+        public bool IsGridView => !_isListView;
+
         public bool IsEmpty => Items.Count == 0;
 
         public ICommand AddCommand { get; }
@@ -54,6 +67,7 @@ namespace Urkey.WPF.ViewModels
 
         public void Reload()
         {
+            var previousId = SelectedItem?.Id;
             Items.Clear();
             var query = _searchText.Trim();
             foreach (var note in _vaultService.GetEntries().OfType<NoteEntry>()
@@ -69,7 +83,7 @@ namespace Urkey.WPF.ViewModels
                 Items.Add(note);
             }
 
-            SelectedItem = Items.FirstOrDefault();
+            SelectedItem = Items.FirstOrDefault(n => n.Id == previousId) ?? Items.FirstOrDefault();
             OnPropertyChanged(nameof(IsEmpty));
         }
 

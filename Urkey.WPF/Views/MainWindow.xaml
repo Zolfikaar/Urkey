@@ -172,22 +172,14 @@
                         IsSidebarExpanded="{Binding IsSidebarExpanded, RelativeSource={RelativeSource AncestorType=Window}}"/>
         </Border>
 
-        <!-- Main Content -->
+        <!-- Main Content — flat surface (no nested shell card) -->
         <Border Grid.Row="1"
                 Grid.Column="1"
                 Grid.ColumnSpan="2"
-                Padding="16"
                 Background="{DynamicResource BgColor}">
-            <Border CornerRadius="{StaticResource CardCornerRadius}"
-                    Padding="4"
-                    Background="{DynamicResource CardBgColor}"
-                    BorderBrush="{DynamicResource BorderColor}"
-                    BorderThickness="1"
-                    Effect="{StaticResource CardShadow}">
-                <Frame x:Name="MainContentArea"
-                       NavigationUIVisibility="Hidden"
-                       Background="Transparent"/>
-            </Border>
+            <Frame x:Name="MainContentArea"
+                   NavigationUIVisibility="Hidden"
+                   Background="Transparent"/>
         </Border>
 
         <!-- Global toast overlay -->

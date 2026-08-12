@@ -12,7 +12,7 @@ using Urkey.WPF.Views.Windows;
 
 namespace Urkey.WPF.ViewModels
 {
-    public class DocumentsViewModel : INotifyPropertyChanged
+    public class DocumentsViewModel : INotifyPropertyChanged, ISupportsViewMode
     {
         private readonly VaultService _vaultService;
         private Vault _vault;
@@ -76,8 +76,36 @@ namespace Urkey.WPF.ViewModels
             }
         }
 
+        private string _searchText = string.Empty;
+        public string SearchText
+        {
+            get => _searchText;
+            set
+            {
+                _searchText = value ?? string.Empty;
+                OnPropertyChanged(nameof(SearchText));
+                Reload();
+            }
+        }
+
+        private bool _isListView = true;
+        public bool IsListView
+        {
+            get => _isListView;
+            set
+            {
+                if (_isListView == value) return;
+                _isListView = value;
+                OnPropertyChanged(nameof(IsListView));
+                OnPropertyChanged(nameof(IsGridView));
+            }
+        }
+
+        public bool IsGridView => !_isListView;
+
         // الأوامر
         public ICommand SaveDocCommand { get; }
+        public ICommand AddCommand { get; }
         public ICommand ReloadCommand { get; }
         public ICommand PreviewCommand { get; }
         public ICommand OpenFolderCommand { get; }
@@ -95,6 +123,7 @@ namespace Urkey.WPF.ViewModels
             _vault = _vaultService.EnsureLoaded();
 
             SaveDocCommand = new RelayCommand<DocumentEntry>(SaveNewDocument, CanSaveDocument);
+            AddCommand = new RelayCommand<object>(_ => AddDocument());
             ReloadCommand = new RelayCommand<DocumentEntry>(_ => Reload());
             PreviewCommand = new RelayCommand<DocumentEntry>(Preview, doc => doc != null);
             OpenFolderCommand = new RelayCommand<DocumentEntry>(OpenFolder, doc => doc != null);
@@ -105,6 +134,22 @@ namespace Urkey.WPF.ViewModels
             ZoomOutCommand = new RelayCommand<object?>(_ => ZoomLevel -= 0.1, _ => PreviewImage != null);
             ZoomResetCommand = new RelayCommand<object?>(_ => ZoomLevel = 1.0, _ => PreviewImage != null);
             DismissWarningCommand = new RelayCommand<DocumentEntry>(_ => ShowSecurityWarning = false);
+
+            Reload();
+        }
+
+        private void AddDocument()
+        {
+            var win = new AddDocument
+            {
+                Owner = Application.Current.MainWindow
+            };
+
+            if (win.ShowDialog() == true && win.Document is not null)
+            {
+                SaveNewDocument(win.Document);
+                Reload();
+            }
         }
 
         public void SaveNewDocument(DocumentEntry? newDoc)
@@ -170,12 +215,23 @@ namespace Urkey.WPF.ViewModels
 
         public void Reload()
         {
+            var previousId = SelectedDocument?.Id;
             _vault = _vaultService.LoadVault();
             Documents.Clear();
 
+            var query = _searchText.Trim();
             foreach (var doc in _vault.Entries.OfType<DocumentEntry>())
-                Documents.Add(doc);
+            {
+                if (!string.IsNullOrEmpty(query) &&
+                    !(doc.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) == true) &&
+                    !(doc.Type?.Contains(query, StringComparison.OrdinalIgnoreCase) == true) &&
+                    !(doc.Notes?.Contains(query, StringComparison.OrdinalIgnoreCase) == true))
+                    continue;
 
+                Documents.Add(doc);
+            }
+
+            SelectedDocument = Documents.FirstOrDefault(d => d.Id == previousId) ?? Documents.FirstOrDefault();
             OnPropertyChanged(nameof(Documents));
             OnPropertyChanged(nameof(IsEmpty));
         }

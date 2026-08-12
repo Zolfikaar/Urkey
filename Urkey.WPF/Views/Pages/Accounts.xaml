@@ -509,22 +509,12 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
-                    <StackPanel Style="{StaticResource EmptyStatePanelStyle}"
-                                Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
-                        <Path Data="{StaticResource bx_userAccount}"
-                              Fill="{DynamicResource TextMutedColor}"
-                              Width="48" Height="48" Stretch="Uniform"
-                              Opacity="0.55" HorizontalAlignment="Center" Margin="0,0,0,16"/>
-                        <TextBlock Text="{DynamicResource Accounts_Empty}"
-                                   Style="{StaticResource Text.SectionTitle}"
-                                   HorizontalAlignment="Center"
-                                   TextAlignment="Center"/>
-                        <TextBlock Text="{DynamicResource Accounts_EmptyHint}"
-                                   Style="{StaticResource Text.BodyMuted}"
-                                   HorizontalAlignment="Center"
-                                   TextAlignment="Center"
-                                   Margin="0,8,0,0"/>
-                    </StackPanel>
+                    <uc:EmptyState IconData="{StaticResource bx_userAccount}"
+                                   Title="{DynamicResource Accounts_Empty}"
+                                   Hint="{DynamicResource Accounts_EmptyHint}"
+                                   ActionText="{DynamicResource AddButton}"
+                                   ActionCommand="{Binding AddCommand}"
+                                   Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}"/>
                 </Grid>
 
                 <Grid x:Name="GridViewContainer" Visibility="{Binding IsGridView, Converter={StaticResource BoolToVisibility}}">
@@ -540,11 +530,8 @@
                             </ItemsControl.ItemsPanel>
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Width="240" Height="188"
-                                            Margin="8"
-                                            Padding="12"
+                                    <Border Style="{StaticResource EntryTileStyle}"
                                             Cursor="Hand"
-                                            Style="{StaticResource CardStyle}"
                                             MouseLeftButtonUp="OnGridCardClicked"
                                             MouseLeftButtonDown="OnGridCardMouseDown">
                                         <Grid>
@@ -557,10 +544,11 @@
 
                                             <StackPanel Grid.Row="0" Orientation="Horizontal">
                                                 <TextBlock Text="{Binding ServiceName}"
-                                                           FontWeight="Bold"
+                                                           FontWeight="SemiBold"
+                                                           FontSize="{StaticResource FontSizeSubtitle}"
                                                            Foreground="{DynamicResource TextColor}"
                                                            TextWrapping="Wrap"
-                                                           MaxWidth="180"/>
+                                                           MaxWidth="200"/>
                                                 <TextBlock Text="★"
                                                            Margin="6,0,0,0"
                                                            Foreground="{DynamicResource PrimaryColor}">
@@ -580,30 +568,36 @@
                                             <TextBlock Grid.Row="1"
                                                        Text="{Binding AccountType}"
                                                        Foreground="{DynamicResource PrimaryColor}"
-                                                       FontSize="11"
+                                                       FontSize="{StaticResource FontSizeCaption}"
                                                        Margin="0,4,0,0"/>
 
-                                            <StackPanel Grid.Row="2" Margin="0,8,0,0">
-                                                <TextBlock Text="{Binding Username}"
-                                                           Foreground="{DynamicResource SubTextColor}"
-                                                           FontSize="12"
-                                                           TextTrimming="CharacterEllipsis"/>
-                                                <TextBlock Text="{Binding Email}"
-                                                           Foreground="{DynamicResource SubTextColor}"
-                                                           FontSize="11"
-                                                           TextTrimming="CharacterEllipsis"/>
-                                            </StackPanel>
+                                            <Border Grid.Row="2"
+                                                    Margin="0,10,0,10"
+                                                    Padding="10"
+                                                    CornerRadius="{StaticResource ControlCornerRadius}"
+                                                    Background="{DynamicResource ElevatedBgColor}">
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Username}"
+                                                               Foreground="{DynamicResource SubTextColor}"
+                                                               FontSize="{StaticResource FontSizeCaption}"
+                                                               TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Email}"
+                                                               Foreground="{DynamicResource SubTextColor}"
+                                                               FontSize="{StaticResource FontSizeCaption}"
+                                                               TextTrimming="CharacterEllipsis"
+                                                               Margin="0,4,0,0"/>
+                                                </StackPanel>
+                                            </Border>
 
                                             <StackPanel Grid.Row="3"
                                                         Orientation="Horizontal"
-                                                        HorizontalAlignment="Right"
-                                                        Margin="0,8,0,0">
+                                                        HorizontalAlignment="Right">
                                                 <Button Width="36" Height="36"
                                                         Style="{StaticResource IconBtnStyle}"
                                                         ToolTip="{DynamicResource OpenAccountPreview}"
                                                         Click="OnOpenPreviewClick"
                                                         Tag="{Binding}">
-                                                    <Viewbox Width="16" Height="16">
+                                                    <Viewbox Width="{StaticResource IconSizeSM}" Height="{StaticResource IconSizeSM}">
                                                         <Path Data="{StaticResource bx_eye}"
                                                               Fill="{DynamicResource TextColor}"/>
                                                     </Viewbox>
@@ -613,7 +607,7 @@
                                                         Style="{StaticResource IconBtnStyle}"
                                                         ToolTip="{DynamicResource CopyBtnTitle}"
                                                         Click="OnGridCopyPasswordClick">
-                                                    <Viewbox Width="16" Height="16">
+                                                    <Viewbox Width="{StaticResource IconSizeSM}" Height="{StaticResource IconSizeSM}">
                                                         <Path Data="{StaticResource bx_copy}"
                                                               Fill="{DynamicResource TextColor}"/>
                                                     </Viewbox>
@@ -624,7 +618,7 @@
                                                         Command="{Binding DataContext.OpenAccountCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
                                                         CommandParameter="{Binding}"
                                                         ToolTip="{DynamicResource AccountsActionOpenWebsite}">
-                                                    <Viewbox Width="16" Height="16">
+                                                    <Viewbox Width="{StaticResource IconSizeSM}" Height="{StaticResource IconSizeSM}">
                                                         <Path Data="{StaticResource bx_open_in_browser}"
                                                               Fill="{DynamicResource TextColor}"/>
                                                     </Viewbox>
@@ -637,22 +631,12 @@
                         </ItemsControl>
                     </ScrollViewer>
 
-                    <StackPanel Style="{StaticResource EmptyStatePanelStyle}"
-                                Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
-                        <Path Data="{StaticResource bx_userAccount}"
-                              Fill="{DynamicResource TextMutedColor}"
-                              Width="48" Height="48" Stretch="Uniform"
-                              Opacity="0.55" HorizontalAlignment="Center" Margin="0,0,0,16"/>
-                        <TextBlock Text="{DynamicResource Accounts_Empty}"
-                                   Style="{StaticResource Text.SectionTitle}"
-                                   HorizontalAlignment="Center"
-                                   TextAlignment="Center"/>
-                        <TextBlock Text="{DynamicResource Accounts_EmptyHint}"
-                                   Style="{StaticResource Text.BodyMuted}"
-                                   HorizontalAlignment="Center"
-                                   TextAlignment="Center"
-                                   Margin="0,8,0,0"/>
-                    </StackPanel>
+                    <uc:EmptyState IconData="{StaticResource bx_userAccount}"
+                                   Title="{DynamicResource Accounts_Empty}"
+                                   Hint="{DynamicResource Accounts_EmptyHint}"
+                                   ActionText="{DynamicResource AddButton}"
+                                   ActionCommand="{Binding AddCommand}"
+                                   Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}"/>
                 </Grid>
         </Grid>
     </Grid>

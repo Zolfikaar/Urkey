@@ -28,4 +28,14 @@
     <sys:Double x:Key="AuthInputHeight">56</sys:Double>
     <sys:Double x:Key="AuthButtonHeight">50</sys:Double>
 
+    <!-- Standard icon sizes (boxicons Path in Viewbox) -->
+    <sys:Double x:Key="IconSizeXS">14</sys:Double>
+    <sys:Double x:Key="IconSizeSM">16</sys:Double>
+    <sys:Double x:Key="IconSizeMD">18</sys:Double>
+    <sys:Double x:Key="IconSizeLG">20</sys:Double>
+    <sys:Double x:Key="IconSizeXL">48</sys:Double>
+
+    <sys:Double x:Key="EntryTileWidth">260</sys:Double>
+    <sys:Double x:Key="EntryTileMinHeight">168</sys:Double>
+
 </ResourceDictionary>

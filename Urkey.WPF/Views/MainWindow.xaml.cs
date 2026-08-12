@@ -225,24 +225,13 @@ namespace Urkey.WPF.Views
         {
             if (GlobalViewToggler == null) return;
 
-            var content = MainContentArea.Content;
-            bool shouldHide =
-                content is Home ||
-                content is AllEntries ||
-                content is PasswordCheck ||
-                content is PasswordGenerator ||
-                content is Settings;
+            var content = MainContentArea.Content as FrameworkElement;
+            var dc = content?.DataContext;
 
-            GlobalViewToggler.Visibility = shouldHide ? Visibility.Collapsed : Visibility.Visible;
-
-            if (content is FrameworkElement fe)
-            {
-                GlobalViewToggler.DataContext = fe.DataContext;
-            }
-            else
-            {
-                GlobalViewToggler.DataContext = null;
-            }
+            // Only entry list/grid pages expose ISupportsViewMode (not Home / Generator / Password Check / Settings).
+            bool supportsViewMode = dc is ISupportsViewMode;
+            GlobalViewToggler.Visibility = supportsViewMode ? Visibility.Visible : Visibility.Collapsed;
+            GlobalViewToggler.DataContext = supportsViewMode ? dc : null;
         }
 
         private void MainContentArea_Navigated(object sender, NavigationEventArgs e)

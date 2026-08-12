@@ -1,0 +1,56 @@
+<UserControl x:Class="Urkey.WPF.UserControls.EmptyState"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d">
+    <StackPanel Style="{StaticResource EmptyStatePanelStyle}"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+        <Viewbox Width="{StaticResource IconSizeXL}"
+                 Height="{StaticResource IconSizeXL}"
+                 HorizontalAlignment="Center"
+                 Margin="0,0,0,16"
+                 Opacity="0.55">
+            <Path x:Name="IconPath"
+                  Fill="{DynamicResource TextMutedColor}"
+                  Stretch="Uniform"/>
+        </Viewbox>
+
+        <TextBlock x:Name="TitleText"
+                   Style="{StaticResource Text.SectionTitle}"
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"/>
+
+        <TextBlock x:Name="HintText"
+                   Style="{StaticResource Text.BodyMuted}"
+                   HorizontalAlignment="Center"
+                   TextAlignment="Center"
+                   TextWrapping="Wrap"
+                   Margin="0,8,0,0"
+                   MaxWidth="360"/>
+
+        <Button x:Name="ActionButton"
+                Style="{StaticResource PrimaryBtnStyle}"
+                Margin="0,20,0,0"
+                MinWidth="140"
+                HorizontalAlignment="Center"
+                Visibility="Collapsed"
+                Click="OnActionClick">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Viewbox Width="{StaticResource IconSizeSM}"
+                         Height="{StaticResource IconSizeSM}"
+                         Margin="0,0,8,0"
+                         VerticalAlignment="Center">
+                    <Path Data="{StaticResource bx_plus}"
+                          Fill="{DynamicResource ButtonPrimaryText}"
+                          Stretch="Uniform"/>
+                </Viewbox>
+                <TextBlock x:Name="ActionLabel"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource ButtonPrimaryText}"/>
+            </StackPanel>
+        </Button>
+    </StackPanel>
+</UserControl>

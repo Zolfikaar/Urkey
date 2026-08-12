@@ -1,7 +1,6 @@
 ﻿using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Urkey.WPF.UserControls;
 using Urkey.WPF.ViewModels;
 
 namespace Urkey.WPF.Views.Pages
@@ -29,6 +28,24 @@ namespace Urkey.WPF.Views.Pages
         {
             if (_vm.EditCommand.CanExecute(null))
                 _vm.EditCommand.Execute(null);
+        }
+
+        private void OnTileClicked(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement { DataContext: EntryListItem item })
+                _vm.SelectedEntry = item;
+        }
+
+        private void OnTileMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            if (sender is FrameworkElement { DataContext: EntryListItem item })
+                _vm.SelectedEntry = item;
+        }
+
+        private void OnTileActionClick(object sender, RoutedEventArgs e)
+        {
+            if (sender is FrameworkElement { DataContext: EntryListItem item })
+                _vm.SelectedEntry = item;
         }
     }
 }

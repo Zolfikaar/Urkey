@@ -270,7 +270,11 @@
     <sys:String x:Key="PasswordGenerator_GenerateFirst">Generate a password first.</sys:String>
     <sys:String x:Key="PasswordGenerator_Saved">Password saved as a new account.</sys:String>
     <sys:String x:Key="PasswordGenerator_Error">Could not generate password.</sys:String>
-    <sys:String x:Key="PasswordGenerator_StrengthFormat">Strength: {0} · ~{1} bits entropy</sys:String>
+    <sys:String x:Key="PasswordGenerator_StrengthFormat">Password strength: {0}</sys:String>
+    <sys:String x:Key="PasswordGenerator_Settings">Settings</sys:String>
+    <sys:String x:Key="PasswordGenerator_Regenerate">Regenerate</sys:String>
+    <sys:String x:Key="PasswordGenerator_Show">Show password</sys:String>
+    <sys:String x:Key="PasswordGenerator_Hide">Hide password</sys:String>
 
     <!-- Password Check -->
     <sys:String x:Key="PasswordCheck_Subtitle">Local review of weak, reused, or low-entropy passwords. No data is sent online.</sys:String>
@@ -285,6 +289,10 @@
     <sys:String x:Key="PasswordCheck_Stat_Weak">Weak</sys:String>
     <sys:String x:Key="PasswordCheck_Stat_Reused">Reused</sys:String>
     <sys:String x:Key="PasswordCheck_Filter_IssuesOnly">Issues only</sys:String>
+    <sys:String x:Key="PasswordCheck_ChangePassword">Change password</sys:String>
+    <sys:String x:Key="PasswordCheck_SavePassword">Save password</sys:String>
+    <sys:String x:Key="PasswordCheck_PasswordUpdated">Password updated.</sys:String>
+    <sys:String x:Key="PasswordCheck_PasswordRequired">Enter a new password.</sys:String>
     <sys:String x:Key="PasswordCheck_Tag_Length">{0} chars</sys:String>
     <sys:String x:Key="PasswordCheck_Tag_Lower">a-z</sys:String>
     <sys:String x:Key="PasswordCheck_Tag_Upper">A-Z</sys:String>

@@ -6,32 +6,31 @@
                       x:Shared="False"
                       Color="#000000"
                       Direction="270"
-                      ShadowDepth="4"
-                      BlurRadius="16"
-                      Opacity="0.22"/>
+                      ShadowDepth="1"
+                      BlurRadius="8"
+                      Opacity="0.08"/>
 
     <DropShadowEffect x:Key="SoftShadow"
                       x:Shared="False"
                       Color="#000000"
-                      ShadowDepth="2"
-                      BlurRadius="8"
-                      Opacity="0.35"/>
+                      ShadowDepth="1"
+                      BlurRadius="6"
+                      Opacity="0.1"/>
 
     <DropShadowEffect x:Key="DropShadowSmall"
                       x:Shared="False"
                       Color="Black"
-                      BlurRadius="12"
+                      BlurRadius="8"
                       ShadowDepth="0"
-                      Opacity="0.35"/>
+                      Opacity="0.12"/>
 
-    <!-- Cards -->
+    <!-- Cards — flat KPM-style surfaces (no heavy nested chrome) -->
     <Style x:Key="CardStyle" TargetType="Border">
         <Setter Property="Background" Value="{DynamicResource CardBgColor}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="CornerRadius" Value="{StaticResource CardCornerRadius}"/>
         <Setter Property="Padding" Value="{StaticResource CardPadding}"/>
-        <Setter Property="Effect" Value="{StaticResource CardShadow}"/>
         <Setter Property="SnapsToDevicePixels" Value="True"/>
     </Style>
 
@@ -41,6 +40,46 @@
     </Style>
 
     <Style x:Key="SettingsCardStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}"/>
+
+    <!-- Tile card used in grid/tile entry views -->
+    <Style x:Key="EntryTileStyle" TargetType="Border" BasedOn="{StaticResource CardStyle}">
+        <Setter Property="Padding" Value="{StaticResource CardPaddingCompact}"/>
+        <Setter Property="Margin" Value="8"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Width" Value="{StaticResource EntryTileWidth}"/>
+        <Setter Property="MinHeight" Value="{StaticResource EntryTileMinHeight}"/>
+    </Style>
+
+    <!-- Flat list-row chrome (selection via background, not nested cards) -->
+    <Style x:Key="EntryListBoxItemStyle" TargetType="ListBoxItem">
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0,2"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="ListBoxItem">
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            CornerRadius="{StaticResource ControlCornerRadius}"
+                            Padding="14,12"
+                            SnapsToDevicePixels="True">
+                        <ContentPresenter HorizontalAlignment="Stretch"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverColor}"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowSelectedColor}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
     <!-- Primary button -->
     <Style x:Key="PrimaryBtnStyle" TargetType="Button">
@@ -506,9 +545,9 @@
     <Style x:Key="VaultDataGridStyle" TargetType="DataGrid">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Foreground" Value="{DynamicResource TextColor}"/>
-        <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
-        <Setter Property="BorderThickness" Value="1"/>
-        <Setter Property="RowBackground" Value="{DynamicResource CardBgColor}"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="RowBackground" Value="Transparent"/>
         <Setter Property="AlternatingRowBackground" Value="{DynamicResource RowAltColor}"/>
         <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource BorderColor}"/>
         <Setter Property="VerticalGridLinesBrush" Value="Transparent"/>
@@ -519,7 +558,7 @@
         <Setter Property="CanUserAddRows" Value="False"/>
         <Setter Property="CanUserDeleteRows" Value="False"/>
         <Setter Property="AutoGenerateColumns" Value="False"/>
-        <Setter Property="RowHeight" Value="44"/>
+        <Setter Property="RowHeight" Value="48"/>
         <Setter Property="ColumnHeaderHeight" Value="40"/>
         <Setter Property="FontSize" Value="{StaticResource FontSizeBody}"/>
     </Style>

@@ -17,8 +17,9 @@ namespace Urkey.WPF.ViewModels
         public bool IsFeature { get; init; }
     }
 
-    public class PasswordIssueItem
+    public class PasswordIssueItem : ViewModelBase
     {
+        public Guid AccountId { get; init; }
         public string ServiceName { get; init; } = string.Empty;
         public string Username { get; init; } = string.Empty;
         public string StrengthText { get; init; } = string.Empty;
@@ -36,6 +37,33 @@ namespace Urkey.WPF.ViewModels
         public bool IsWeak => Level == PasswordStrengthLevel.Weak;
         public bool IsMedium => Level == PasswordStrengthLevel.Medium;
         public bool IsStrong => Level == PasswordStrengthLevel.Strong;
+
+        private bool _isEditing;
+        public bool IsEditing
+        {
+            get => _isEditing;
+            set
+            {
+                if (!SetProperty(ref _isEditing, value)) return;
+                OnPropertyChanged(nameof(IsNotEditing));
+            }
+        }
+
+        public bool IsNotEditing => !IsEditing;
+
+        private string _draftPassword = string.Empty;
+        public string DraftPassword
+        {
+            get => _draftPassword;
+            set => SetProperty(ref _draftPassword, value ?? string.Empty);
+        }
+
+        private bool _isDraftVisible;
+        public bool IsDraftVisible
+        {
+            get => _isDraftVisible;
+            set => SetProperty(ref _isDraftVisible, value);
+        }
     }
 
     public class PasswordCheckViewModel : ViewModelBase
@@ -98,21 +126,6 @@ namespace Urkey.WPF.ViewModels
             private set => SetProperty(ref _reusedCountText, value);
         }
 
-        private bool _isListView = true;
-        public bool IsListView
-        {
-            get => _isListView;
-            set
-            {
-                if (_isListView == value) return;
-                _isListView = value;
-                OnPropertyChanged(nameof(IsListView));
-                OnPropertyChanged(nameof(IsGridView));
-            }
-        }
-
-        public bool IsGridView => !_isListView;
-
         private bool _showIssuesOnly;
         public bool ShowIssuesOnly
         {
@@ -128,9 +141,12 @@ namespace Urkey.WPF.ViewModels
         }
 
         public ICommand ReloadCommand { get; }
-        public ICommand ShowListCommand { get; }
-        public ICommand ShowGridCommand { get; }
         public ICommand ToggleIssuesOnlyCommand { get; }
+        public ICommand BeginEditCommand { get; }
+        public ICommand CancelEditCommand { get; }
+        public ICommand SavePasswordCommand { get; }
+        public ICommand GenerateDraftCommand { get; }
+        public ICommand ToggleDraftVisibilityCommand { get; }
 
         public PasswordCheckViewModel(VaultService vaultService)
         {
@@ -139,9 +155,15 @@ namespace Urkey.WPF.ViewModels
             EntriesView.Filter = FilterEntry;
 
             ReloadCommand = new RelayCommand<object>(_ => Reload());
-            ShowListCommand = new RelayCommand<object>(_ => IsListView = true);
-            ShowGridCommand = new RelayCommand<object>(_ => IsListView = false);
             ToggleIssuesOnlyCommand = new RelayCommand<object>(_ => ShowIssuesOnly = !ShowIssuesOnly);
+            BeginEditCommand = new RelayCommand<PasswordIssueItem>(BeginEdit, item => item != null);
+            CancelEditCommand = new RelayCommand<PasswordIssueItem>(CancelEdit, item => item != null);
+            SavePasswordCommand = new RelayCommand<PasswordIssueItem>(SavePassword, item => item != null);
+            GenerateDraftCommand = new RelayCommand<PasswordIssueItem>(GenerateDraft, item => item?.IsEditing == true);
+            ToggleDraftVisibilityCommand = new RelayCommand<PasswordIssueItem>(
+                item => { if (item != null) item.IsDraftVisible = !item.IsDraftVisible; },
+                item => item?.IsEditing == true);
+
             Reload();
         }
 
@@ -149,6 +171,69 @@ namespace Urkey.WPF.ViewModels
         {
             if (obj is not PasswordIssueItem item) return false;
             return !ShowIssuesOnly || item.HasIssues;
+        }
+
+        private void BeginEdit(PasswordIssueItem? item)
+        {
+            if (item == null) return;
+
+            foreach (var other in _allItems.Where(i => i.IsEditing && i != item))
+            {
+                other.IsEditing = false;
+                other.DraftPassword = string.Empty;
+                other.IsDraftVisible = false;
+            }
+
+            var account = _vaultService.GetEntries().OfType<AccountEntry>()
+                .FirstOrDefault(a => a.Id == item.AccountId);
+            item.DraftPassword = account?.Password ?? string.Empty;
+            item.IsDraftVisible = false;
+            item.IsEditing = true;
+        }
+
+        private void CancelEdit(PasswordIssueItem? item)
+        {
+            if (item == null) return;
+            item.IsEditing = false;
+            item.DraftPassword = string.Empty;
+            item.IsDraftVisible = false;
+        }
+
+        private void GenerateDraft(PasswordIssueItem? item)
+        {
+            if (item == null) return;
+            item.DraftPassword = PasswordGeneratorService.Generate(new PasswordGeneratorOptions
+            {
+                Length = 16,
+                UseLowercase = true,
+                UseUppercase = true,
+                UseDigits = true,
+                UseSymbols = true
+            });
+            item.IsDraftVisible = true;
+        }
+
+        private void SavePassword(PasswordIssueItem? item)
+        {
+            if (item == null) return;
+            if (string.IsNullOrWhiteSpace(item.DraftPassword))
+            {
+                ToastService.Warning(Loc.Get("PasswordCheck_PasswordRequired"));
+                return;
+            }
+
+            var account = _vaultService.GetEntries().OfType<AccountEntry>()
+                .FirstOrDefault(a => a.Id == item.AccountId);
+            if (account == null)
+            {
+                ToastService.Error(Loc.Get("PasswordGenerator_Error"));
+                return;
+            }
+
+            account.Password = item.DraftPassword.Trim();
+            _vaultService.UpdateEntry(account);
+            ToastService.Success(Loc.Get("PasswordCheck_PasswordUpdated"));
+            Reload();
         }
 
         public void Reload()
@@ -238,6 +323,7 @@ namespace Urkey.WPF.ViewModels
 
                 _allItems.Add(new PasswordIssueItem
                 {
+                    AccountId = account.Id,
                     ServiceName = string.IsNullOrWhiteSpace(account.ServiceName)
                         ? Loc.Get("AccountType")
                         : account.ServiceName,

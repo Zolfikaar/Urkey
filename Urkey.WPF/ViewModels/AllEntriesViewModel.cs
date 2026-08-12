@@ -10,7 +10,7 @@ using Urkey.WPF.Views.Windows;
 
 namespace Urkey.WPF.ViewModels
 {
-    public class AllEntriesViewModel : ViewModelBase
+    public class AllEntriesViewModel : ViewModelBase, ISupportsViewMode
     {
         public const string FilterAll = "all";
 
@@ -55,6 +55,7 @@ namespace Urkey.WPF.ViewModels
             {
                 if (!SetProperty(ref _searchText, value ?? string.Empty)) return;
                 FilteredEntries.Refresh();
+                EnsureSelectionVisible();
                 NotifyEmpty();
             }
         }
@@ -67,9 +68,23 @@ namespace Urkey.WPF.ViewModels
             {
                 if (!SetProperty(ref _selectedTypeFilter, string.IsNullOrWhiteSpace(value) ? FilterAll : value)) return;
                 FilteredEntries.Refresh();
+                EnsureSelectionVisible();
                 NotifyEmpty();
             }
         }
+
+        private bool _isListView = true;
+        public bool IsListView
+        {
+            get => _isListView;
+            set
+            {
+                if (!SetProperty(ref _isListView, value)) return;
+                OnPropertyChanged(nameof(IsGridView));
+            }
+        }
+
+        public bool IsGridView => !_isListView;
 
         /// <summary>ComboBox SelectedIndex bridge (0=all,1=account,2=card,3=address,4=document,5=note).</summary>
         public int SelectedTypeFilterIndex
@@ -109,8 +124,15 @@ namespace Urkey.WPF.ViewModels
                 Entries.Add(new EntryListItem(entry));
 
             FilteredEntries.Refresh();
-            SelectedEntry = FilteredEntries.Cast<EntryListItem>().FirstOrDefault();
+            EnsureSelectionVisible();
             NotifyEmpty();
+        }
+
+        private void EnsureSelectionVisible()
+        {
+            var visible = FilteredEntries.Cast<EntryListItem>().ToList();
+            if (SelectedEntry == null || !visible.Contains(SelectedEntry))
+                SelectedEntry = visible.FirstOrDefault();
         }
 
         private bool FilterEntry(object obj)

@@ -1,6 +1,7 @@
 ﻿<Page x:Class="Urkey.WPF.Views.Pages.CreditCards"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:uc="clr-namespace:Urkey.WPF.UserControls"
       Title="{DynamicResource BankCardsTitle}"
       Foreground="{DynamicResource TextColor}"
       Background="{DynamicResource BgColor}"
@@ -32,92 +33,257 @@
             </StackPanel>
         </Grid>
 
-        <Border Grid.Row="1" Style="{StaticResource CardStyle}" Padding="0">
-            <Grid>
+        <Grid Grid.Row="1" Visibility="{Binding IsEmpty, Converter={StaticResource InverseBoolToVisibility}}">
+            <!-- LIST: master-detail -->
+            <Grid Visibility="{Binding IsListView, Converter={StaticResource BoolToVisibility}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="280" MinWidth="220" MaxWidth="360"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Entry list -->
+            <Border Grid.Column="0"
+                    BorderBrush="{DynamicResource BorderColor}"
+                    BorderThickness="0,0,1,0"
+                    Margin="0,0,16,0">
                 <ListBox ItemsSource="{Binding Items}"
                          SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
                          BorderThickness="0"
                          Background="Transparent"
                          HorizontalContentAlignment="Stretch"
-                         ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                         Visibility="{Binding IsEmpty, Converter={StaticResource InverseBoolToVisibility}}">
-                    <ListBox.ItemContainerStyle>
-                        <Style TargetType="ListBoxItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
-                            <Setter Property="Padding" Value="0"/>
-                            <Setter Property="Margin" Value="8,6"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="ListBoxItem">
-                                        <Border x:Name="Bd"
-                                                Background="{DynamicResource ElevatedBgColor}"
-                                                BorderBrush="{DynamicResource BorderColor}"
-                                                BorderThickness="1"
-                                                CornerRadius="12"
-                                                Padding="16,14">
-                                            <ContentPresenter/>
-                                        </Border>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource HoverColor}"/>
-                                            </Trigger>
-                                            <Trigger Property="IsSelected" Value="True">
-                                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource PrimaryColor}"/>
-                                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource RowSelectedColor}"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                    </ListBox.ItemContainerStyle>
+                         ItemContainerStyle="{StaticResource EntryListBoxItemStyle}">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="{Binding HolderName}"
-                                               FontWeight="SemiBold"
-                                               FontSize="15"
-                                               Foreground="{DynamicResource TextColor}"/>
-                                    <TextBlock Text="{Binding Notes}"
-                                               Style="{StaticResource Text.Caption}"
-                                               TextTrimming="CharacterEllipsis"
-                                               Margin="0,6,0,0"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="16,0,0,0">
-                                    <TextBlock Text="{DynamicResource ExpiryDateFieldTitle}"
-                                               Style="{StaticResource Text.Caption}"
-                                               HorizontalAlignment="Right"/>
-                                    <TextBlock Text="{Binding ExpiryDate, Converter={StaticResource LocaleDate}, ConverterParameter=MM/yy}"
-                                               FontWeight="SemiBold"
-                                               Foreground="{DynamicResource TextColor}"
-                                               HorizontalAlignment="Right"
-                                               Margin="0,4,0,0"/>
-                                </StackPanel>
-                            </Grid>
+                            <StackPanel>
+                                <TextBlock Text="{Binding HolderName}"
+                                           FontWeight="SemiBold"
+                                           FontSize="{StaticResource FontSizeSubtitle}"
+                                           Foreground="{DynamicResource TextColor}"/>
+                                <TextBlock Style="{StaticResource Text.Caption}"
+                                           Margin="0,4,0,0"
+                                           Text="{Binding ExpiryDate, Converter={StaticResource LocaleDate}, ConverterParameter=MM/yy}"/>
+                            </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
+            </Border>
 
-                <StackPanel Style="{StaticResource EmptyStatePanelStyle}"
-                            Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}">
-                    <Path Data="{StaticResource bx_credit_card}"
-                          Fill="{DynamicResource TextMutedColor}"
-                          Width="48" Height="48" Stretch="Uniform"
-                          Opacity="0.55" HorizontalAlignment="Center" Margin="0,0,0,16"/>
-                    <TextBlock Text="{DynamicResource Cards_Empty}"
-                               Style="{StaticResource Text.SectionTitle}"
-                               HorizontalAlignment="Center"/>
-                    <TextBlock Text="{DynamicResource Cards_EmptyHint}"
-                               Style="{StaticResource Text.BodyMuted}"
-                               HorizontalAlignment="Center" TextAlignment="Center"
-                               Margin="0,8,0,0"/>
-                </StackPanel>
+            <!-- KPM-style detail card visualization -->
+            <ScrollViewer Grid.Column="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Visibility="{Binding HasSelection, Converter={StaticResource BoolToVisibility}}">
+                <Border Style="{StaticResource CardStyle}"
+                        MaxWidth="520"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Padding="24">
+                    <StackPanel>
+                        <DockPanel Margin="0,0,0,18">
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <Viewbox Width="{StaticResource IconSizeLG}" Height="{StaticResource IconSizeLG}" Margin="0,0,10,0">
+                                    <Path Data="{StaticResource bx_credit_card}" Fill="{DynamicResource PrimaryColor}" Stretch="Uniform"/>
+                                </Viewbox>
+                                <TextBlock Text="{Binding SelectedItem.HolderName}"
+                                           Style="{StaticResource Text.SectionTitle}"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Button Style="{StaticResource IconBtnStyle}" Width="36" Height="36" Margin="0,0,4,0"
+                                        Command="{Binding EditCommand}" ToolTip="{DynamicResource EditButton}">
+                                    <Viewbox Width="{StaticResource IconSizeMD}" Height="{StaticResource IconSizeMD}">
+                                        <Path Data="{StaticResource bx_edit}" Fill="{DynamicResource TextColor}" Stretch="Uniform"/>
+                                    </Viewbox>
+                                </Button>
+                            </StackPanel>
+                        </DockPanel>
+
+                        <!-- Dark plastic card face -->
+                        <Border CornerRadius="16"
+                                Padding="22,20"
+                                MinHeight="180"
+                                Margin="0,0,0,20">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#2B303A" Offset="0"/>
+                                    <GradientStop Color="#1A1D24" Offset="1"/>
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Text="{DynamicResource AccountTypeBankCard}"
+                                           Foreground="#AAB0BC"
+                                           FontSize="{StaticResource FontSizeCaption}"/>
+
+                                <StackPanel Grid.Row="1" VerticalAlignment="Center" Margin="0,16,0,12">
+                                    <DockPanel>
+                                        <TextBlock Text="{Binding DisplayedNumber}"
+                                                   FontFamily="Consolas"
+                                                   FontSize="22"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="White"
+                                                   VerticalAlignment="Center"/>
+                                        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <Button Style="{StaticResource IconBtnStyle}" Width="32" Height="32" Margin="0,0,2,0"
+                                                    Command="{Binding ToggleNumberCommand}"
+                                                    ToolTip="{DynamicResource UnlockWindow_ShowPassword}">
+                                                <Viewbox Width="16" Height="16">
+                                                    <Path Data="{StaticResource bx_eye}" Fill="#DDDDDD" Stretch="Uniform"/>
+                                                </Viewbox>
+                                            </Button>
+                                            <Button Style="{StaticResource IconBtnStyle}" Width="32" Height="32"
+                                                    Command="{Binding CopyNumberCommand}"
+                                                    ToolTip="{DynamicResource CopyBtnTitle}">
+                                                <Viewbox Width="16" Height="16">
+                                                    <Path Data="{StaticResource bx_copy}" Fill="#DDDDDD" Stretch="Uniform"/>
+                                                </Viewbox>
+                                            </Button>
+                                        </StackPanel>
+                                    </DockPanel>
+                                </StackPanel>
+
+                                <Grid Grid.Row="2" Margin="0,0,0,12">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="*"/>
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel>
+                                        <TextBlock Text="{DynamicResource ExpiryDateFieldTitle}"
+                                                   Foreground="#8E95A3" FontSize="{StaticResource FontSizeCaption}"/>
+                                        <TextBlock Text="{Binding DisplayedExpiry}"
+                                                   Foreground="White" FontWeight="SemiBold" Margin="0,4,0,0"
+                                                   FontSize="{StaticResource FontSizeBody}"/>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1">
+                                        <TextBlock Text="{DynamicResource CvvFieldTitle}"
+                                                   Foreground="#8E95A3" FontSize="{StaticResource FontSizeCaption}"/>
+                                        <DockPanel Margin="0,4,0,0">
+                                            <TextBlock Text="{Binding DisplayedCvv}"
+                                                       Foreground="White" FontWeight="SemiBold"
+                                                       FontFamily="Consolas"
+                                                       VerticalAlignment="Center"/>
+                                            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right">
+                                                <Button Style="{StaticResource IconBtnStyle}" Width="28" Height="28"
+                                                        Command="{Binding ToggleCvvCommand}">
+                                                    <Viewbox Width="14" Height="14">
+                                                        <Path Data="{StaticResource bx_eye}" Fill="#DDDDDD" Stretch="Uniform"/>
+                                                    </Viewbox>
+                                                </Button>
+                                                <Button Style="{StaticResource IconBtnStyle}" Width="28" Height="28"
+                                                        Command="{Binding CopyCvvCommand}">
+                                                    <Viewbox Width="14" Height="14">
+                                                        <Path Data="{StaticResource bx_copy}" Fill="#DDDDDD" Stretch="Uniform"/>
+                                                    </Viewbox>
+                                                </Button>
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </StackPanel>
+                                </Grid>
+
+                                <DockPanel Grid.Row="3">
+                                    <TextBlock Text="{Binding SelectedItem.HolderName}"
+                                               Foreground="White" FontWeight="SemiBold"
+                                               FontSize="{StaticResource FontSizeBody}"/>
+                                    <Button DockPanel.Dock="Right"
+                                            Style="{StaticResource IconBtnStyle}" Width="32" Height="32"
+                                            HorizontalAlignment="Right"
+                                            Command="{Binding CopyHolderCommand}"
+                                            ToolTip="{DynamicResource CopyBtnTitle}">
+                                        <Viewbox Width="16" Height="16">
+                                            <Path Data="{StaticResource bx_copy}" Fill="#DDDDDD" Stretch="Uniform"/>
+                                        </Viewbox>
+                                    </Button>
+                                </DockPanel>
+                            </Grid>
+                        </Border>
+
+                        <Border Background="{DynamicResource ElevatedBgColor}"
+                                CornerRadius="{StaticResource ControlCornerRadius}"
+                                Padding="14,12">
+                            <DockPanel>
+                                <StackPanel>
+                                    <TextBlock Text="{DynamicResource PinFieldTitle}" Style="{StaticResource Text.Caption}"/>
+                                    <TextBlock Text="{Binding DisplayedPin}"
+                                               FontFamily="Consolas"
+                                               FontWeight="SemiBold"
+                                               FontSize="{StaticResource FontSizeSubtitle}"
+                                               Foreground="{DynamicResource TextColor}"
+                                               Margin="0,4,0,0"/>
+                                </StackPanel>
+                                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                    <Button Style="{StaticResource IconBtnStyle}" Width="36" Height="36" Margin="0,0,4,0"
+                                            Command="{Binding TogglePinCommand}">
+                                        <Viewbox Width="{StaticResource IconSizeMD}" Height="{StaticResource IconSizeMD}">
+                                            <Path Data="{StaticResource bx_eye}" Fill="{DynamicResource TextColor}" Stretch="Uniform"/>
+                                        </Viewbox>
+                                    </Button>
+                                    <Button Style="{StaticResource IconBtnStyle}" Width="36" Height="36"
+                                            Command="{Binding CopyPinCommand}">
+                                        <Viewbox Width="{StaticResource IconSizeMD}" Height="{StaticResource IconSizeMD}">
+                                            <Path Data="{StaticResource bx_copy}" Fill="{DynamicResource TextColor}" Stretch="Uniform"/>
+                                        </Viewbox>
+                                    </Button>
+                                </StackPanel>
+                            </DockPanel>
+                        </Border>
+
+                        <TextBlock Text="{Binding SelectedItem.Notes}"
+                                   Style="{StaticResource Text.BodyMuted}"
+                                   Margin="0,16,0,0"
+                                   TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </ScrollViewer>
             </Grid>
-        </Border>
+
+            <!-- GRID: visual card tiles -->
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          Visibility="{Binding IsGridView, Converter={StaticResource BoolToVisibility}}">
+                <ItemsControl ItemsSource="{Binding Items}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="300" MinHeight="168" Margin="8" Padding="18" CornerRadius="16"
+                                    Cursor="Hand" MouseLeftButtonUp="OnCardTileClicked">
+                                <Border.Background>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                        <GradientStop Color="#2B303A" Offset="0"/>
+                                        <GradientStop Color="#1A1D24" Offset="1"/>
+                                    </LinearGradientBrush>
+                                </Border.Background>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding HolderName}" Foreground="White" FontWeight="SemiBold"
+                                               FontSize="{StaticResource FontSizeSubtitle}"/>
+                                    <TextBlock Text="{Binding ExpiryDate, Converter={StaticResource LocaleDate}, ConverterParameter=MM/yy}"
+                                               Foreground="#AAB0BC" Margin="0,16,0,0"
+                                               FontSize="{StaticResource FontSizeBody}"/>
+                                    <TextBlock Text="{DynamicResource AccountTypeBankCard}"
+                                               Foreground="#8E95A3" Margin="0,20,0,0"
+                                               FontSize="{StaticResource FontSizeCaption}"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+        </Grid>
+
+        <uc:EmptyState Grid.Row="1"
+                       IconData="{StaticResource bx_credit_card}"
+                       Title="{DynamicResource Cards_Empty}"
+                       Hint="{DynamicResource Cards_EmptyHint}"
+                       ActionText="{DynamicResource AddButton}"
+                       ActionCommand="{Binding AddCommand}"
+                       Visibility="{Binding IsEmpty, Converter={StaticResource BoolToVisibility}}"/>
     </Grid>
 </Page>

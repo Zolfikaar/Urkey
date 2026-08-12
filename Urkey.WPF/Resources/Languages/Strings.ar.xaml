@@ -270,21 +270,29 @@
     <sys:String x:Key="PasswordGenerator_GenerateFirst">قم بتوليد كلمة مرور أولاً.</sys:String>
     <sys:String x:Key="PasswordGenerator_Saved">تم حفظ كلمة المرور كحساب جديد.</sys:String>
     <sys:String x:Key="PasswordGenerator_Error">تعذّر توليد كلمة المرور.</sys:String>
-    <sys:String x:Key="PasswordGenerator_StrengthFormat">القوة: {0} · ~{1} بت إنتروبيا</sys:String>
+    <sys:String x:Key="PasswordGenerator_StrengthFormat">قوة كلمة المرور: {0}</sys:String>
+    <sys:String x:Key="PasswordGenerator_Settings">الإعدادات</sys:String>
+    <sys:String x:Key="PasswordGenerator_Regenerate">إعادة التوليد</sys:String>
+    <sys:String x:Key="PasswordGenerator_Show">إظهار كلمة المرور</sys:String>
+    <sys:String x:Key="PasswordGenerator_Hide">إخفاء كلمة المرور</sys:String>
 
     <!-- Password Check -->
     <sys:String x:Key="PasswordCheck_Subtitle">مراجعة محلية لكلمات المرور الضعيفة أو المكررة أو منخفضة الإنتروبيا. لا تُرسل أي بيانات عبر الإنترنت.</sys:String>
     <sys:String x:Key="PasswordCheck_Empty">لا توجد مشكلات في كلمات المرور</sys:String>
     <sys:String x:Key="PasswordCheck_EmptyHint">جميع كلمات المرور المخزنة تبدو قوية وفريدة.</sys:String>
     <sys:String x:Key="PasswordCheck_Summary">تم فحص {0} كلمة مرور · {1} مشكلة · {2} ضعيفة · {3} مكررة</sys:String>
-    <sys:String x:Key="PasswordCheck_SummaryStrong">تم فحص {0} · {1} قوية · {2} قوية بمشكلات · {3} مشكلات · {4} ضعيفة · {5} مكررة</sys:String>
+    <sys:String x:Key="PasswordCheck_SummaryStrong">تم فحص {0} · {1} قوية · {2} قوية مع مشكلات · {3} مشكلات · {4} ضعيفة · {5} مكررة</sys:String>
     <sys:String x:Key="PasswordCheck_Stat_Checked">تم الفحص</sys:String>
     <sys:String x:Key="PasswordCheck_Stat_Strong">قوية</sys:String>
-    <sys:String x:Key="PasswordCheck_Stat_StrongWithIssues">قوية بمشكلات</sys:String>
+    <sys:String x:Key="PasswordCheck_Stat_StrongWithIssues">قوية مع مشكلات</sys:String>
     <sys:String x:Key="PasswordCheck_Stat_Issues">مشكلات</sys:String>
     <sys:String x:Key="PasswordCheck_Stat_Weak">ضعيفة</sys:String>
     <sys:String x:Key="PasswordCheck_Stat_Reused">مكررة</sys:String>
     <sys:String x:Key="PasswordCheck_Filter_IssuesOnly">المشكلات فقط</sys:String>
+    <sys:String x:Key="PasswordCheck_ChangePassword">تغيير كلمة المرور</sys:String>
+    <sys:String x:Key="PasswordCheck_SavePassword">حفظ كلمة المرور</sys:String>
+    <sys:String x:Key="PasswordCheck_PasswordUpdated">تم تحديث كلمة المرور.</sys:String>
+    <sys:String x:Key="PasswordCheck_PasswordRequired">أدخل كلمة مرور جديدة.</sys:String>
     <sys:String x:Key="PasswordCheck_Tag_Length">{0} حرف</sys:String>
     <sys:String x:Key="PasswordCheck_Tag_Lower">a-z</sys:String>
     <sys:String x:Key="PasswordCheck_Tag_Upper">A-Z</sys:String>

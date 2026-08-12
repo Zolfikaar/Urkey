@@ -7,9 +7,10 @@
         ResizeMode="CanResize"
         Background="{DynamicResource AuthBgColor}"
         WindowStartupLocation="CenterScreen"
-        Icon="/Assets/Icons/favicon.ico"
         Title="{DynamicResource FirstTimeSetupWindow_Title}"
-        FlowDirection="{DynamicResource AppFlowDirection}">
+        FlowDirection="{DynamicResource AppFlowDirection}"
+        Icon="pack://application:,,,/Assets/Icons/app-icon.ico"
+        >
 
     <Grid>
         <Image Source="/Assets/Backgrounds/splash-bg.jpg"

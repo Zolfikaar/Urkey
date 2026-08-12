@@ -25,6 +25,9 @@
     <!-- Status -->
     <SolidColorBrush x:Key="ErrorColor" Color="#EF5350"/>
     <SolidColorBrush x:Key="SuccessColor" Color="#81C784"/>
+    <SolidColorBrush x:Key="OrangeColor" Color="#FF9F43"/>
+    <SolidColorBrush x:Key="DeepRedColor" Color="#FF5252"/>
+    <SolidColorBrush x:Key="PurpleColor" Color="#B39DDB"/>
     <SolidColorBrush x:Key="WarningBgColor" Color="#3D3420"/>
     <SolidColorBrush x:Key="WarningBorderColor" Color="#D4AF56"/>
     <SolidColorBrush x:Key="WarningTextColor" Color="#F0E6C8"/>

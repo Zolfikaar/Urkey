@@ -1,41 +1,13 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
-using System.Windows.Input;
-using Urkey.Core.Models;
-using Urkey.WPF.Helpers;
-using Urkey.WPF.Views;
 
 namespace Urkey.WPF.ViewModels
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        
         private bool _initialLaunch = true;
-        private bool _isAuthenticated = false;
-        private bool _isVaultLocked = true;
-
-        private string _masterPassword = string.Empty;
-        private string _password = string.Empty;
-        private string _email = string.Empty;
-        private string _emailVerified = string.Empty;
-        private string _phoneNumber = string.Empty;
-
-
-        private int _loginAttempts = 0;
-        private const int MaxLoginAttempts = 3;
-        private const int MaxPasswordAttempts = 3;
-
-        private const int LockoutDurationMinutes = 5;
-        private const int ClearClipboardDuration = 1;
-
-
-        private const int MinPasswordLength = 8;
-        private const int MaxPasswordLength = 40;
-
-        private Dictionary<string, string> _data = new Dictionary<string, string>();
 
         private FlowDirection _wordDirection = FlowDirection.LeftToRight;
         public FlowDirection WordDirection
@@ -52,7 +24,6 @@ namespace Urkey.WPF.ViewModels
         {
             Home,
             Settings
-           
         }
 
         private NavigationTarget _currentPage;
@@ -69,17 +40,12 @@ namespace Urkey.WPF.ViewModels
             }
         }
 
-        //MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
-
         public MainViewModel()
         {
             // Check if this is the first launch by looking for a settings file or registry entry
             // For now, we'll use a simple approach with a file
             CheckInitialLaunchStatus();
-
         }
-
-
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
@@ -87,7 +53,6 @@ namespace Urkey.WPF.ViewModels
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
 
         public bool InitialLaunch()
         { return _initialLaunch; }
@@ -123,7 +88,5 @@ namespace Urkey.WPF.ViewModels
             string settingsPath = Path.Combine(appDataPath, "settings.txt");
             File.WriteAllText(settingsPath, "AppLaunched=true");
         }
-
     }
-
 }

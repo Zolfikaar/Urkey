@@ -9,7 +9,9 @@
         ShowInTaskbar="False"
         Background="{DynamicResource AuthBgColor}"
         FlowDirection="{DynamicResource AppFlowDirection}"
-        Loaded="SplashScreen_Loaded">
+        Loaded="SplashScreen_Loaded"
+        Icon="pack://application:,,,/Assets/Icons/app-icon.ico"
+        >
 
     <Grid>
         <Image Source="/Assets/Backgrounds/splash-bg.jpg"

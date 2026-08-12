@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using Urkey.Core.Managers;
 using Urkey.Core.Paths;
 using Urkey.Core.Services;
@@ -13,12 +14,18 @@ namespace Urkey.WPF
         private bool _devMode = false;
         private static bool _suppressSettingsSaveOnExit;
 
-        public static AppSettings Settings { get; private set; } = new();
+        public static AppSettings Settings { get; internal set; } = new();
         public static VaultService VaultService = null!;
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            if (TryGetCaptureOutputDir(e.Args, out string? captureDir))
+            {
+                await ScreenshotCaptureRunner.RunAsync(captureDir!);
+                return;
+            }
 
             AppDataPaths.EnsureInitialized();
 
@@ -58,6 +65,23 @@ namespace Urkey.WPF
             }
         }
 
+        private static bool TryGetCaptureOutputDir(string[] args, out string? outputDir)
+        {
+            outputDir = null;
+            for (int i = 0; i < args.Length; i++)
+            {
+                if (!string.Equals(args[i], "--capture-screenshots", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                outputDir = i + 1 < args.Length && !args[i + 1].StartsWith('-')
+                    ? Path.GetFullPath(args[i + 1])
+                    : Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..", "..", "..", "..", "docs", "screenshots"));
+                return true;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Clear decrypted session state and return to the unlock screen.
         /// </summary>
@@ -73,7 +97,7 @@ namespace Urkey.WPF
             var currentMain = Current.MainWindow;
             Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
-            var unlock = new UnlockWindow(VaultService);
+            var unlock = new UnlockWindow(VaultService!);
             Current.MainWindow = unlock;
             unlock.Show();
 

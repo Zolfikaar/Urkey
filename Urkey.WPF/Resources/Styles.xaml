@@ -275,7 +275,8 @@
         </Setter>
     </Style>
 
-    <!-- Corner settings (auth screens) -->
+    <!-- Corner settings (auth screens).
+         HorizontalAlignment=Right = trailing/end edge: LTR → bottom-right, RTL → bottom-left. -->
     <Style x:Key="AuthSettingsBtnStyle" TargetType="Button">
         <Setter Property="Width" Value="50"/>
         <Setter Property="Height" Value="50"/>

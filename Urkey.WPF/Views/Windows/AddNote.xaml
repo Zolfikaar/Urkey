@@ -13,7 +13,9 @@
         FlowDirection="{DynamicResource AppFlowDirection}"
         WindowStartupLocation="CenterOwner"
         ResizeMode="NoResize"
-        SizeToContent="Height">
+        SizeToContent="Height"
+        Icon="pack://application:,,,/Assets/Icons/app-icon.ico"
+        >
     <Border Style="{DynamicResource CardStyle}"
             Margin="20">
         <Grid>

@@ -59,6 +59,22 @@ public static class AppDataPaths
     }
 
     /// <summary>
+    /// Redirect storage to an isolated folder (screenshot / test harness only).
+    /// Must be called before any other AppDataPaths access.
+    /// </summary>
+    public static void OverrideRootDirectory(string absolutePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(absolutePath);
+
+        lock (Gate)
+        {
+            _rootDirectory = Path.GetFullPath(absolutePath);
+            Directory.CreateDirectory(_rootDirectory);
+            _initialized = true;
+        }
+    }
+
+    /// <summary>
     /// Deletes all UrKey local data (vault, user, settings, documents, secure store)
     /// from the canonical folder and legacy locations. Retries briefly on locked files.
     /// Does not throw for individual file failures.

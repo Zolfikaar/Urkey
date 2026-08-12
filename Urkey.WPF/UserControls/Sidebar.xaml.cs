@@ -34,8 +34,8 @@ namespace Urkey.WPF.UserControls
             set => SetValue(IsSidebarExpandedProperty, value);
         }
 
-        public event EventHandler<SidebarNavigationEventArgs> OnNavigationRequested;
-        public event EventHandler OnToggleRequested;
+        public event EventHandler<SidebarNavigationEventArgs>? OnNavigationRequested;
+        public event EventHandler? OnToggleRequested;
 
         public Sidebar()
         {
@@ -145,6 +145,12 @@ namespace Urkey.WPF.UserControls
             IsSidebarExpanded = isExpanded;
             UpdateSidebarTextVisibility();
             UpdateToggleIcon(isExpanded);
+        }
+
+        public void ActivateNavButton(string buttonName)
+        {
+            if (FindName(buttonName) is Button button)
+                SetButtonActive(button);
         }
     }
 

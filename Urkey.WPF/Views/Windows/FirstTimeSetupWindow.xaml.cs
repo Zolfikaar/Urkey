@@ -3,8 +3,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
-using Urkey.Core.Models;
-using Urkey.Core.Repository;
 using Urkey.Core.Services;
 using Urkey.WPF.Helpers;
 
@@ -17,12 +15,11 @@ namespace Urkey.WPF.Views.Windows
     {
         private bool _isPasswordVisible = false;
         private bool _isConfirmPasswordVisible = false;
-        private string _password;
-        private string _confPassword;
+        private string _password = string.Empty;
+        private string _confPassword = string.Empty;
 
         private readonly VaultService _vaultService;
         private readonly UserService _userService;
-        public Vault vault;
 
         public FirstTimeSetupWindow(VaultService vaultService)
         {
@@ -70,12 +67,8 @@ namespace Urkey.WPF.Views.Windows
             LanguageManager.ApplyLanguage(langCode);
 
             FlowDirection = langCode == "ar" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-
-            // Position settings button based on language
-            // In RTL, button should be on left; in LTR, on right
-            SettingsButton.HorizontalAlignment = langCode == "ar"
-                ? HorizontalAlignment.Left
-                : HorizontalAlignment.Right;
+            // Settings gear: AuthSettingsBtnStyle uses HorizontalAlignment=Right (trailing),
+            // mirrored by FlowDirection (LTR → bottom-right, RTL → bottom-left).
 
             // Apply font based on language
             var fontFamily = langCode == "ar" ? new FontFamily("Cairo") : new FontFamily("LeagueSpartan");
@@ -96,28 +89,19 @@ namespace Urkey.WPF.Views.Windows
             // 3) تطبيق اللغة الجديدة على الواجهة
             LanguageManager.ApplyLanguage(newLang);
 
-            // 4) تحديث اتجاه النص (يمين ← يسار للغة العربية)
+            // 4) تحديث اتجاه النص — trailing alignment on SettingsButton mirrors automatically
             FlowDirection = newLang == "ar"
                 ? FlowDirection.RightToLeft
                 : FlowDirection.LeftToRight;
 
-            // 5) تبديل مكان زر الإعدادات حسب اللغة
-            SettingsButton.HorizontalAlignment = newLang == "ar"
-                ? HorizontalAlignment.Left
-                : HorizontalAlignment.Right;
-
-            // 6) تحديث الخط بناءً على اللغة
+            // 5) تحديث الخط بناءً على اللغة
             var fontFamily = newLang == "ar"
                 ? new FontFamily("Cairo")
                 : new FontFamily("LeagueSpartan");
 
             ApplyFontToWindow(this, fontFamily);
 
-            // 7) إعادة تحميل النصوص مباشرة (DynamicResource يدعم التحديث الفوري)
-            // لكن لو تحب تحديث كامل الواجهة:
-            // this.InvalidateVisual();
-
-            // 8) إغلاق القائمة
+            // 6) إغلاق القائمة
             SettingsPopup.IsOpen = false;
         }
 

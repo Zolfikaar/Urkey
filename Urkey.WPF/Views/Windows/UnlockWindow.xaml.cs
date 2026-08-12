@@ -57,10 +57,8 @@ namespace Urkey.WPF.Views.Windows
             LanguageManager.ApplyLanguage(langCode);
 
             FlowDirection = langCode == "ar" ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
-
-            SettingsButton.HorizontalAlignment = langCode == "ar"
-                ? HorizontalAlignment.Left
-                : HorizontalAlignment.Right;
+            // Settings gear uses AuthSettingsBtnStyle HorizontalAlignment=Right (trailing),
+            // which FlowDirection mirrors: LTR → bottom-right, RTL → bottom-left.
 
             var fontFamily = langCode == "ar" ? new FontFamily("Cairo") : new FontFamily("LeagueSpartan");
             ApplyFontToWindow(this, fontFamily);

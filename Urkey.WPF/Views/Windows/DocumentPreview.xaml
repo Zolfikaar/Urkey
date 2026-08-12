@@ -7,7 +7,9 @@
         ResizeMode="CanResize"
         Background="#16181D"
         Foreground="{DynamicResource TextColor}"
-        FlowDirection="{DynamicResource AppFlowDirection}">
+        FlowDirection="{DynamicResource AppFlowDirection}"
+        Icon="pack://application:,,,/Assets/Icons/app-icon.ico"
+        >
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
         <Style x:Key="CircularButtonStyle" TargetType="Button">

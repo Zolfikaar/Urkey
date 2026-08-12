@@ -9,7 +9,9 @@
         MinHeight="420"
         Background="{DynamicResource BgColor}"
         Foreground="{DynamicResource TextColor}"
-        FlowDirection="{DynamicResource AppFlowDirection}">
+        FlowDirection="{DynamicResource AppFlowDirection}"
+        Icon="pack://application:,,,/Assets/Icons/app-icon.ico"
+        >
     <Window.Resources>
         <Style x:Key="FieldLabelStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="12"/>

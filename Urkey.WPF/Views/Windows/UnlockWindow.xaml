@@ -16,8 +16,9 @@
         AllowsTransparency="False"
         ShowInTaskbar="True"
         Topmost="False"
-        Icon="/Assets/Icons/favicon.ico"
-        FlowDirection="{DynamicResource AppFlowDirection}">
+        FlowDirection="{DynamicResource AppFlowDirection}"
+        Icon="pack://application:,,,/Assets/Icons/app-icon.ico"
+        >
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>

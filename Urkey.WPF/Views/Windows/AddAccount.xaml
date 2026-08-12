@@ -17,7 +17,9 @@
         SizeToContent="Manual"
         ShowInTaskbar="True"
         MinWidth="520"
-        MinHeight="520">
+        MinHeight="520"
+        Icon="pack://application:,,,/Assets/Icons/app-icon.ico"
+        >
 
     <Window.Resources>
         <conv:BoolToVisibilityConverter x:Key="BoolToVisibility" />

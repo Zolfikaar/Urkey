@@ -7,11 +7,13 @@
         ResizeMode="CanResize"
         Height="720"
         Width="1080"
+        WindowState="Maximized"
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource BgColor}"
         Foreground="{DynamicResource TextColor}"
         FlowDirection="{DynamicResource AppFlowDirection}"
-        Icon="Assets/icons/app-icon.ico">
+        Icon="pack://application:,,,/Assets/Icons/app-icon.ico"
+        >
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>

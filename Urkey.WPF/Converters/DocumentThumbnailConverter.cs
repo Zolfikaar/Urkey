@@ -34,7 +34,7 @@ namespace Urkey.WPF.Converters
                     // Return null if image loading fails
                 }
             }
-            return null;
+            return null!;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

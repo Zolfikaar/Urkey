@@ -1,9 +1,7 @@
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
@@ -23,13 +21,11 @@ namespace Urkey.WPF.Views
             Settings
         }
 
-
-
         private bool _isSidebarExpanded;
         private readonly MainViewModel _mainViewModel;
 
-        public event PropertyChangedEventHandler PropertyChanged;
-        public static event EventHandler<bool> SidebarStateChanged;
+        public event PropertyChangedEventHandler? PropertyChanged;
+        public static event EventHandler<bool>? SidebarStateChanged;
 
         public bool IsSidebarExpanded
         {
@@ -89,7 +85,7 @@ namespace Urkey.WPF.Views
             Sidebar.OnToggleRequested += (_, _) => ToggleSidebar_Click(null!, null!);
 
             // 🎨 طبّق الثيم فقط (اللغة طُبقت قبل الإنشاء)
-            ThemeManager.ApplyTheme(App.Settings.Theme);
+            ThemeManager.ApplyTheme(App.Settings!.Theme);
 
             // 🧠 تهيئة ViewModel
             _mainViewModel = new MainViewModel();
@@ -142,6 +138,21 @@ namespace Urkey.WPF.Views
             UpdateSidebarActiveButton(NavigationTarget.Home);
         }
 
+        /// <summary>
+        /// Programmatic navigation used by the README screenshot harness.
+        /// </summary>
+        public void NavigateToPage(Page page, string? sidebarButtonName = null)
+        {
+            if (page is FrameworkElement view && view.DataContext == null)
+                view.DataContext = _mainViewModel;
+
+            MainContentArea.Content = page;
+            UpdateViewTogglerForContent();
+
+            if (!string.IsNullOrWhiteSpace(sidebarButtonName))
+                Sidebar.ActivateNavButton(sidebarButtonName);
+        }
+
         private void UpdateSidebarActiveButton(NavigationTarget page)
         {
             Sidebar.SetIsActive(Sidebar.Home, page == NavigationTarget.Home);
@@ -150,7 +161,7 @@ namespace Urkey.WPF.Views
 
 
 
-        private void Sidebar_OnNavigationRequested(object sender, SidebarNavigationEventArgs e)
+        private void Sidebar_OnNavigationRequested(object? sender, SidebarNavigationEventArgs e)
         {
             if (e.View is FrameworkElement view)
             {

@@ -198,7 +198,7 @@ namespace Urkey.WPF.Views.Pages
             MainWindow.SidebarStateChanged += MainWindow_SidebarStateChanged;
         }
 
-        private void MainWindow_SidebarStateChanged(object sender, bool isExpanded)
+        private void MainWindow_SidebarStateChanged(object? sender, bool isExpanded)
         {
             if (SidebarToggle != null && SidebarToggle.IsChecked != isExpanded)
             {

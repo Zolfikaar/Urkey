@@ -90,6 +90,15 @@
     <sys:String x:Key="ImportSettings_Title">استيراد كلمات المرور</sys:String>
     <sys:String x:Key="ImportSettings_Heading">الاستيراد من ملف</sys:String>
     <sys:String x:Key="ImportSettings_Description">استورد الحسابات من ملف CSV أو TXT مُصدَّر (Chrome أو Kaspersky وغيرها)</sys:String>
+
+    <!-- Reset application data -->
+    <sys:String x:Key="ResetAppData_Title">إعادة ضبط بيانات التطبيق</sys:String>
+    <sys:String x:Key="ResetAppData_Heading">مسح كل البيانات المحلية</sys:String>
+    <sys:String x:Key="ResetAppData_Description">احذف نهائيًا كلمات المرور والمستندات والإعدادات المخزّنة على هذا الجهاز.</sys:String>
+    <sys:String x:Key="ResetAppData_Button">إعادة ضبط التطبيق / مسح كل البيانات</sys:String>
+    <sys:String x:Key="ResetAppData_ConfirmTitle">إعادة ضبط بيانات التطبيق</sys:String>
+    <sys:String x:Key="ResetAppData_ConfirmMessage">هل أنت متأكد أنك تريد حذف جميع كلمات المرور والملفات والإعدادات المخزّنة؟ لا يمكن التراجع عن هذا الإجراء.</sys:String>
+    <sys:String x:Key="ResetAppData_Failed">تعذّر إعادة ضبط بيانات التطبيق: {0}</sys:String>
     <sys:String x:Key="Import_Button">استيراد</sys:String>
     <sys:String x:Key="Import_WindowTitle">استيراد كلمات المرور</sys:String>
     <sys:String x:Key="Import_SelectFileTitle">اختر ملف تصدير كلمات المرور</sys:String>
@@ -242,7 +251,7 @@
     <!-- First-time setup -->
     <sys:String x:Key="FirstTimeSetupWindow_Title">أُوركي - إعداد لأول مرة</sys:String>
     <sys:String x:Key="Setup_WelcomeTitle">إعداد التطبيق لأول مرة</sys:String>
-    <sys:String x:Key="Setup_WelcomeSubtitle">قم بإنشاء كلمة مرور رئيسية لحماية جميع حساباتك المخزنة في أُوركي.</sys:String>
+    <sys:String x:Key="Setup_WelcomeSubtitle">قم بإنشاء كلمة مرور رئيسية لحماية جميع حساباتك و ملفاتك المخزنة في أُوركي.</sys:String>
     <sys:String x:Key="Setup_MasterPasswordTitle">كلمة المرور الرئيسية</sys:String>
     <sys:String x:Key="Setup_MasterPasswordConfirmTitle">تأكيد كلمة المرور</sys:String>
     <sys:String x:Key="Setup_ContinueButton">متابعة</sys:String>

@@ -37,7 +37,7 @@ namespace Urkey.Core.Services
             if (string.IsNullOrWhiteSpace(vaultRootPath))
                 throw new ArgumentException("Vault root path cannot be null or empty.", nameof(vaultRootPath));
 
-            // إنشاء مجلد فرعي داخل AppData\Urkey\DocumentsFiles
+            // DocumentsFiles under LocalApplicationData\UrKey (or custom vault root)
             string docImagesDir = Path.Combine(vaultRootPath, "DocumentsFiles");
             try
             {

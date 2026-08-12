@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Text.Json;
 using Urkey.Core.Models;
+using Urkey.Core.Paths;
 using Urkey.Core.Services;
 
 namespace Urkey.Core.Repository
@@ -12,14 +13,18 @@ namespace Urkey.Core.Repository
 
         public VaultRepository(string? customVaultDirectory = null)
         {
-            _vaultDirectory = string.IsNullOrWhiteSpace(customVaultDirectory)
-                ? Path.Combine(
-                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "Urkey")
-                : customVaultDirectory;
-
-            Directory.CreateDirectory(_vaultDirectory);
-            _vaultFilePath = Path.Combine(_vaultDirectory, "vault.json");
+            if (string.IsNullOrWhiteSpace(customVaultDirectory))
+            {
+                AppDataPaths.EnsureInitialized();
+                _vaultDirectory = AppDataPaths.RootDirectory;
+                _vaultFilePath = AppDataPaths.VaultFilePath;
+            }
+            else
+            {
+                _vaultDirectory = customVaultDirectory;
+                Directory.CreateDirectory(_vaultDirectory);
+                _vaultFilePath = Path.Combine(_vaultDirectory, AppDataPaths.VaultFileName);
+            }
         }
 
         public bool VaultExists() => File.Exists(_vaultFilePath);

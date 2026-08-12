@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Text.Json;
 using Urkey.Core.Models;
+using Urkey.Core.Paths;
 
 namespace Urkey.Core.Repository
 {
@@ -12,14 +13,18 @@ namespace Urkey.Core.Repository
 
     public UserRepository(string? customUserDirectory = null)
     {
-      _userDirectory = string.IsNullOrWhiteSpace(customUserDirectory)
-          ? Path.Combine(
-              Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-              "Urkey")
-          : customUserDirectory;
-
-      Directory.CreateDirectory(_userDirectory);
-      _userFilePath = Path.Combine(_userDirectory, "user.json");
+      if (string.IsNullOrWhiteSpace(customUserDirectory))
+      {
+        AppDataPaths.EnsureInitialized();
+        _userDirectory = AppDataPaths.RootDirectory;
+        _userFilePath = AppDataPaths.UserFilePath;
+      }
+      else
+      {
+        _userDirectory = customUserDirectory;
+        Directory.CreateDirectory(_userDirectory);
+        _userFilePath = Path.Combine(_userDirectory, AppDataPaths.UserFileName);
+      }
     }
 
     public bool UserExists()

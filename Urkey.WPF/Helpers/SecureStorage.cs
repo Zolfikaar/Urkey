@@ -2,27 +2,36 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Urkey.Core.Paths;
 
 namespace Urkey.WPF.Helpers
 {
     public static class SecureStorage
     {
-        private static readonly string _filePath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Urkey", "secure.dat");
+        private static string FilePath
+        {
+            get
+            {
+                AppDataPaths.EnsureInitialized();
+                return AppDataPaths.SecureStorageFilePath;
+            }
+        }
 
         public static void SaveSecure(string key, string value)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(_filePath)!);
+            string path = FilePath;
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             string encrypted = EncryptString(value);
-            File.WriteAllText(_filePath, encrypted);
+            File.WriteAllText(path, encrypted);
         }
 
         public static string? LoadSecure(string key)
         {
-            if (!File.Exists(_filePath))
+            string path = FilePath;
+            if (!File.Exists(path))
                 return null;
 
-            string encrypted = File.ReadAllText(_filePath);
+            string encrypted = File.ReadAllText(path);
             return DecryptString(encrypted);
         }
 

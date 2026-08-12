@@ -268,6 +268,21 @@ namespace Urkey.WPF.Views.Pages
             App.LockAndShowUnlockWindow();
         }
 
+        private void OnResetAppDataClick(object sender, RoutedEventArgs e)
+        {
+            if (!EntryDialogHelper.ConfirmResetApplicationData())
+                return;
+
+            try
+            {
+                App.ResetApplicationDataAndShowSetup();
+            }
+            catch (Exception ex)
+            {
+                ToastService.Error(Loc.Format("ResetAppData_Failed", ex.Message));
+            }
+        }
+
         private void ClipboardTime_Selected(object sender, RoutedEventArgs e)
         {
             if (sender is Button button && ClipboardTimeButton != null)

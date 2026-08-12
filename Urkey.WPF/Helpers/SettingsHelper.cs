@@ -1,22 +1,29 @@
 ﻿using System;
 using System.IO;
 using System.Text.Json;
-using Urkey.WPF.Helpers;
+using Urkey.Core.Paths;
 
 namespace Urkey.WPF.Helpers
 {
     public static class SettingsHelper
     {
-        private static readonly string _settingsPath =
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Urkey", "settings.json");
+        private static string SettingsPath
+        {
+            get
+            {
+                AppDataPaths.EnsureInitialized();
+                return AppDataPaths.SettingsFilePath;
+            }
+        }
 
         public static AppSettings LoadSettings()
         {
             AppSettings settings;
+            string settingsPath = SettingsPath;
 
-            if (File.Exists(_settingsPath))
+            if (File.Exists(settingsPath))
             {
-                string json = File.ReadAllText(_settingsPath);
+                string json = File.ReadAllText(settingsPath);
                 settings = JsonSerializer.Deserialize<AppSettings>(json)!;
             }
             else
@@ -33,12 +40,13 @@ namespace Urkey.WPF.Helpers
 
         public static void SaveSettings(AppSettings settings)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(_settingsPath)!);
+            string settingsPath = SettingsPath;
+            Directory.CreateDirectory(Path.GetDirectoryName(settingsPath)!);
 
             // Persist non-secret settings only — never write the master password.
             settings.MasterPassword = null;
             string json = JsonSerializer.Serialize(settings, new JsonSerializerOptions { WriteIndented = true });
-            File.WriteAllText(_settingsPath, json);
+            File.WriteAllText(settingsPath, json);
         }
     }
 }

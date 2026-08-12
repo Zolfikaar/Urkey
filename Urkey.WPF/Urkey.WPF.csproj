@@ -7,6 +7,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
 	<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+	  <ApplicationIcon>Assets\Icons\app-icon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -20,15 +21,6 @@
     <ProjectReference Include="..\Urkey.Core\Urkey.Core.csproj" />
 	 
   </ItemGroup>
-
-
-
-	<!-- 
-	<ItemGroup>
-		<Compile Include="..\Urkey.WPF\Converters\BoolToVisibilityConverter.cs" />
-		<Compile Include="..\Urkey.WPF\UserControls\EntryTypesDropdown.cs" />
-	</ItemGroup>
-	-->
 
   <ItemGroup>
     <Compile Update="Properties\Settings.Designer.cs">
@@ -57,12 +49,13 @@
     <Resource Include="Assets\Logos\Logo_with_bg.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Assets\Logos\SplashScreenLogo.png" />
     <Resource Include="Assets\Fonts\Cairo.ttf" />
     <Resource Include="Assets\Fonts\LeagueSpartan.ttf" />
     <Resource Include="Assets\Icons\favicon.ico" />
     <Resource Include="Assets\Icons\favicon-16x16.png" />
     <Resource Include="Assets\Icons\favicon-32x32.png" />
+    <Resource Include="Assets\Logos\SplashScreenLogo.png" />
+	<Resource Include="Assets\icons\app-icon.ico" />
   </ItemGroup>
 
 

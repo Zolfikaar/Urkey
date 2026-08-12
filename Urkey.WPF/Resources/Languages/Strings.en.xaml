@@ -90,6 +90,15 @@
     <sys:String x:Key="ImportSettings_Title">Import Passwords</sys:String>
     <sys:String x:Key="ImportSettings_Heading">Import from a file</sys:String>
     <sys:String x:Key="ImportSettings_Description">Import accounts from a CSV or TXT export (Chrome, Kaspersky, and similar)</sys:String>
+
+    <!-- Reset application data -->
+    <sys:String x:Key="ResetAppData_Title">Reset Application Data</sys:String>
+    <sys:String x:Key="ResetAppData_Heading">Clear all local data</sys:String>
+    <sys:String x:Key="ResetAppData_Description">Permanently delete stored passwords, documents, and settings from this device.</sys:String>
+    <sys:String x:Key="ResetAppData_Button">Reset App / Clear All Data</sys:String>
+    <sys:String x:Key="ResetAppData_ConfirmTitle">Reset Application Data</sys:String>
+    <sys:String x:Key="ResetAppData_ConfirmMessage">Are you sure you want to delete all stored passwords, files, and settings? This action cannot be undone.</sys:String>
+    <sys:String x:Key="ResetAppData_Failed">Could not reset application data: {0}</sys:String>
     <sys:String x:Key="Import_Button">Import</sys:String>
     <sys:String x:Key="Import_WindowTitle">Import Passwords</sys:String>
     <sys:String x:Key="Import_SelectFileTitle">Select password export file</sys:String>
@@ -242,7 +251,7 @@
     <!-- First-time setup -->
     <sys:String x:Key="FirstTimeSetupWindow_Title">Urkey – First Time Setup</sys:String>
     <sys:String x:Key="Setup_WelcomeTitle">Welcome to Urkey</sys:String>
-    <sys:String x:Key="Setup_WelcomeSubtitle">Let's set up your master password to protect all your stored accounts.</sys:String>
+    <sys:String x:Key="Setup_WelcomeSubtitle">Let's set up your master password to protect all your stored accounts and documents.</sys:String>
     <sys:String x:Key="Setup_MasterPasswordTitle">Master Password</sys:String>
     <sys:String x:Key="Setup_MasterPasswordConfirmTitle">Confirm Password</sys:String>
     <sys:String x:Key="Setup_ContinueButton">Continue</sys:String>

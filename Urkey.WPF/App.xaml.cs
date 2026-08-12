@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using Urkey.Core.Managers;
+using Urkey.Core.Paths;
 using Urkey.Core.Services;
 using Urkey.WPF.Helpers;
 using Urkey.WPF.Views;
@@ -10,12 +11,16 @@ namespace Urkey.WPF
     public partial class App : Application
     {
         private bool _devMode = false;
+        private static bool _suppressSettingsSaveOnExit;
+
         public static AppSettings Settings { get; private set; } = new();
         public static VaultService VaultService = null!;
 
         protected override async void OnStartup(StartupEventArgs e)
         {
             base.OnStartup(e);
+
+            AppDataPaths.EnsureInitialized();
 
             if (!_devMode)
             {
@@ -80,11 +85,73 @@ namespace Urkey.WPF
             Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
         }
 
+        /// <summary>
+        /// Wipe all local app data (vault, documents, settings) and open first-run setup.
+        /// Clears in-memory crypto/session state before deleting files to avoid locked handles.
+        /// </summary>
+        public static void ResetApplicationDataAndShowSetup()
+        {
+            IdleLockService.Stop();
+            ClipboardHelper.CancelPendingClear();
+            try { Clipboard.Clear(); } catch { /* ignore */ }
+
+            // Drop decrypted vault + encryption key before touching disk.
+            VaultService?.ClearSession();
+            FileHelper.CleanupTempDocumentImages();
+
+            // Close owned dialogs that might still reference vault files.
+            CloseSecondaryWindows();
+
+            _suppressSettingsSaveOnExit = true;
+            try
+            {
+                AppDataPaths.ClearAllLocalData();
+            }
+            finally
+            {
+                _suppressSettingsSaveOnExit = false;
+            }
+
+            Settings = new AppSettings();
+            VaultService = new VaultService();
+
+            LanguageManager.ApplyLanguage(Settings.Language);
+            ThemeManager.ApplyTheme(Settings.Theme);
+
+            var currentMain = Current.MainWindow;
+            Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+
+            var setup = new FirstTimeSetupWindow(VaultService);
+            Current.MainWindow = setup;
+            setup.Show();
+
+            if (currentMain != null && !ReferenceEquals(currentMain, setup))
+            {
+                currentMain.Close();
+            }
+
+            Current.ShutdownMode = ShutdownMode.OnLastWindowClose;
+        }
+
+        private static void CloseSecondaryWindows()
+        {
+            var main = Current.MainWindow;
+            foreach (Window window in Current.Windows.Cast<Window>().ToList())
+            {
+                if (ReferenceEquals(window, main))
+                    continue;
+
+                try { window.Close(); }
+                catch { /* ignore */ }
+            }
+        }
+
         protected override void OnExit(ExitEventArgs e)
         {
             VaultManager.Lock();
             FileHelper.CleanupTempDocumentImages();
-            SettingsHelper.SaveSettings(Settings);
+            if (!_suppressSettingsSaveOnExit)
+                SettingsHelper.SaveSettings(Settings);
             base.OnExit(e);
         }
     }

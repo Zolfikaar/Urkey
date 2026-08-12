@@ -48,6 +48,12 @@
     <SolidColorBrush x:Key="ButtonPrimaryHoverBg" Color="#5B66D6"/>
     <SolidColorBrush x:Key="ButtonPrimaryPressedBg" Color="#3A42A6"/>
     <SolidColorBrush x:Key="ButtonPrimaryText" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="ButtonDangerBg" Color="#E63946"/>
+    <SolidColorBrush x:Key="ButtonDangerHoverBg" Color="#D32F3C"/>
+    <SolidColorBrush x:Key="ButtonDangerPressedBg" Color="#B71C28"/>
+    <SolidColorBrush x:Key="ButtonDangerText" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="DangerCardBg" Color="#FFF5F5"/>
+    <SolidColorBrush x:Key="DangerCardBorder" Color="#E63946"/>
 
     <!-- Navigation / lists -->
     <SolidColorBrush x:Key="SidebarSelectedColor" Color="#EDEFF3"/>

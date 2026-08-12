@@ -168,5 +168,12 @@ namespace Urkey.WPF.Helpers
                 Loc.Get("ConfirmSignOut_Message"),
                 Loc.Get("ConfirmSignOut_Title"));
         }
+
+        public static bool ConfirmResetApplicationData()
+        {
+            return ToastService.Confirm(
+                Loc.Get("ResetAppData_ConfirmMessage"),
+                Loc.Get("ResetAppData_ConfirmTitle"));
+        }
     }
 }

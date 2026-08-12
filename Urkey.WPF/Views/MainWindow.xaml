@@ -10,7 +10,8 @@
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource BgColor}"
         Foreground="{DynamicResource TextColor}"
-        FlowDirection="{DynamicResource AppFlowDirection}">
+        FlowDirection="{DynamicResource AppFlowDirection}"
+        Icon="Assets/icons/app-icon.ico">
 
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>

@@ -78,6 +78,7 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="50*"/>
@@ -559,7 +560,7 @@
                     <!-- Import Passwords -->
                     <Border Grid.Row="4"
                             Grid.Column="0"
-                            Margin="0,0,15,0"
+                            Margin="0,0,15,20"
                             Height="{Binding ActualHeight, ElementName=SecurityCard}"
                             Width="{Binding ActualWidth, ElementName=SecurityCard}"
                             Style="{StaticResource SettingsCardStyle}">
@@ -591,6 +592,49 @@
                                         Padding="12,6"
                                         VerticalAlignment="Center"
                                         Click="OnImportPasswordsClick"/>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Reset Application Data (danger zone) -->
+                    <Border Grid.Row="5"
+                            Grid.Column="0"
+                            Grid.ColumnSpan="2"
+                            Margin="0,0,0,0"
+                            Background="{DynamicResource DangerCardBg}"
+                            BorderBrush="{DynamicResource DangerCardBorder}"
+                            BorderThickness="1"
+                            Style="{StaticResource SettingsCardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource ResetAppData_Title}"
+                                       Style="{StaticResource Text.SectionTitle}"
+                                       Foreground="{DynamicResource ErrorColor}"
+                                       Margin="{StaticResource SectionSpacing}"/>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                </Grid.ColumnDefinitions>
+
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="{DynamicResource ResetAppData_Heading}"
+                                               Style="{StaticResource Text.Body}"
+                                               Margin="0,0,0,5"/>
+                                    <TextBlock Text="{DynamicResource ResetAppData_Description}"
+                                               Style="{StaticResource Text.BodyMuted}"
+                                               TextWrapping="Wrap"/>
+                                </StackPanel>
+
+                                <Button x:Name="ResetAppDataButton"
+                                        Grid.Column="1"
+                                        Content="{DynamicResource ResetAppData_Button}"
+                                        Style="{StaticResource DangerBtnStyle}"
+                                        FontSize="12"
+                                        Padding="12,6"
+                                        VerticalAlignment="Center"
+                                        Margin="16,0,0,0"
+                                        Click="OnResetAppDataClick"/>
                             </Grid>
                         </StackPanel>
                     </Border>

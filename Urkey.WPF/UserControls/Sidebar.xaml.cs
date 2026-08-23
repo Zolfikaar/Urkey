@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
+using Urkey.Core.Models;
 using Urkey.WPF.Views.Pages;
 
 namespace Urkey.WPF.UserControls
@@ -20,6 +22,19 @@ namespace Urkey.WPF.UserControls
 
         public static bool GetIsActive(Button button)
             => (bool)button.GetValue(IsActiveProperty);
+
+        public static readonly DependencyProperty CountProperty =
+            DependencyProperty.RegisterAttached(
+                "Count",
+                typeof(string),
+                typeof(Sidebar),
+                new PropertyMetadata(string.Empty));
+
+        public static void SetCount(Button button, string? value)
+            => button.SetValue(CountProperty, value ?? string.Empty);
+
+        public static string GetCount(Button button)
+            => (string)button.GetValue(CountProperty);
 
         public static readonly DependencyProperty IsSidebarExpandedProperty =
             DependencyProperty.Register(
@@ -45,6 +60,7 @@ namespace Urkey.WPF.UserControls
                 SetButtonActive(Home);
                 UpdateSidebarTextVisibility();
                 UpdateToggleIcon(IsSidebarExpanded);
+                RefreshCounts();
             };
         }
 
@@ -100,7 +116,21 @@ namespace Urkey.WPF.UserControls
                 OnNavigationRequested?.Invoke(this, new SidebarNavigationEventArgs(page));
 
             UpdateSidebarTextVisibility();
+            RefreshCounts();
         }
+
+        public void RefreshCounts()
+        {
+            var entries = App.VaultService?.GetEntries() ?? Array.Empty<VaultEntry>();
+            SetCount(AllEntries, FormatCount(entries.Count));
+            SetCount(Accounts, FormatCount(entries.OfType<AccountEntry>().Count()));
+            SetCount(CreditCards, FormatCount(entries.OfType<CardEntry>().Count()));
+            SetCount(Addresses, FormatCount(entries.OfType<AddressEntry>().Count()));
+            SetCount(Notes, FormatCount(entries.OfType<NoteEntry>().Count()));
+            SetCount(Docs, FormatCount(entries.OfType<DocumentEntry>().Count()));
+        }
+
+        private static string FormatCount(int count) => count > 0 ? count.ToString() : string.Empty;
 
         private void ResetAllButtons()
         {
@@ -126,8 +156,11 @@ namespace Urkey.WPF.UserControls
             {
                 if (btn == null) return;
                 btn.ApplyTemplate();
+                var visibility = IsSidebarExpanded ? Visibility.Visible : Visibility.Collapsed;
                 if (btn.Template?.FindName("Label", btn) is TextBlock label)
-                    label.Visibility = IsSidebarExpanded ? Visibility.Visible : Visibility.Collapsed;
+                    label.Visibility = visibility;
+                if (btn.Template?.FindName("CountLabel", btn) is TextBlock count)
+                    count.Visibility = visibility;
             }
 
             foreach (var child in TopBtns.Children)

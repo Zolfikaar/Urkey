@@ -2,9 +2,11 @@ using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Threading;
+using Urkey.WPF.Commands;
 using Urkey.WPF.Helpers;
 using Urkey.WPF.UserControls;
 using Urkey.WPF.ViewModels;
@@ -23,6 +25,7 @@ namespace Urkey.WPF.Views
 
         private bool _isSidebarExpanded;
         private readonly MainViewModel _mainViewModel;
+        private GlobalHotkeyService? _fastHotkey;
 
         public event PropertyChangedEventHandler? PropertyChanged;
         public static event EventHandler<bool>? SidebarStateChanged;
@@ -98,8 +101,49 @@ namespace Urkey.WPF.Views
             // 🧭 التنقل الأولي حسب السيناريو
             NavigateInitialPage(startupPage);
 
-            Closed += (_, _) => IdleLockService.Stop();
+            Closed += (_, _) =>
+            {
+                IdleLockService.Stop();
+                _fastHotkey?.Dispose();
+            };
             IdleLockService.Start();
+
+            InputBindings.Add(new KeyBinding(new RelayCommand<object>(_ => FocusGlobalSearch()), Key.F, ModifierKeys.Control));
+            InputBindings.Add(new KeyBinding(new RelayCommand<object>(_ => OnLockVaultClick(this, new RoutedEventArgs())), Key.L, ModifierKeys.Control));
+
+            SourceInitialized += (_, _) => RefreshFastHotkey();
+        }
+
+        public Page? CurrentContent => MainContentArea.Content as Page;
+
+        public void FocusGlobalSearch()
+        {
+            SearchBox?.Focus();
+            SearchBox?.SelectAll();
+        }
+
+        public void RefreshFastHotkey()
+        {
+            _fastHotkey ??= new GlobalHotkeyService(this, OnFastHotkeyPressed);
+            _fastHotkey.Update(
+                App.Settings.FastHotkeyEnabled,
+                App.Settings.FastHotkeyModifier,
+                App.Settings.FastHotkeyKey);
+        }
+
+        private void OnFastHotkeyPressed()
+        {
+            if (WindowState == WindowState.Minimized)
+                WindowState = WindowState.Normal;
+            Activate();
+            NavigateToPage(new AllEntries(), "AllEntries");
+            Dispatcher.BeginInvoke(FocusGlobalSearch, DispatcherPriority.Input);
+        }
+
+        private void OnLockVaultClick(object sender, RoutedEventArgs e)
+        {
+            DiagnosticLog.Info("Vault locked from header");
+            App.LockAndShowUnlockWindow();
         }
 
         private void NavigateInitialPage(StartupPage startupPage)
@@ -148,6 +192,7 @@ namespace Urkey.WPF.Views
 
             MainContentArea.Content = page;
             UpdateViewTogglerForContent();
+            Sidebar.RefreshCounts();
 
             if (!string.IsNullOrWhiteSpace(sidebarButtonName))
                 Sidebar.ActivateNavButton(sidebarButtonName);

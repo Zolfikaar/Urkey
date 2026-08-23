@@ -13,5 +13,10 @@ namespace Urkey.Core.Models
         public Guid Id { get; set; } = Guid.NewGuid();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
+        /// <summary>
+        /// Last time the entry was opened or used. Falls back to <see cref="UpdatedAt"/> when unset.
+        /// </summary>
+        public DateTime LastAccessedAt { get; set; }
     }
 }

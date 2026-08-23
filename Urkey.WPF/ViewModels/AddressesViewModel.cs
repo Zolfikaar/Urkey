@@ -70,8 +70,7 @@ namespace Urkey.WPF.ViewModels
             var previousId = SelectedItem?.Id;
             Items.Clear();
             var query = _searchText.Trim();
-            foreach (var address in _vaultService.GetEntries().OfType<AddressEntry>()
-                         .OrderByDescending(a => a.UpdatedAt))
+            foreach (var address in EntryListSort.Apply(_vaultService.GetEntries().OfType<AddressEntry>()))
             {
                 if (!string.IsNullOrEmpty(query) &&
                     !Contains(address.Name, query) &&

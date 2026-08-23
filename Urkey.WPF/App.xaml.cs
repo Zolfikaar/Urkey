@@ -35,7 +35,7 @@ namespace Urkey.WPF
                 VaultService = new VaultService();
 
                 LanguageManager.ApplyLanguage(Settings.Language);
-                ThemeManager.ApplyTheme(Settings.Theme);
+                ThemeManager.Initialize();
 
                 Application.Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;
 
@@ -57,7 +57,7 @@ namespace Urkey.WPF
                 VaultService = new VaultService();
 
                 LanguageManager.ApplyLanguage(Settings.Language);
-                ThemeManager.ApplyTheme(Settings.Theme);
+                ThemeManager.Initialize();
 
                 Window next = new MainWindow();
                 Application.Current.MainWindow = next;
@@ -140,7 +140,7 @@ namespace Urkey.WPF
             VaultService = new VaultService();
 
             LanguageManager.ApplyLanguage(Settings.Language);
-            ThemeManager.ApplyTheme(Settings.Theme);
+            ThemeManager.Initialize();
 
             var currentMain = Current.MainWindow;
             Current.ShutdownMode = ShutdownMode.OnExplicitShutdown;

@@ -46,6 +46,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <uc:ViewToggler x:Name="GlobalViewToggler"
@@ -54,7 +55,18 @@
                                 Margin="0,0,12,0"
                                 DataContext="{Binding ElementName=MainContentArea, Path=Content.DataContext}"/>
 
-                <Border Grid.Column="2"
+                <Button x:Name="LockVaultButton"
+                        Grid.Column="2"
+                        Style="{StaticResource WindowButtonStyle}"
+                        Margin="0,0,8,0"
+                        ToolTip="{DynamicResource LockVault_Tooltip}"
+                        Click="OnLockVaultClick">
+                    <Viewbox Width="16" Height="16">
+                        <Path Data="{StaticResource bx_lock}" Fill="{DynamicResource TextColor}"/>
+                    </Viewbox>
+                </Button>
+
+                <Border Grid.Column="3"
                         Height="40"
                         Width="260"
                         Background="{DynamicResource InputBgColor}"

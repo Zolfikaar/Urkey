@@ -17,9 +17,8 @@
   </ItemGroup>
 
   <ItemGroup>
-	  
     <ProjectReference Include="..\Urkey.Core\Urkey.Core.csproj" />
-	 
+    <PackageReference Include="Microsoft.Win32.SystemEvents" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>

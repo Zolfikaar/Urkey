@@ -99,7 +99,8 @@ namespace Urkey.WPF.Helpers
                 Password = "Tr0ng-GitHub-Key#9fQ2mL8x",
                 Url = "https://github.com",
                 AccountType = "Website",
-                IsFavorite = true
+                IsFavorite = true,
+                LastAccessedAt = DateTime.UtcNow
             });
             vaultService.AddEntry(new AccountEntry
             {
@@ -196,7 +197,16 @@ namespace Urkey.WPF.Helpers
             await NavigateAndCaptureAsync(main, new Home(), Path.Combine(outputDir, $"home-{suffix}.png"), "Home");
             await NavigateAndCaptureAsync(main, new PasswordCheck(), Path.Combine(outputDir, $"password-check-{suffix}.png"), "PasswordCheck");
             await NavigateAndCaptureAsync(main, new PasswordGenerator(), Path.Combine(outputDir, $"password-generator-{suffix}.png"), "PasswordGenerator");
-            await NavigateAndCaptureAsync(main, new Settings { DataContext = main.DataContext }, Path.Combine(outputDir, $"settings-{suffix}.png"), "Settings");
+            var settings = new Settings { DataContext = main.DataContext };
+            await NavigateAndCaptureAsync(main, settings, Path.Combine(outputDir, $"settings-{suffix}.png"), "Settings");
+            settings.ShowCategory("ImportExport");
+            await WaitForLayoutAsync(main);
+            await Task.Delay(200);
+            CaptureWindow(main, Path.Combine(outputDir, $"settings-import-{suffix}.png"));
+            settings.ShowCategory("Advanced");
+            await WaitForLayoutAsync(main);
+            await Task.Delay(200);
+            CaptureWindow(main, Path.Combine(outputDir, $"settings-advanced-{suffix}.png"));
             await NavigateAndCaptureAsync(main, new Accounts(), Path.Combine(outputDir, $"accounts-{suffix}.png"), "Accounts");
             await NavigateAndCaptureAsync(main, new CreditCards(), Path.Combine(outputDir, $"bank-cards-{suffix}.png"), "CreditCards");
 

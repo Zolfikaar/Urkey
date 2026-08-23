@@ -120,7 +120,7 @@ namespace Urkey.WPF.ViewModels
             _vaultService.EnsureLoaded();
             Entries.Clear();
 
-            foreach (var entry in _vaultService.GetEntries().OrderByDescending(e => e.UpdatedAt))
+            foreach (var entry in EntryListSort.Apply(_vaultService.GetEntries()))
                 Entries.Add(new EntryListItem(entry));
 
             FilteredEntries.Refresh();

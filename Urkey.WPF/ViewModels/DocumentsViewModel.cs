@@ -220,7 +220,7 @@ namespace Urkey.WPF.ViewModels
             Documents.Clear();
 
             var query = _searchText.Trim();
-            foreach (var doc in _vault.Entries.OfType<DocumentEntry>())
+            foreach (var doc in EntryListSort.Apply(_vault.Entries.OfType<DocumentEntry>()))
             {
                 if (!string.IsNullOrEmpty(query) &&
                     !(doc.Name?.Contains(query, StringComparison.OrdinalIgnoreCase) == true) &&

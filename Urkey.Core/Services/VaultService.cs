@@ -206,6 +206,29 @@ public class VaultService
         _repo.Save(vault);
     }
 
+    public void TouchLastAccessed(Guid id)
+    {
+        var vault = EnsureLoaded();
+        var existing = vault.Entries.FirstOrDefault(e => e.Id == id);
+        if (existing == null)
+            return;
+
+        existing.LastAccessedAt = DateTime.UtcNow;
+        _repo.Save(vault);
+    }
+
+    public void SortEntriesAlphabetically()
+    {
+        var vault = EnsureLoaded();
+        vault.Entries = VaultExportService
+            .OrderEntries(vault.Entries, alphabetical: true)
+            .ToList();
+        _repo.Save(vault);
+    }
+
+    public static DateTime GetRecency(VaultEntry entry)
+        => entry.LastAccessedAt == default ? entry.UpdatedAt : entry.LastAccessedAt;
+
     public void LogActivity(string action, string entryType, string entryName, Guid? entryId = null, bool save = true)
     {
         var vault = EnsureLoaded();

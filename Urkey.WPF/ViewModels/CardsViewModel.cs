@@ -160,8 +160,7 @@ namespace Urkey.WPF.ViewModels
             var previousId = SelectedItem?.Id;
             Items.Clear();
             var query = _searchText.Trim();
-            foreach (var card in _vaultService.GetEntries().OfType<CardEntry>()
-                         .OrderByDescending(c => c.UpdatedAt))
+            foreach (var card in EntryListSort.Apply(_vaultService.GetEntries().OfType<CardEntry>()))
             {
                 if (!string.IsNullOrEmpty(query) &&
                     !Contains(card.HolderName, query) &&

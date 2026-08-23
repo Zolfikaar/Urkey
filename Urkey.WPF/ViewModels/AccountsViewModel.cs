@@ -99,7 +99,7 @@ namespace Urkey.WPF.ViewModels
             _vault = _vaultService.LoadVault();
 
             Accounts = new ObservableCollection<AccountEntry>(
-                _vault.Entries.OfType<AccountEntry>()
+                EntryListSort.Apply(_vault.Entries.OfType<AccountEntry>())
             );
 
             Accounts.CollectionChanged += OnAccountsCollectionChanged;
@@ -126,7 +126,7 @@ namespace Urkey.WPF.ViewModels
             Accounts.CollectionChanged -= OnAccountsCollectionChanged;
             Accounts.Clear();
 
-            foreach (var acc in _vault.Entries.OfType<AccountEntry>())
+            foreach (var acc in EntryListSort.Apply(_vault.Entries.OfType<AccountEntry>()))
                 Accounts.Add(acc);
 
             Accounts.CollectionChanged += OnAccountsCollectionChanged;
@@ -244,6 +244,7 @@ namespace Urkey.WPF.ViewModels
 
             try
             {
+                _vaultService.TouchLastAccessed(entry.Id);
                 if (!string.IsNullOrWhiteSpace(entry.Url))
                     Process.Start(new ProcessStartInfo(entry.Url) { UseShellExecute = true });
                 else if (!string.IsNullOrWhiteSpace(entry.ApplicationPath))

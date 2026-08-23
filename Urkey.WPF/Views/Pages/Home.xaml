@@ -32,116 +32,238 @@
                       HorizontalScrollBarVisibility="Disabled">
             <StackPanel>
 
-                <Border Style="{StaticResource CardStyle}"
-                        Margin="{StaticResource SectionSpacing}">
+                <Border Style="{StaticResource CardStyle}" Margin="{StaticResource SectionSpacing}">
                     <StackPanel>
-                        <TextBlock Text="{DynamicResource WelcomeHomeText}"
-                                   Style="{StaticResource Text.CardTitle}"
-                                   Margin="0,0,0,8"/>
-                        <TextBlock Text="{DynamicResource WelcomeSubtitle}"
-                                   Style="{StaticResource Text.BodyMuted}"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="{DynamicResource Setup_Title}" Style="{StaticResource Text.SectionTitle}"/>
+                                <TextBlock Text="{Binding SetupProgressText}" Style="{StaticResource Text.BodyMuted}" Margin="0,6,0,8"/>
+                            </StackPanel>
+                            <Button Grid.Column="1"
+                                    Content="{Binding SetupToggleLabel}"
+                                    Style="{StaticResource OutlineBtnStyle}"
+                                    MinWidth="90"
+                                    Command="{Binding ToggleSetupCommand}"/>
+                        </Grid>
+                        <ProgressBar Height="6"
+                                     Minimum="0"
+                                     Maximum="100"
+                                     Value="{Binding SetupPercent, Mode=OneWay}"
+                                     Foreground="{DynamicResource PrimaryColor}"
+                                     Background="{DynamicResource HoverColor}"
+                                     BorderThickness="0"/>
+                        <ItemsControl ItemsSource="{Binding SetupTasks}"
+                                      Margin="0,14,0,0"
+                                      Visibility="{Binding IsSetupExpanded, Converter={StaticResource BoolToVisibility}}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <UniformGrid Columns="3"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Style="{StaticResource OutlineBtnStyle}"
+                                            Margin="0,0,10,10"
+                                            HorizontalAlignment="Stretch"
+                                            HorizontalContentAlignment="Left"
+                                            Tag="{Binding Action}"
+                                            Click="OnSetupTaskClick">
+                                        <StackPanel>
+                                            <TextBlock Text="{Binding Title}" Style="{StaticResource Text.Body}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding StatusText}" Style="{StaticResource Text.Caption}" Margin="0,4,0,0"/>
+                                        </StackPanel>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
                     </StackPanel>
                 </Border>
 
-                <UniformGrid Columns="3"
-                             Margin="{StaticResource SectionSpacing}">
-
+                <UniformGrid Columns="3" Margin="{StaticResource SectionSpacing}">
                     <Border Style="{StaticResource StatCardStyle}">
                         <StackPanel HorizontalAlignment="Center">
-                            <Path Data="{StaticResource bx_passwords}"
-                                  Fill="{DynamicResource PrimaryColor}"
-                                  Width="28"
-                                  Height="28"
-                                  Stretch="Uniform"
-                                  HorizontalAlignment="Center"
-                                  Margin="0,0,0,12"/>
-                            <TextBlock Text="{Binding PasswordsTotalText}"
-                                       Style="{StaticResource Text.StatValue}"
-                                       Margin="0,0,0,4"/>
-                            <TextBlock Text="{DynamicResource PasswordsTotal}"
-                                       Style="{StaticResource Text.Caption}"
-                                       HorizontalAlignment="Center"/>
+                            <Path Data="{StaticResource bx_passwords}" Fill="{DynamicResource PrimaryColor}" Width="28" Height="28" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                            <TextBlock Text="{Binding PasswordsTotalText}" Style="{StaticResource Text.StatValue}" Margin="0,0,0,4"/>
+                            <TextBlock Text="{DynamicResource PasswordsTotal}" Style="{StaticResource Text.Caption}" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
-
                     <Border Style="{StaticResource StatCardStyle}">
                         <StackPanel HorizontalAlignment="Center">
-                            <Path Data="{StaticResource bx_lock}"
-                                  Fill="{DynamicResource PrimaryColor}"
-                                  Width="28"
-                                  Height="28"
-                                  Stretch="Uniform"
-                                  HorizontalAlignment="Center"
-                                  Margin="0,0,0,12"/>
-                            <TextBlock Text="{Binding VaultsTotalText}"
-                                       Style="{StaticResource Text.StatValue}"
-                                       Margin="0,0,0,4"/>
-                            <TextBlock Text="{DynamicResource VaultsTotal}"
-                                       Style="{StaticResource Text.Caption}"
-                                       HorizontalAlignment="Center"/>
+                            <Path Data="{StaticResource bx_lock}" Fill="{DynamicResource PrimaryColor}" Width="28" Height="28" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                            <TextBlock Text="{Binding VaultsTotalText}" Style="{StaticResource Text.StatValue}" Margin="0,0,0,4"/>
+                            <TextBlock Text="{DynamicResource VaultsTotal}" Style="{StaticResource Text.Caption}" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
-
                     <Border Style="{StaticResource StatCardStyle}">
                         <StackPanel HorizontalAlignment="Center">
-                            <Path Data="{StaticResource bx_check}"
-                                  Fill="{DynamicResource AccentGold}"
-                                  Width="28"
-                                  Height="28"
-                                  Stretch="Uniform"
-                                  HorizontalAlignment="Center"
-                                  Margin="0,0,0,12"/>
-                            <TextBlock Text="{Binding SecurityScoreText}"
-                                       Style="{StaticResource Text.StatValue}"
-                                       Foreground="{DynamicResource AccentGold}"
-                                       Margin="0,0,0,4"/>
-                            <TextBlock Text="{DynamicResource SecurityPoints}"
-                                       Style="{StaticResource Text.Caption}"
-                                       HorizontalAlignment="Center"/>
+                            <Path Data="{StaticResource bx_check}" Fill="{DynamicResource AccentGold}" Width="28" Height="28" Stretch="Uniform" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                            <TextBlock Text="{Binding SecurityScoreText}" Style="{StaticResource Text.StatValue}" Foreground="{DynamicResource AccentGold}" Margin="0,0,0,4"/>
+                            <TextBlock Text="{DynamicResource SecurityPoints}" Style="{StaticResource Text.Caption}" HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                 </UniformGrid>
 
+                <Grid Margin="{StaticResource SectionSpacing}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0" Style="{StaticResource CardStyle}" Margin="0,0,8,0">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource Home_Recent}" Style="{StaticResource Text.SectionTitle}" Margin="0,0,0,12"/>
+                            <ItemsControl ItemsSource="{Binding RecentEntries}"
+                                          Visibility="{Binding HasRecentEntries, Converter={StaticResource BoolToVisibility}}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource OutlineBtnStyle}"
+                                                HorizontalAlignment="Stretch"
+                                                HorizontalContentAlignment="Left"
+                                                Margin="0,0,0,8"
+                                                Command="{Binding DataContext.OpenEntryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                CommandParameter="{Binding}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="36"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Border Width="32" Height="32" CornerRadius="16" Background="{DynamicResource HoverColor}">
+                                                    <TextBlock Text="{Binding Initial}" HorizontalAlignment="Center" VerticalAlignment="Center" FontWeight="SemiBold" Foreground="{DynamicResource PrimaryColor}"/>
+                                                </Border>
+                                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                                    <TextBlock Text="{Binding Title}" Style="{StaticResource Text.Body}" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Subtitle}" Style="{StaticResource Text.Caption}" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Text="{DynamicResource Home_RecentEmpty}"
+                                       Style="{StaticResource Text.BodyMuted}"
+                                       Visibility="{Binding IsRecentEmpty, Converter={StaticResource BoolToVisibility}}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Border Grid.Column="1" Style="{StaticResource CardStyle}" Margin="8,0,0,0">
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource Home_Favorites}" Style="{StaticResource Text.SectionTitle}" Margin="0,0,0,12"/>
+                            <ItemsControl ItemsSource="{Binding FavoriteEntries}"
+                                          Visibility="{Binding HasFavorites, Converter={StaticResource BoolToVisibility}}">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <Button Style="{StaticResource OutlineBtnStyle}"
+                                                HorizontalAlignment="Stretch"
+                                                HorizontalContentAlignment="Left"
+                                                Margin="0,0,0,8"
+                                                Command="{Binding DataContext.OpenEntryCommand, RelativeSource={RelativeSource AncestorType=Page}}"
+                                                CommandParameter="{Binding}">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="36"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Viewbox Width="18" Height="18">
+                                                    <Path Data="{StaticResource bx_star}" Fill="{DynamicResource AccentGold}"/>
+                                                </Viewbox>
+                                                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                                                    <TextBlock Text="{Binding Title}" Style="{StaticResource Text.Body}" TextTrimming="CharacterEllipsis"/>
+                                                    <TextBlock Text="{Binding Subtitle}" Style="{StaticResource Text.Caption}" TextTrimming="CharacterEllipsis"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Text="{DynamicResource Home_FavoritesEmpty}"
+                                       Style="{StaticResource Text.BodyMuted}"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding IsFavoritesEmpty, Converter={StaticResource BoolToVisibility}}"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+
+                <Border Style="{StaticResource CardStyle}" Margin="{StaticResource SectionSpacing}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="{Binding SavedPasswordsHeading}" Style="{StaticResource Text.SectionTitle}" Margin="0,0,0,12"/>
+                            <StackPanel Orientation="Horizontal">
+                                <StackPanel Margin="0,0,24,0">
+                                    <TextBlock Text="{Binding StrongCountText}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource SuccessColor}"/>
+                                    <TextBlock Text="{DynamicResource Home_Strong}" Style="{StaticResource Text.Caption}"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,24,0">
+                                    <TextBlock Text="{Binding WeakCountText}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource ErrorColor}"/>
+                                    <TextBlock Text="{DynamicResource Home_Weak}" Style="{StaticResource Text.Caption}"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,24,0">
+                                    <TextBlock Text="{Binding DuplicateCountText}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource OrangeColor}"/>
+                                    <TextBlock Text="{DynamicResource Home_Duplicate}" Style="{StaticResource Text.Caption}"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding CompromisedCountText}" FontSize="22" FontWeight="SemiBold" Foreground="{DynamicResource DeepRedColor}"/>
+                                    <TextBlock Text="{DynamicResource Home_Compromised}" Style="{StaticResource Text.Caption}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                        <Button Grid.Column="1"
+                                Content="{DynamicResource Home_LearnMore}"
+                                Style="{StaticResource OutlineBtnStyle}"
+                                VerticalAlignment="Center"
+                                Click="OnLearnMoreClick"/>
+                    </Grid>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}" Margin="{StaticResource SectionSpacing}">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="{DynamicResource Home_StorageTitle}" Style="{StaticResource Text.SectionTitle}" Margin="0,0,0,6"/>
+                            <TextBlock Text="{DynamicResource Home_StorageHint}" Style="{StaticResource Text.BodyMuted}" TextWrapping="Wrap" Margin="0,0,0,10"/>
+                            <ProgressBar Height="8" Minimum="0" Maximum="100" Value="{Binding StoragePercent, Mode=OneWay}" Foreground="{DynamicResource PrimaryColor}" Background="{DynamicResource HoverColor}" BorderThickness="0"/>
+                            <TextBlock Text="{Binding StorageUsageText}" Style="{StaticResource Text.Caption}" Margin="0,8,0,0"/>
+                            <TextBlock Text="{Binding StorageFilesText}" Style="{StaticResource Text.Caption}"/>
+                        </StackPanel>
+                        <Button Grid.Column="1"
+                                Content="{DynamicResource Home_Upload}"
+                                Style="{StaticResource OutlineBtnStyle}"
+                                VerticalAlignment="Center"
+                                Margin="16,0,0,0"
+                                Click="OnUploadClick"/>
+                    </Grid>
+                </Border>
+
                 <Border Style="{StaticResource CardStyle}">
                     <StackPanel>
-                        <TextBlock Text="{DynamicResource RecentActivityTitle}"
-                                   Style="{StaticResource Text.SectionTitle}"
-                                   Margin="0,0,0,16"/>
-
+                        <TextBlock Text="{DynamicResource RecentActivityTitle}" Style="{StaticResource Text.SectionTitle}" Margin="0,0,0,16"/>
                         <ItemsControl ItemsSource="{Binding RecentActivity}"
                                       Visibility="{Binding HasActivity, Converter={StaticResource BoolToVisibility}}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
                                     <Border Padding="0,0,0,12">
                                         <StackPanel>
-                                            <TextBlock Text="{Binding Text}"
-                                                       Style="{StaticResource Text.Body}"
-                                                       TextWrapping="Wrap"/>
-                                            <TextBlock Text="{Binding TimestampText}"
-                                                       Style="{StaticResource Text.Caption}"
-                                                       Margin="0,4,0,0"/>
+                                            <TextBlock Text="{Binding Text}" Style="{StaticResource Text.Body}" TextWrapping="Wrap"/>
+                                            <TextBlock Text="{Binding TimestampText}" Style="{StaticResource Text.Caption}" Margin="0,4,0,0"/>
                                         </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-
-                        <StackPanel HorizontalAlignment="Center"
-                                    Margin="0,12"
-                                    Visibility="{Binding IsActivityEmpty, Converter={StaticResource BoolToVisibility}}">
-                            <Path Data="{StaticResource bx_notes}"
-                                  Fill="{DynamicResource TextMutedColor}"
-                                  Width="40"
-                                  Height="40"
-                                  Stretch="Uniform"
-                                  Opacity="0.55"
-                                  HorizontalAlignment="Center"
-                                  Margin="0,0,0,12"/>
-                            <TextBlock Text="{DynamicResource RecentActivityEmpty}"
-                                       Style="{StaticResource Text.BodyMuted}"
-                                       HorizontalAlignment="Center"
-                                       TextAlignment="Center"/>
-                        </StackPanel>
+                        <TextBlock Text="{DynamicResource RecentActivityEmpty}"
+                                   Style="{StaticResource Text.BodyMuted}"
+                                   HorizontalAlignment="Center"
+                                   Visibility="{Binding IsActivityEmpty, Converter={StaticResource BoolToVisibility}}"/>
                     </StackPanel>
                 </Border>
             </StackPanel>

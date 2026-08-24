@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
 	<SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
 	<ApplicationIcon>Assets\Icons\app-icon.ico</ApplicationIcon>
+	<Version>1.1.0</Version>
   </PropertyGroup>
 
   <ItemGroup>

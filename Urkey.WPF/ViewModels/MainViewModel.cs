@@ -71,7 +71,7 @@ namespace Urkey.WPF.ViewModels
         private void CheckInitialLaunchStatus()
         {
             // Check if the app has been launched before
-            string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PasswordManager", "settings.txt");
+            string settingsPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Urkey", "settings.txt");
 
             if (File.Exists(settingsPath))
             {
@@ -82,7 +82,7 @@ namespace Urkey.WPF.ViewModels
         private void SaveInitialLaunchStatus()
         {
             // Save that the app has been launched
-            string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "PasswordManager");
+            string appDataPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Urkey");
             Directory.CreateDirectory(appDataPath);
 
             string settingsPath = Path.Combine(appDataPath, "settings.txt");

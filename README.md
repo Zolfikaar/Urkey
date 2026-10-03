@@ -72,13 +72,13 @@ Fresh captures from the current build — English (LTR) beside Arabic (RTL).
 
 ## Download & Quick Start
 
-### Latest release — **v1.0.0**
+### Latest release — **v1.2.0**
 
 | Asset | Link |
 | --- | --- |
-| **Urkey.exe** (portable) | [Download Urkey.exe](https://github.com/Zolfikaar/Urkey/releases/download/v1.0.0/Urkey.exe) |
-| Zip package (win-x64) | [Urkey-v1.0.0-win-x64.zip](https://github.com/Zolfikaar/Urkey/releases/download/v1.0.0/Urkey-v1.0.0-win-x64.zip) |
-| Release notes | [UrKey v1.0.0](https://github.com/Zolfikaar/Urkey/releases/tag/v1.0.0) |
+| **Urkey Setup** (Windows Installer) | [Download UrkeySetup_v1.2.0.exe](https://github.com/Zolfikaar/Urkey/releases/download/v1.2.0/UrkeySetup_v1.2.0.exe) |
+| Zip package (win-x64) | [Urkey-v1.2.0-win-x64.zip](https://github.com/Zolfikaar/Urkey/releases/download/v1.2.0/Urkey-v1.2.0-win-x64.zip) |
+| Release notes | [UrKey v1.2.0](https://github.com/Zolfikaar/Urkey/releases/tag/v1.2.0) |
 
 ### Run in 30 seconds
 

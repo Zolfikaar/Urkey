@@ -154,17 +154,39 @@ namespace Urkey.WPF.ViewModels
             EntriesView = CollectionViewSource.GetDefaultView(_allItems);
             EntriesView.Filter = FilterEntry;
 
-            ReloadCommand = new RelayCommand<object>(_ => Reload());
+            //ReloadCommand = new RelayCommand<object>(_ => ReloadAsync());
+            // استخدام AsyncRelayCommand أو استدعاء حذر داخل الـ RelayCommand
+            //ReloadCommand = new AsyncRelayCommand(async () => await ReloadAsync());
+
+            // ربط الـ Async methods بـ ICommand
+            ReloadCommand = new RelayCommand<object>(async _ => await ReloadAsync());
+            SavePasswordCommand = new RelayCommand<PasswordIssueItem>(async item => await SavePasswordAsync(item), item => item != null);
+
             ToggleIssuesOnlyCommand = new RelayCommand<object>(_ => ShowIssuesOnly = !ShowIssuesOnly);
             BeginEditCommand = new RelayCommand<PasswordIssueItem>(BeginEdit, item => item != null);
             CancelEditCommand = new RelayCommand<PasswordIssueItem>(CancelEdit, item => item != null);
-            SavePasswordCommand = new RelayCommand<PasswordIssueItem>(SavePassword, item => item != null);
+            //SavePasswordCommand = new RelayCommand<PasswordIssueItem>(SavePasswordAsync, item => item != null);
             GenerateDraftCommand = new RelayCommand<PasswordIssueItem>(GenerateDraft, item => item?.IsEditing == true);
             ToggleDraftVisibilityCommand = new RelayCommand<PasswordIssueItem>(
                 item => { if (item != null) item.IsDraftVisible = !item.IsDraftVisible; },
                 item => item?.IsEditing == true);
 
-            Reload();
+            //ReloadAsync();
+            // تشغيل التهيئة الأولية بأمان وتجاهل تحذير CS4014 بصريح العبارة
+            _ = InitializeAsync();
+        }
+        private CancellationTokenSource? _reloadCts;
+        private async Task InitializeAsync()
+        {
+            try
+            {
+                await ReloadAsync();
+            }
+            catch (Exception ex)
+            {
+                // يمكنك تسجيل الخطأ هنا أو إظهار تنبيه
+                System.Diagnostics.Debug.WriteLine($"Error during initialization: {ex.Message}");
+            }
         }
 
         private bool FilterEntry(object obj)
@@ -213,7 +235,7 @@ namespace Urkey.WPF.ViewModels
             item.IsDraftVisible = true;
         }
 
-        private void SavePassword(PasswordIssueItem? item)
+        private async Task SavePasswordAsync(PasswordIssueItem? item)
         {
             if (item == null) return;
             if (string.IsNullOrWhiteSpace(item.DraftPassword))
@@ -233,131 +255,193 @@ namespace Urkey.WPF.ViewModels
             account.Password = item.DraftPassword.Trim();
             _vaultService.UpdateEntry(account);
             ToastService.Success(Loc.Get("PasswordCheck_PasswordUpdated"));
-            Reload();
+
+            // استخدام await لمنع تحذير CS4014 وضمان اكتمال تحديث القائمة
+            await ReloadAsync();
         }
 
-        public void Reload()
+        public async Task ReloadAsync()
         {
-            _allItems.Clear();
-            var accounts = _vaultService.GetEntries()
-                .OfType<AccountEntry>()
-                .Where(a => !string.IsNullOrEmpty(a.Password))
-                .ToList();
+            // إلغاء أي عملية تحميل سابقة كانت تعمل في الخلفية
+            _reloadCts?.Cancel();
+            _reloadCts = new CancellationTokenSource();
+            var token = _reloadCts.Token;
 
-            var reuseCounts = accounts
-                .GroupBy(a => a.Password!, StringComparer.Ordinal)
-                .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
-
-            int weak = 0, reused = 0, strong = 0, strongWithIssues = 0, issues = 0;
-
-            Brush weakBrush = ResolveBrush("ErrorColor", Color.FromRgb(0xEF, 0x53, 0x50));
-            Brush mediumBrush = ResolveBrush("AccentGold", Color.FromRgb(0xD4, 0xAF, 0x56));
-            Brush strongBrush = ResolveBrush("SuccessColor", Color.FromRgb(0x81, 0xC7, 0x84));
-            Brush trackBrush = ResolveBrush("BorderColor", Color.FromRgb(0x34, 0x36, 0x4A));
-
-            foreach (var account in accounts)
+            // 1. قراءة وحساب البيانات في Background Thread
+            var result = await Task.Run(() =>
             {
-                var analysis = PasswordStrengthEvaluator.Analyze(account.Password);
-                bool isReused = reuseCounts.TryGetValue(account.Password!, out int count) && count > 1;
-                bool hasIssues = analysis.Level != PasswordStrengthLevel.Strong
-                                 || isReused
-                                 || analysis.IssueKeys.Count > 0;
-
-                if (analysis.Level == PasswordStrengthLevel.Strong)
-                {
-                    strong++;
-                    if (isReused || analysis.IssueKeys.Count > 0)
-                        strongWithIssues++;
-                }
-
-                if (analysis.Level == PasswordStrengthLevel.Weak) weak++;
-                if (isReused) reused++;
-                if (hasIssues) issues++;
-
-                var issueKeys = analysis.IssueKeys.ToList();
-                if (isReused)
-                    issueKeys.Add("PasswordCheck_Issue_Reused");
-
-                string strengthKey = analysis.Level switch
-                {
-                    PasswordStrengthLevel.Strong => "PasswordCheck_Strength_Strong",
-                    PasswordStrengthLevel.Medium => "PasswordCheck_Strength_Medium",
-                    PasswordStrengthLevel.Weak => "PasswordCheck_Strength_Weak",
-                    _ => "PasswordCheck_Strength_Empty"
-                };
-
-                Brush strengthBrush = analysis.Level switch
-                {
-                    PasswordStrengthLevel.Strong => strongBrush,
-                    PasswordStrengthLevel.Medium => mediumBrush,
-                    _ => weakBrush
-                };
-
-                double percent = analysis.Level switch
-                {
-                    PasswordStrengthLevel.Strong => Math.Max(78, Math.Min(100, analysis.EntropyBits / 80.0 * 100)),
-                    PasswordStrengthLevel.Medium => Math.Max(40, Math.Min(72, analysis.EntropyBits / 80.0 * 100)),
-                    PasswordStrengthLevel.Weak => Math.Max(8, Math.Min(35, analysis.EntropyBits / 80.0 * 100)),
-                    _ => 0
-                };
-
-                var chips = issueKeys
-                    .Distinct()
-                    .Where(k => k != "PasswordCheck_Issue_Reused")
-                    .Select(k => new PasswordIssueChip
-                    {
-                        Text = Loc.Get(k),
-                        IsReuse = false
-                    })
+                var accounts = _vaultService.GetEntries()
+                    .OfType<AccountEntry>()
+                    .Where(a => !string.IsNullOrEmpty(a.Password))
                     .ToList();
 
-                var featureTags = new List<PasswordIssueChip>
-                {
-                    new() { Text = Loc.Format("PasswordCheck_Tag_Length", analysis.Length), IsFeature = true }
-                };
-                if (analysis.HasLower) featureTags.Add(new PasswordIssueChip { Text = Loc.Get("PasswordCheck_Tag_Lower"), IsFeature = true });
-                if (analysis.HasUpper) featureTags.Add(new PasswordIssueChip { Text = Loc.Get("PasswordCheck_Tag_Upper"), IsFeature = true });
-                if (analysis.HasDigit) featureTags.Add(new PasswordIssueChip { Text = Loc.Get("PasswordCheck_Tag_Digit"), IsFeature = true });
-                if (analysis.HasSymbol) featureTags.Add(new PasswordIssueChip { Text = Loc.Get("PasswordCheck_Tag_Symbol"), IsFeature = true });
-                if (isReused) featureTags.Add(new PasswordIssueChip { Text = Loc.Get("PasswordCheck_Issue_Reused"), IsReuse = true });
+                var reuseCounts = accounts
+                    .GroupBy(a => a.Password!, StringComparer.Ordinal)
+                    .ToDictionary(g => g.Key, g => g.Count(), StringComparer.Ordinal);
 
-                _allItems.Add(new PasswordIssueItem
+                int weak = 0, reused = 0, strong = 0, strongWithIssues = 0, issues = 0;
+
+                Brush weakBrush = ResolveBrush("ErrorColor", Color.FromRgb(0xEF, 0x53, 0x50));
+                Brush mediumBrush = ResolveBrush("AccentGold", Color.FromRgb(0xD4, 0xAF, 0x56));
+                Brush strongBrush = ResolveBrush("SuccessColor", Color.FromRgb(0x81, 0xC7, 0x84));
+                Brush trackBrush = ResolveBrush("BorderColor", Color.FromRgb(0x34, 0x36, 0x4A));
+
+                if (weakBrush.CanFreeze) weakBrush.Freeze();
+                if (mediumBrush.CanFreeze) mediumBrush.Freeze();
+                if (strongBrush.CanFreeze) strongBrush.Freeze();
+                if (trackBrush.CanFreeze) trackBrush.Freeze();
+
+                var items = new List<PasswordIssueItem>();
+
+                foreach (var account in accounts)
                 {
-                    AccountId = account.Id,
-                    ServiceName = string.IsNullOrWhiteSpace(account.ServiceName)
-                        ? Loc.Get("AccountType")
-                        : account.ServiceName,
-                    Username = string.IsNullOrWhiteSpace(account.Username)
-                        ? (account.Email ?? string.Empty)
-                        : account.Username,
-                    StrengthText = Loc.Get(strengthKey),
-                    EntropyText = Loc.Format("PasswordCheck_EntropyFormat", analysis.EntropyBits),
-                    LengthText = Loc.Format("PasswordCheck_Tag_Length", analysis.Length),
-                    IssuesText = string.Join(" • ", chips.Select(c => c.Text)),
-                    IsReused = isReused,
-                    HasIssues = hasIssues,
-                    Level = analysis.Level,
-                    StrengthPercent = percent,
-                    StrengthBrush = strengthBrush,
-                    StrengthTrackBrush = trackBrush,
-                    Chips = chips,
-                    FeatureTags = featureTags
-                });
+                    if (token.IsCancellationRequested) return null;
+
+                    var analysis = PasswordStrengthEvaluator.Analyze(account.Password);
+                    bool isReused = reuseCounts.TryGetValue(account.Password!, out int count) && count > 1;
+                    bool hasIssues = analysis.Level != PasswordStrengthLevel.Strong
+                                     || isReused
+                                     || analysis.IssueKeys.Count > 0;
+
+                    if (analysis.Level == PasswordStrengthLevel.Strong)
+                    {
+                        strong++;
+                        if (isReused || analysis.IssueKeys.Count > 0)
+                            strongWithIssues++;
+                    }
+
+                    if (analysis.Level == PasswordStrengthLevel.Weak) weak++;
+                    if (isReused) reused++;
+                    if (hasIssues) issues++;
+
+                    var issueKeys = analysis.IssueKeys.ToList();
+                    if (isReused)
+                        issueKeys.Add("PasswordCheck_Issue_Reused");
+
+                    string strengthKey = analysis.Level switch
+                    {
+                        PasswordStrengthLevel.Strong => "PasswordCheck_Strength_Strong",
+                        PasswordStrengthLevel.Medium => "PasswordCheck_Strength_Medium",
+                        PasswordStrengthLevel.Weak => "PasswordCheck_Strength_Weak",
+                        _ => "PasswordCheck_Strength_Empty"
+                    };
+
+                    Brush strengthBrush = analysis.Level switch
+                    {
+                        PasswordStrengthLevel.Strong => strongBrush,
+                        PasswordStrengthLevel.Medium => mediumBrush,
+                        _ => weakBrush
+                    };
+
+                    double percent = analysis.Level switch
+                    {
+                        PasswordStrengthLevel.Strong => Math.Max(78, Math.Min(100, analysis.EntropyBits / 80.0 * 100)),
+                        PasswordStrengthLevel.Medium => Math.Max(40, Math.Min(72, analysis.EntropyBits / 80.0 * 100)),
+                        PasswordStrengthLevel.Weak => Math.Max(8, Math.Min(35, analysis.EntropyBits / 80.0 * 100)),
+                        _ => 0
+                    };
+
+                    var chips = issueKeys
+                        .Distinct()
+                        .Where(k => k != "PasswordCheck_Issue_Reused")
+                        .Select(k => new PasswordIssueChip
+                        {
+                            Text = Loc.Get(k),
+                            IsReuse = false
+                        })
+                        .ToList();
+
+                    var featureTags = new List<PasswordIssueChip>
+            {
+                new() { Text = Loc.Format("PasswordCheck_Tag_Length", analysis.Length), IsFeature = true }
+            };
+                    if (analysis.HasLower) featureTags.Add(new PasswordIssueChip { Text = Loc.Get("PasswordCheck_Tag_Lower"), IsFeature = true });
+                    if (analysis.HasUpper) featureTags.Add(new PasswordIssueChip { Text = Loc.Get("PasswordCheck_Tag_Upper"), IsFeature = true });
+                    if (analysis.HasDigit) featureTags.Add(new PasswordIssueChip { Text = Loc.Get("PasswordCheck_Tag_Digit"), IsFeature = true });
+                    if (analysis.HasSymbol) featureTags.Add(new PasswordIssueChip { Text = Loc.Get("PasswordCheck_Tag_Symbol"), IsFeature = true });
+                    if (isReused) featureTags.Add(new PasswordIssueChip { Text = Loc.Get("PasswordCheck_Issue_Reused"), IsReuse = true });
+
+                    items.Add(new PasswordIssueItem
+                    {
+                        AccountId = account.Id,
+                        ServiceName = string.IsNullOrWhiteSpace(account.ServiceName)
+                            ? Loc.Get("AccountType")
+                            : account.ServiceName,
+                        Username = string.IsNullOrWhiteSpace(account.Username)
+                            ? (account.Email ?? string.Empty)
+                            : account.Username,
+                        StrengthText = Loc.Get(strengthKey),
+                        EntropyText = Loc.Format("PasswordCheck_EntropyFormat", analysis.EntropyBits),
+                        LengthText = Loc.Format("PasswordCheck_Tag_Length", analysis.Length),
+                        IssuesText = string.Join(" • ", chips.Select(c => c.Text)),
+                        IsReused = isReused,
+                        HasIssues = hasIssues,
+                        Level = analysis.Level,
+                        StrengthPercent = percent,
+                        StrengthBrush = strengthBrush,
+                        StrengthTrackBrush = trackBrush,
+                        Chips = chips,
+                        FeatureTags = featureTags
+                    });
+                }
+
+                return new
+                {
+                    Items = items,
+                    AccountCount = accounts.Count,
+                    Strong = strong,
+                    StrongWithIssues = strongWithIssues,
+                    Issues = issues,
+                    Weak = weak,
+                    Reused = reused
+                };
+            }, token);
+
+            // إذا تم إلغاء العملية، اخرج فوراً
+            if (result == null || token.IsCancellationRequested) return;
+
+            // 2. تفريغ القائمة القديمة وحقن الدفعة الأولى
+            _allItems.Clear();
+
+            int chunkSize = 15;
+            var initialChunk = result.Items.Take(chunkSize);
+
+            foreach (var item in initialChunk)
+            {
+                _allItems.Add(item);
             }
 
-            CheckedCountText = accounts.Count.ToString(System.Globalization.CultureInfo.CurrentCulture);
-            StrongCountText = strong.ToString(System.Globalization.CultureInfo.CurrentCulture);
-            StrongWithIssuesCountText = strongWithIssues.ToString(System.Globalization.CultureInfo.CurrentCulture);
-            IssueCountText = issues.ToString(System.Globalization.CultureInfo.CurrentCulture);
-            WeakCountText = weak.ToString(System.Globalization.CultureInfo.CurrentCulture);
-            ReusedCountText = reused.ToString(System.Globalization.CultureInfo.CurrentCulture);
-            SummaryText = Loc.Format("PasswordCheck_SummaryStrong", accounts.Count, strong, strongWithIssues, issues, weak, reused);
-            EntriesView.Refresh();
+            // 3. تحديث النصوص والإحصائيات
+            CheckedCountText = result.AccountCount.ToString(System.Globalization.CultureInfo.CurrentCulture);
+            StrongCountText = result.Strong.ToString(System.Globalization.CultureInfo.CurrentCulture);
+            StrongWithIssuesCountText = result.StrongWithIssues.ToString(System.Globalization.CultureInfo.CurrentCulture);
+            IssueCountText = result.Issues.ToString(System.Globalization.CultureInfo.CurrentCulture);
+            WeakCountText = result.Weak.ToString(System.Globalization.CultureInfo.CurrentCulture);
+            ReusedCountText = result.Reused.ToString(System.Globalization.CultureInfo.CurrentCulture);
+            SummaryText = Loc.Format("PasswordCheck_SummaryStrong", result.AccountCount, result.Strong, result.StrongWithIssues, result.Issues, result.Weak, result.Reused);
+
+            // إشعار الواجهة بالحالة الحقيقية فقط بعد إضافة العناصر
             OnPropertyChanged(nameof(HasEntries));
             OnPropertyChanged(nameof(IsEmpty));
             OnPropertyChanged(nameof(HasVisibleEntries));
-        }
 
+            // 4. استكمال باقي العناصر في الخلفية بأمان
+            var remainingItems = result.Items.Skip(chunkSize).ToList();
+
+            if (remainingItems.Count > 0)
+            {
+                _ = System.Windows.Application.Current.Dispatcher.InvokeAsync(async () =>
+                {
+                    foreach (var item in remainingItems)
+                    {
+                        if (token.IsCancellationRequested) break;
+                        _allItems.Add(item);
+                        await Task.Delay(1);
+                    }
+                    OnPropertyChanged(nameof(HasVisibleEntries));
+                }, System.Windows.Threading.DispatcherPriority.Background);
+            }
+        }
         private static Brush ResolveBrush(string resourceKey, Color fallback)
         {
             try

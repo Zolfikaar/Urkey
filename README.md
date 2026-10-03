@@ -14,6 +14,10 @@ A standalone Windows desktop password manager that keeps your vault encrypted on
 
 ---
 
+## Demo
+![UrKey Demo](docs/UrkeyDemo.gif)
+---
+
 ## Overview
 
 UrKey is a full-featured local vault for accounts, bank cards, notes, addresses, and documents. It is designed as a **portfolio-grade** WPF application: layered architecture, MVVM presentation, AES-GCM encryption, and first-class bilingual UX.

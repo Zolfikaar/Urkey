@@ -15,6 +15,9 @@ namespace Urkey.WPF.Views.Pages
             DataContext = _vm;
         }
 
-        private void OnPageLoaded(object sender, RoutedEventArgs e) => _vm.Reload();
+        private async void OnPageLoaded(object sender, RoutedEventArgs e)
+        {
+            await _vm.ReloadAsync();
+        }
     }
 }
